@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flex-moe-toolkit"
+version = "0.0.1"
+description = "Tools for analysing Mixture-of-Experts models"
+authors = [{name="Your Name"}]
+
+dependencies = [
+  "torch",
+  "transformers",
+  "pandas",
+  "numpy",
+  "matplotlib",
+  "seaborn"
+]
