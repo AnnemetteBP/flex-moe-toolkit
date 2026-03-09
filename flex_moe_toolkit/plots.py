@@ -3,15 +3,15 @@ import matplotlib.pyplot as plt
 
 
 
-def expert_heatmap(matrix, title="Expert usage"):
+def plot_expert_heatmap(matrix):
 
-    plt.figure(figsize=(6,4))
+    plt.figure(figsize=(8,4))
 
     sns.heatmap(matrix, cmap="viridis")
 
-    plt.title(title)
-
     plt.xlabel("Expert")
     plt.ylabel("Layer")
+
+    plt.title("Layer × Expert Usage")
 
     plt.show()
