@@ -6,11 +6,12 @@ build-backend = "setuptools.build_meta"
 name = "flex-moe-toolkit"
 version = "0.0.1"
 description = "Tools for analysing Mixture-of-Experts models"
-authors = [{name="Your Name"}]
+authors = [{Annemette Brok Pirchert"}]
 
 dependencies = [
   "torch",
   "transformers",
+  "accelerate",
   "pandas",
   "numpy",
   "matplotlib",
