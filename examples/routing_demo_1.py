@@ -2,8 +2,8 @@ import torch
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from flex_moe_toolkit.capture import capture_router_logits
-from flex_moe_toolkit.routing import selected_experts, expert_load
+from flex_moe_toolkit.prev_analysis.capture import capture_router_logits
+from flex_moe_toolkit.prev_analysis.routing import selected_experts, expert_load
 
 
 

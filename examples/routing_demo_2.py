@@ -1,9 +1,9 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from flex_moe_toolkit.capture import capture_router_logits
-from flex_moe_toolkit.logger import log_routing
-from flex_moe_toolkit.analysis import compute_expert_usage, layer_expert_matrix
-from flex_moe_toolkit.plots import plot_expert_heatmap
+from flex_moe_toolkit.prev_analysis.capture import capture_router_logits
+from flex_moe_toolkit.prev_analysis.logger import log_routing
+from flex_moe_toolkit.prev_analysis.analysis import compute_expert_usage, layer_expert_matrix
+from flex_moe_toolkit.prev_analysis.plots import plot_expert_heatmap
 
 
 

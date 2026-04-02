@@ -8,19 +8,14 @@ def expert_similarity_matrix(model, layer_idx):
     Compute cosine similarity between experts in a given layer.
     """
 
-    layer = model.model.layers[layer_idx]
-
+    base_model = getattr(model, "model", model)
+    layer = base_model.layers[layer_idx]
     experts = layer.mlp.experts
 
-    weights = []
-
-    for expert in experts:
-
-        w = expert.gate_up_proj.weight.flatten()
-
-        weights.append(w)
-
-    weights = torch.stack(weights)
+    if hasattr(experts, "gate_up_proj"):
+        weights = experts.gate_up_proj.flatten(start_dim=1)
+    else:
+        weights = torch.stack([expert.gate_up_proj.weight.flatten() for expert in experts])
 
     sim = F.cosine_similarity(
         weights.unsqueeze(1),
