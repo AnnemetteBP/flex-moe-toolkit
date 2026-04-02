@@ -1,13 +1,16 @@
 import torch
 
 
-
-def capture_router_logits(model, inputs):
+def capture_router_logits(model, inputs, adapter=None):
     """
     Run model and return router logits.
     """
 
-    model.config.output_router_logits = True
+    if adapter is not None:
+        return adapter.get_router_logits(model, inputs)
+
+    if hasattr(model, "config"):
+        model.config.output_router_logits = True
 
     with torch.no_grad():
         outputs = model(**inputs)

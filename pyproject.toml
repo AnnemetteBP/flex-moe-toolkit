@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "flex-moe-toolkit"
 version = "0.0.1"
 description = "Tools for analysing Mixture-of-Experts models"
-authors = [{Annemette Brok Pirchert"}]
+authors = [{ name = "Annemette Brok Pirchert" }]
 
 dependencies = [
   "torch",
@@ -17,3 +17,9 @@ dependencies = [
   "matplotlib",
   "seaborn"
 ]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
