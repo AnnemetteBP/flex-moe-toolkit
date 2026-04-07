@@ -40,6 +40,7 @@ from scripts.flex_olmo.utils.evaluate_fake_flex_olmo_dataset import (
 OUTPUT_DIR = PROJECT_ROOT / "outputs" / "flex_olmo" / "paper_style"
 MAX_SEQ_LEN = 32
 TOP_K_VALUES = (1, 2, 4)
+DOMAIN_SPECIALIZATION_TOP_K = 2
 
 
 def build_prompt(example, choice_text):
@@ -280,78 +281,92 @@ def save_expert_token_specialization(records):
     return payload
 
 
-def plot_domain_expert_usage(records):
+def compute_domain_specialization(records, top_k=DOMAIN_SPECIALIZATION_TOP_K):
     num_layers = len(records[0]["correct_router_logits_by_layer"])
     num_experts = records[0]["correct_router_logits_by_layer"][0].shape[-1]
     domains = sorted({record["benchmark"] for record in records})
-    matrix = np.zeros((len(domains), num_experts), dtype=float)
-    layerwise_matrices = np.zeros((num_layers, len(domains), num_experts), dtype=float)
+    domain_to_idx = {domain: idx for idx, domain in enumerate(domains)}
+    num_domains = len(domains)
+    specialization_by_layer = []
 
-    for row_idx, domain in enumerate(domains):
-        usage_counts = torch.zeros(num_experts, dtype=torch.float32)
-        layerwise_usage_counts = [torch.zeros(num_experts, dtype=torch.float32) for _ in range(num_layers)]
+    for layer_idx in range(num_layers):
+        counts_d_e = torch.zeros((num_domains, num_experts), dtype=torch.float32)
+        counts_d = torch.zeros(num_domains, dtype=torch.float32)
+
         for record in records:
-            if record["benchmark"] == domain:
-                usage_counts += top1_usage_counts(record["correct_router_logits_by_layer"][0])
-                for layer_idx, layer_router_logits in enumerate(record["correct_router_logits_by_layer"]):
-                    layerwise_usage_counts[layer_idx] += top1_usage_counts(layer_router_logits)
-        usage = usage_counts / usage_counts.sum()
-        matrix[row_idx] = usage.numpy()
-        for layer_idx, layer_usage_counts in enumerate(layerwise_usage_counts):
-            layer_usage = layer_usage_counts / layer_usage_counts.sum()
-            layerwise_matrices[layer_idx, row_idx] = layer_usage.numpy()
-
-    fig, ax = plt.subplots(figsize=(8, 4))
-    sns.heatmap(matrix, cmap="viridis", ax=ax, yticklabels=domains)
-    ax.set_xlabel("Expert")
-    ax.set_ylabel("Domain")
-    ax.set_title("Domain Expert Usage")
-    fig.savefig(OUTPUT_DIR / "domain_expert_usage.png", dpi=200, bbox_inches="tight")
-    plt.close(fig)
-
-    expert_axis = np.arange(num_experts, dtype=float)
-    fig, axes = plt.subplots(num_layers, 1, figsize=(9, 2.5 * num_layers), sharex=True)
-    if num_layers == 1:
-        axes = [axes]
-
-    ridge_scale = 8.0
-    ridge_offset = 1.0
-    colors = sns.color_palette("viridis", n_colors=len(domains))
-
-    for layer_idx, ax in enumerate(axes):
-        for domain_idx, domain in enumerate(domains):
-            baseline = domain_idx * ridge_offset
-            values = layerwise_matrices[layer_idx, domain_idx] * ridge_scale
-            ax.fill_between(
-                expert_axis,
-                baseline,
-                baseline + values,
-                color=colors[domain_idx],
-                alpha=0.6,
+            router_logits = record["correct_router_logits_by_layer"][layer_idx]
+            probs = torch.softmax(router_logits, dim=-1)
+            topk_experts = torch.topk(probs, k=min(top_k, num_experts), dim=-1).indices
+            domain_idx = domain_to_idx[record["benchmark"]]
+            domain_labels = torch.full(
+                topk_experts.shape[:2],
+                domain_idx,
+                dtype=torch.long,
             )
-            ax.plot(expert_axis, baseline + values, color=colors[domain_idx], linewidth=1.5)
 
-        ax.set_yticks([idx * ridge_offset for idx in range(len(domains))])
-        ax.set_yticklabels(domains)
-        ax.set_ylabel(f"Layer {layer_idx}")
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.grid(axis="x", linestyle="--", alpha=0.2)
+            for batch_idx in range(topk_experts.shape[0]):
+                for token_idx in range(topk_experts.shape[1]):
+                    token_domain = int(domain_labels[batch_idx, token_idx].item())
+                    experts = topk_experts[batch_idx, token_idx]
+                    for expert_idx in experts.tolist():
+                        counts_d_e[token_domain, int(expert_idx)] += 1.0
+                    counts_d[token_domain] += 1.0
 
-    axes[0].set_title("Layer-wise Domain Expert Usage Ridge Plot")
-    axes[-1].set_xlabel("Expert")
-    axes[-1].set_xticks(list(range(num_experts)))
-    fig.savefig(OUTPUT_DIR / "domain_expert_usage_layerwise_ridge.png", dpi=200, bbox_inches="tight")
+        spec = counts_d_e / (counts_d.unsqueeze(-1) + 1e-9)
+        specialization_by_layer.append(spec)
+
+    return domains, specialization_by_layer
+
+
+def plot_domain_specialization(records, top_k=DOMAIN_SPECIALIZATION_TOP_K):
+    domains, specialization_by_layer = compute_domain_specialization(records, top_k=top_k)
+    num_layers = len(specialization_by_layer)
+    num_experts = specialization_by_layer[0].shape[-1]
+    uniform = float(top_k) / float(num_experts)
+
+    for layer_idx, spec in enumerate(specialization_by_layer):
+        fig, ax = plt.subplots(figsize=(8, 4))
+        expert_axis = np.arange(num_experts)
+        for domain_idx, domain in enumerate(domains):
+            ax.plot(expert_axis, spec[domain_idx].tolist(), marker="o", linewidth=1.5, label=domain)
+        ax.axhline(uniform, color="#b24c2f", linestyle="--", linewidth=1.5, label="uniform")
+        ax.set_xlabel("Expert")
+        ax.set_ylabel("Domain specialization")
+        ax.set_title(f"Domain Specialization - Layer {layer_idx}")
+        ax.set_xticks(list(range(num_experts)))
+        ax.legend(frameon=False)
+        fig.savefig(OUTPUT_DIR / f"domain_specialization_layer_{layer_idx}.png", dpi=200, bbox_inches="tight")
+        plt.close(fig)
+
+    mean_specialization = np.array(
+        [[float(spec[domain_idx].mean().item()) for spec in specialization_by_layer] for domain_idx in range(len(domains))]
+    )
+    fig, ax = plt.subplots(figsize=(8, 4))
+    layer_axis = np.arange(num_layers)
+    for domain_idx, domain in enumerate(domains):
+        ax.plot(layer_axis, mean_specialization[domain_idx], marker="o", linewidth=1.5, label=domain)
+    ax.axhline(uniform, color="#b24c2f", linestyle="--", linewidth=1.5, label="uniform")
+    ax.set_xlabel("Layer")
+    ax.set_ylabel("Mean domain specialization")
+    ax.set_title("Domain Specialization by Layer")
+    ax.set_xticks(list(range(num_layers)))
+    ax.legend(frameon=False)
+    fig.savefig(OUTPUT_DIR / "domain_specialization_layerwise.png", dpi=200, bbox_inches="tight")
     plt.close(fig)
 
     return {
-        "aggregate": {domain: matrix[idx].tolist() for idx, domain in enumerate(domains)},
-        "layerwise": {
+        "top_k": top_k,
+        "uniform_reference": uniform,
+        "aggregate_by_layer": {
             f"layer_{layer_idx}": {
-                domain: layerwise_matrices[layer_idx, domain_idx].tolist()
+                domain: specialization_by_layer[layer_idx][domain_idx].tolist()
                 for domain_idx, domain in enumerate(domains)
             }
             for layer_idx in range(num_layers)
+        },
+        "mean_by_domain_over_layers": {
+            domain: mean_specialization[domain_idx].tolist()
+            for domain_idx, domain in enumerate(domains)
         },
     }
 
@@ -425,7 +440,7 @@ def compute_routing_stability(records):
     return stability
 
 
-def save_metrics_json(records, usage, load_balance_cv, corrected_coactivation, layerwise_coactivation, domain_usage, expert_tokens, entropy_curve_mean, performance_vs_k, routing_stability):
+def save_metrics_json(records, usage, load_balance_cv, corrected_coactivation, layerwise_coactivation, domain_specialization, expert_tokens, entropy_curve_mean, performance_vs_k, routing_stability):
     num_experts = records[0]["correct_router_logits_by_layer"][0].shape[-1]
     first_layer_logits = torch.cat(
         [record["correct_router_logits_by_layer"][0].reshape(-1, num_experts) for record in records],
@@ -449,7 +464,7 @@ def save_metrics_json(records, usage, load_balance_cv, corrected_coactivation, l
         "layerwise_coactivation_matrices": [
             layer_matrix.tolist() for layer_matrix in layerwise_coactivation
         ],
-        "domain_expert_usage": domain_usage,
+        "domain_specialization": domain_specialization,
         "expert_token_specialization": expert_tokens,
         "performance_vs_k": performance_vs_k,
         "entropy_loss_buckets": bucketed_loss,
@@ -472,7 +487,7 @@ def main():
     entropy_curve_mean = plot_entropy_views(records)
     corrected_coactivation, layerwise_coactivation = plot_corrected_coactivation(records)
     expert_tokens = save_expert_token_specialization(records)
-    domain_usage = plot_domain_expert_usage(records)
+    domain_specialization = plot_domain_specialization(records)
     performance_vs_k = evaluate_performance_vs_k(examples)
     routing_stability = compute_routing_stability(records)
     save_metrics_json(
@@ -481,7 +496,7 @@ def main():
         load_balance_cv=load_balance_cv,
         corrected_coactivation=corrected_coactivation,
         layerwise_coactivation=layerwise_coactivation,
-        domain_usage=domain_usage,
+        domain_specialization=domain_specialization,
         expert_tokens=expert_tokens,
         entropy_curve_mean=entropy_curve_mean,
         performance_vs_k=performance_vs_k,
@@ -491,3 +506,130 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+TARGET_LAYER_ID = 0
+VOCAB_SPECIALIZATION_TOP_K = 2
+
+
+def _as_layerwise_router_logits(router_logits):
+    if isinstance(router_logits, (list, tuple)):
+        return torch.stack(tuple(router_logits), dim=0)
+    if router_logits.ndim == 3:
+        return router_logits.unsqueeze(0)
+    return router_logits
+
+
+def compute_vocabulary_specialization(router_logits, input_ids, top_k=VOCAB_SPECIALIZATION_TOP_K):
+    router_logits = _as_layerwise_router_logits(router_logits)
+    num_layers, _batch_size, _seq_len, num_experts = router_logits.shape
+    vocab_size = int(input_ids.max().item()) + 1 if input_ids.numel() else 1
+
+    specialization_per_layer = []
+    specialization_per_expert_per_layer = []
+    specialization_matrix_per_layer = []
+
+    for layer_idx in range(num_layers):
+        router_logits_layer = router_logits[layer_idx]
+        probabilities = torch.softmax(router_logits_layer, dim=-1)
+        topk_indices = torch.topk(probabilities, k=min(top_k, num_experts), dim=-1).indices
+
+        token_expert_counts = torch.zeros((vocab_size, num_experts), dtype=torch.float32)
+        token_totals = torch.zeros(vocab_size, dtype=torch.float32)
+
+        flat_input_ids = input_ids.reshape(-1)
+        flat_topk_indices = topk_indices.reshape(-1, topk_indices.shape[-1])
+
+        for token_id, expert_ids in zip(flat_input_ids.tolist(), flat_topk_indices.tolist()):
+            token_totals[token_id] += float(len(expert_ids))
+            for expert_idx in expert_ids:
+                token_expert_counts[token_id, int(expert_idx)] += 1.0
+
+        valid_token_mask = token_totals > 0
+        specialization_matrix = torch.zeros_like(token_expert_counts)
+        specialization_matrix[valid_token_mask] = (
+            token_expert_counts[valid_token_mask]
+            / token_totals[valid_token_mask].unsqueeze(-1)
+        )
+
+        specialization_by_expert = specialization_matrix[valid_token_mask].mean(dim=0)
+        specialization_per_expert_per_layer.append(specialization_by_expert.tolist())
+        specialization_per_layer.append(float(specialization_by_expert.mean().item()))
+        specialization_matrix_per_layer.append(specialization_matrix.tolist())
+
+    return {
+        "specialization_per_layer": specialization_per_layer,
+        "specialization_per_expert_per_layer": specialization_per_expert_per_layer,
+        "specialization_matrix_per_layer": specialization_matrix_per_layer,
+    }
+
+
+def _build_vocab_from_records(records):
+    token_to_id = {}
+    for record in records:
+        for token in record["correct_tokens"]:
+            if token not in token_to_id:
+                token_to_id[token] = len(token_to_id)
+    return token_to_id
+
+
+def _plot_vocabulary_specialization(results):
+    layer_values = results["specialization_per_layer"]
+    expert_values = results["specialization_per_expert_per_layer"]
+    target_layer_id = min(TARGET_LAYER_ID, len(expert_values) - 1)
+
+    fig, ax = plt.subplots(figsize=(7, 4))
+    ax.plot(range(len(layer_values)), layer_values, marker="o", color="#2f6db2")
+    ax.set_xlabel("Layer")
+    ax.set_ylabel("Average specialization")
+    ax.set_title("Vocabulary Specialization by Layer")
+    fig.savefig(OUTPUT_DIR / "vocab_specialization_layerwise.png", dpi=200, bbox_inches="tight")
+    plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(8, 4))
+    ax.bar(range(len(expert_values[target_layer_id])), expert_values[target_layer_id], color="#2f6db2")
+    ax.set_xlabel("Expert")
+    ax.set_ylabel("Specialization")
+    ax.set_title(f"Vocabulary Specialization by Expert - Layer {target_layer_id}")
+    fig.savefig(
+        OUTPUT_DIR / f"vocab_specialization_expert_layer_{target_layer_id}.png",
+        dpi=200,
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+
+
+def run_vocabulary_specialization_analysis():
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    torch.manual_seed(17)
+    examples = load_jsonl(DATASET_PATH)
+    model = FakeFlexOlmoModel(num_experts=7)
+    records = collect_analysis_records(model, examples)
+
+    token_to_id = _build_vocab_from_records(records)
+    num_layers = len(records[0]["correct_router_logits_by_layer"])
+    input_id_batches = []
+    layer_router_logits_batches = [[] for _ in range(num_layers)]
+
+    for record in records:
+        input_ids = torch.tensor(
+            [[token_to_id[token] for token in record["correct_tokens"]]],
+            dtype=torch.long,
+        )
+        input_id_batches.append(input_ids)
+        for layer_idx, layer_router_logits in enumerate(record["correct_router_logits_by_layer"]):
+            layer_router_logits_batches[layer_idx].append(layer_router_logits)
+
+    stacked_input_ids = torch.cat(input_id_batches, dim=1) if input_id_batches else torch.zeros((1, 0), dtype=torch.long)
+    stacked_router_logits = torch.stack(
+        [torch.cat(layer_batches, dim=1) for layer_batches in layer_router_logits_batches],
+        dim=0,
+    )
+
+    results = compute_vocabulary_specialization(
+        stacked_router_logits,
+        stacked_input_ids,
+        top_k=VOCAB_SPECIALIZATION_TOP_K,
+    )
+    _plot_vocabulary_specialization(results)
+    return results
