@@ -7,6 +7,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from flex_moe_toolkit.core.routing_diagnostics import compute_all_metrics
+
 
 @dataclass
 class FakeFlexOlmoConfig:
@@ -183,3 +185,17 @@ results = analyze_flex_olmo_routing(model, inputs)
 print(len(router_logits))
 print(results["entropy"])
 """
+
+
+if __name__ == "__main__":
+    model = FakeFlexOlmoModel()
+    inputs = build_fake_inputs()
+    outputs = model(**inputs, output_router_logits=True)
+    router_logits = outputs.router_logits[0]
+    if router_logits.ndim == 4:
+        router_logits = router_logits.flatten(0, 1)
+    results = compute_all_metrics(router_logits, top_k=2)
+    print("usage:", results["usage"])
+    print("entropy_mean:", results["entropy_mean"])
+    print("coactivation_matrix:", results["coactivation_matrix"])
+    print("offdiag_ratio:", results["offdiag_ratio"])

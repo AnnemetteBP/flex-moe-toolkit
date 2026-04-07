@@ -19,7 +19,11 @@ for path in (PROJECT_ROOT, SRC_ROOT):
 
 os.environ.setdefault("MPLCONFIGDIR", "/tmp/flex-moe-toolkit-mpl")
 
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 from fake_test_models.fake_flex_olmo import FakeFlexOlmoModel
+from flex_moe_toolkit.core.routing_diagnostics import compute_all_metrics, compute_offdiagonal_ratio
 from flex_moe_toolkit.pipelines.flex_olmo import analyze_flex_olmo_routing, restricted_expert_mode
 from flex_moe_toolkit.prev_analysis.plots import (
     plot_expert_combination_upset,
@@ -38,9 +42,12 @@ DATASET_PATH = PROJECT_ROOT / "fake_test_models" / "datasets" / "fake_eval_suite
 OUTPUT_DIR = PROJECT_ROOT / "outputs" / "flex_olmo" / "combined_flex"
 EVAL_RECORDS_PATH = OUTPUT_DIR / "fake_eval_router_activity.jsonl"
 SUMMARY_PATH = OUTPUT_DIR / "fake_eval_summary.jsonl"
+ROUTING_ANALYSIS_PATH = OUTPUT_DIR / "routing_analysis.jsonl"
 UPSET_PATH = OUTPUT_DIR / "fake_eval_expert_upset.png"
 UPSET_2_PATH = OUTPUT_DIR / "fake_eval_expert_upset_top2_active.png"
 UPSET_4_PATH = OUTPUT_DIR / "fake_eval_expert_upset_top4_active.png"
+USAGE_PLOT_PATH = OUTPUT_DIR / "routing_usage_bar.png"
+COACTIVATION_PLOT_PATH = OUTPUT_DIR / "routing_coactivation_heatmap.png"
 
 RUN_SPECS = (
     {"run_label": "top2_active", "active_experts": (0, 1), "top_k": 2},
@@ -96,6 +103,12 @@ def evaluate_example(model, example, run_spec):
     predicted = max(choice_runs, key=lambda item: item["score"])
     predicted_idx = predicted["choice_idx"]
     predicted_routing = predicted["routing"]
+    first_layer_router_logits = predicted_routing["router_logits"][0]
+    if first_layer_router_logits.ndim == 2:
+        first_layer_router_logits = first_layer_router_logits.unsqueeze(0)
+    elif first_layer_router_logits.ndim == 4:
+        first_layer_router_logits = first_layer_router_logits.flatten(0, 1)
+    batch_metrics = compute_all_metrics(first_layer_router_logits, top_k=2)
     layer_combos = flatten_topk_experts(predicted_routing["topk_experts"])
     global_combo = activated_expert_combination(predicted_routing["topk_experts"])
     layer_overlap = layer_iou_summary(layer_combos)
@@ -119,6 +132,12 @@ def evaluate_example(model, example, run_spec):
         "load_balance": predicted_routing["load_balance"],
         "expert_usage": predicted_routing["expert_usage"],
         "layer_expert_matrix": predicted_routing["layer_expert_matrix"],
+        "batch_routing_metrics": {
+            "usage": batch_metrics["usage"],
+            "entropy_mean": batch_metrics["entropy_mean"],
+            "coactivation_matrix": batch_metrics["coactivation_matrix"],
+            "offdiag_ratio": batch_metrics["offdiag_ratio"],
+        },
         "layer_activated_experts": layer_combos,
         "activated_experts": global_combo,
         "layer_intersection_experts": layer_overlap["layer_intersection_experts"],
@@ -213,6 +232,75 @@ def build_summary(records):
     return summaries, intersection_records
 
 
+def aggregate_routing_analysis(records):
+    if not records:
+        raise ValueError("No records were provided for routing analysis.")
+
+    usage_sum = None
+    coactivation_sum = None
+    entropy_total = 0.0
+    batch_records = []
+
+    for record in records:
+        metrics = record["batch_routing_metrics"]
+        usage = metrics["usage"].detach().cpu()
+        coactivation = metrics["coactivation_matrix"].detach().cpu()
+        entropy = float(metrics["entropy_mean"])
+
+        usage_sum = usage.clone() if usage_sum is None else usage_sum + usage
+        coactivation_sum = coactivation.clone() if coactivation_sum is None else coactivation_sum + coactivation
+        entropy_total += entropy
+
+        batch_records.append(
+            {
+                "record_type": "routing_batch",
+                "run_label": record["run_label"],
+                "example_id": record["example_id"],
+                "usage": usage,
+                "entropy_mean": entropy,
+                "coactivation_matrix": coactivation,
+                "offdiag_ratio": metrics["offdiag_ratio"],
+            }
+        )
+
+    aggregate_usage = usage_sum / usage_sum.sum()
+    aggregate_entropy = entropy_total / len(records)
+    aggregate_offdiag_ratio = compute_offdiagonal_ratio(coactivation_sum)
+
+    aggregate_record = {
+        "record_type": "routing_aggregate",
+        "num_batches": len(records),
+        "usage": aggregate_usage,
+        "entropy_mean": aggregate_entropy,
+        "coactivation_matrix": coactivation_sum,
+        "offdiag_ratio": aggregate_offdiag_ratio,
+    }
+
+    return batch_records + [aggregate_record], aggregate_record
+
+
+def save_usage_bar_plot(usage, path):
+    fig, ax = plt.subplots(figsize=(8, 4))
+    expert_indices = list(range(len(usage)))
+    ax.bar(expert_indices, usage, color="#2f6db2")
+    ax.set_xlabel("Expert")
+    ax.set_ylabel("Normalized usage")
+    ax.set_title("Aggregate Expert Usage")
+    ax.set_xticks(expert_indices)
+    fig.savefig(path, dpi=200, bbox_inches="tight")
+    plt.close(fig)
+
+
+def save_coactivation_heatmap(matrix, path):
+    fig, ax = plt.subplots(figsize=(6, 5))
+    sns.heatmap(matrix, cmap="viridis", ax=ax)
+    ax.set_xlabel("Expert")
+    ax.set_ylabel("Expert")
+    ax.set_title("Aggregate Coactivation Matrix")
+    fig.savefig(path, dpi=200, bbox_inches="tight")
+    plt.close(fig)
+
+
 def main():
     examples = load_jsonl(DATASET_PATH)
     model = FakeFlexOlmoModel(num_experts=7)
@@ -223,9 +311,11 @@ def main():
             records.append(evaluate_example(model, example, run_spec))
 
     summaries, intersection_records = build_summary(records)
+    routing_analysis_records, routing_aggregate = aggregate_routing_analysis(records)
 
     write_jsonl(records, EVAL_RECORDS_PATH)
     write_jsonl(summaries, SUMMARY_PATH)
+    write_jsonl(routing_analysis_records, ROUTING_ANALYSIS_PATH)
     by_run = defaultdict(list)
     for record in records:
         by_run[record["run_label"]].append(record)
@@ -249,11 +339,15 @@ def main():
         path=UPSET_PATH,
         title="Activated Expert Intersections Across 2 / 4 Active-Expert Runs",
     )
+    save_usage_bar_plot(routing_aggregate["usage"], USAGE_PLOT_PATH)
+    save_coactivation_heatmap(routing_aggregate["coactivation_matrix"], COACTIVATION_PLOT_PATH)
 
     print(f"Wrote {len(records)} evaluation records to {EVAL_RECORDS_PATH}")
     print(f"Wrote {len(summaries)} summary records to {SUMMARY_PATH}")
+    print(f"Wrote routing analysis to {ROUTING_ANALYSIS_PATH}")
     print(f"Saved upset plots to {UPSET_2_PATH} and {UPSET_4_PATH}")
     print(f"Saved comparison upset plot to {UPSET_PATH}")
+    print(f"Saved routing plots to {USAGE_PLOT_PATH} and {COACTIVATION_PLOT_PATH}")
 
 
 if __name__ == "__main__":
