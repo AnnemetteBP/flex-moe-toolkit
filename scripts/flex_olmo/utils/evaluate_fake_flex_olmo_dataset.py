@@ -24,10 +24,9 @@ import seaborn as sns
 
 from fake_test_models.fake_flex_olmo import FakeFlexOlmoModel
 from flex_moe_toolkit.core.routing_diagnostics import compute_all_metrics, compute_offdiagonal_ratio
-from flex_moe_toolkit.pipelines.flex_olmo import analyze_flex_olmo_routing, restricted_expert_mode
+from flex_moe_toolkit.pipelines.flex_olmo import analyze_flex_olmo_routing
 from flex_moe_toolkit.prev_analysis.plots import (
     plot_expert_combination_upset,
-    plot_run_comparison_upset,
 )
 from flex_moe_toolkit.utils.jsonl import write_jsonl
 from flex_moe_toolkit.utils.router_activity import (
@@ -44,15 +43,8 @@ EVAL_RECORDS_PATH = OUTPUT_DIR / "fake_eval_router_activity.jsonl"
 SUMMARY_PATH = OUTPUT_DIR / "fake_eval_summary.jsonl"
 ROUTING_ANALYSIS_PATH = OUTPUT_DIR / "routing_analysis.jsonl"
 UPSET_PATH = OUTPUT_DIR / "fake_eval_expert_upset.png"
-UPSET_2_PATH = OUTPUT_DIR / "fake_eval_expert_upset_top2_active.png"
-UPSET_4_PATH = OUTPUT_DIR / "fake_eval_expert_upset_top4_active.png"
 USAGE_PLOT_PATH = OUTPUT_DIR / "routing_usage_bar.png"
 COACTIVATION_PLOT_PATH = OUTPUT_DIR / "routing_coactivation_heatmap.png"
-
-RUN_SPECS = (
-    {"run_label": "top2_active", "active_experts": (0, 1), "top_k": 2},
-    {"run_label": "top4_active", "active_experts": (0, 1, 2, 3), "top_k": 4},
-)
 
 
 def load_jsonl(path):
@@ -67,20 +59,18 @@ def text_to_fake_inputs(text, hidden_size, sequence_length=12):
     return {"input_ids": hidden_states}
 
 
-def score_choice(model, question, choice_text, active_experts, top_k):
+def score_choice(model, question, choice_text, top_k):
     prompt = f"Question: {question}\nChoice: {choice_text}"
     inputs = text_to_fake_inputs(prompt, hidden_size=model.config.hidden_size)
-
-    with restricted_expert_mode(model, allowed_experts=active_experts):
-        outputs = model(**inputs)
-        routing = analyze_flex_olmo_routing(model, inputs, top_k=min(top_k, len(active_experts)))
+    outputs = model(**inputs)
+    routing = analyze_flex_olmo_routing(model, inputs, top_k=top_k)
 
     final_token = outputs.last_hidden_state[:, -1, :]
     score = float(final_token.mean().item())
     return score, routing
 
 
-def evaluate_example(model, example, run_spec):
+def evaluate_example(model, example, top_k):
     choice_runs = []
 
     for choice_idx, choice_text in enumerate(example["choices"]):
@@ -88,8 +78,7 @@ def evaluate_example(model, example, run_spec):
             model=model,
             question=example["question"],
             choice_text=choice_text,
-            active_experts=run_spec["active_experts"],
-            top_k=run_spec["top_k"],
+            top_k=top_k,
         )
         choice_runs.append(
             {
@@ -112,12 +101,13 @@ def evaluate_example(model, example, run_spec):
     layer_combos = flatten_topk_experts(predicted_routing["topk_experts"])
     global_combo = activated_expert_combination(predicted_routing["topk_experts"])
     layer_overlap = layer_iou_summary(layer_combos)
+    token_combination_counts = count_token_level_combinations(predicted_routing["topk_experts"])
 
     return {
         "record_type": "evaluation_example",
-        "run_label": run_spec["run_label"],
-        "available_experts": tuple(run_spec["active_experts"]),
-        "num_available_experts": len(run_spec["active_experts"]),
+        "run_label": "full_routing",
+        "available_experts": tuple(range(model.config.num_experts)),
+        "num_available_experts": model.config.num_experts,
         "example_id": example["id"],
         "benchmark": example["benchmark"],
         "language": example["language"],
@@ -138,6 +128,10 @@ def evaluate_example(model, example, run_spec):
             "coactivation_matrix": batch_metrics["coactivation_matrix"],
             "offdiag_ratio": batch_metrics["offdiag_ratio"],
         },
+        "token_topk_combination_counts": {
+            ",".join(str(expert) for expert in combo): count
+            for combo, count in sorted(token_combination_counts.items())
+        },
         "layer_activated_experts": layer_combos,
         "activated_experts": global_combo,
         "layer_intersection_experts": layer_overlap["layer_intersection_experts"],
@@ -145,6 +139,25 @@ def evaluate_example(model, example, run_spec):
         "pairwise_layer_iou": layer_overlap["pairwise_layer_iou"],
         "mean_layer_iou": layer_overlap["mean_layer_iou"],
     }
+
+
+def count_token_level_combinations(topk_experts):
+    token_counts = Counter()
+
+    for layer in topk_experts:
+        for batch in layer:
+            batch_list = batch.tolist() if hasattr(batch, "tolist") else batch
+            if not isinstance(batch_list, list):
+                batch_list = [batch_list]
+            for token in batch_list:
+                if isinstance(token, list):
+                    experts = token
+                else:
+                    experts = [token]
+                combo = tuple(sorted(int(expert_idx) for expert_idx in experts))
+                token_counts[combo] += 1
+
+    return token_counts
 
 
 def build_summary(records):
@@ -304,11 +317,9 @@ def save_coactivation_heatmap(matrix, path):
 def main():
     examples = load_jsonl(DATASET_PATH)
     model = FakeFlexOlmoModel(num_experts=7)
+    top_k = model.config.num_experts_per_tok
 
-    records = []
-    for run_spec in RUN_SPECS:
-        for example in examples:
-            records.append(evaluate_example(model, example, run_spec))
+    records = [evaluate_example(model, example, top_k=top_k) for example in examples]
 
     summaries, intersection_records = build_summary(records)
     routing_analysis_records, routing_aggregate = aggregate_routing_analysis(records)
@@ -316,28 +327,19 @@ def main():
     write_jsonl(records, EVAL_RECORDS_PATH)
     write_jsonl(summaries, SUMMARY_PATH)
     write_jsonl(routing_analysis_records, ROUTING_ANALYSIS_PATH)
-    by_run = defaultdict(list)
+    aggregate_counter = Counter()
     for record in records:
-        by_run[record["run_label"]].append(record)
+        aggregate_counter.update(
+            {
+                tuple(int(expert) for expert in combo_key.split(",")): count
+                for combo_key, count in record["token_topk_combination_counts"].items()
+            }
+        )
 
     plot_expert_combination_upset(
-        combination_counts=count_combinations(
-            tuple(record["activated_experts"]) for record in by_run["top2_active"]
-        ),
-        path=UPSET_2_PATH,
-        title="Activated Expert Combinations for 2 Active Experts",
-    )
-    plot_expert_combination_upset(
-        combination_counts=count_combinations(
-            tuple(record["activated_experts"]) for record in by_run["top4_active"]
-        ),
-        path=UPSET_4_PATH,
-        title="Activated Expert Combinations for 4 Active Experts",
-    )
-    plot_run_comparison_upset(
-        intersection_records=intersection_records,
+        combination_counts=aggregate_counter,
         path=UPSET_PATH,
-        title="Activated Expert Intersections Across 2 / 4 Active-Expert Runs",
+        title="Token-Level Top-k Expert Combinations Across Full Routing",
     )
     save_usage_bar_plot(routing_aggregate["usage"], USAGE_PLOT_PATH)
     save_coactivation_heatmap(routing_aggregate["coactivation_matrix"], COACTIVATION_PLOT_PATH)
@@ -345,8 +347,7 @@ def main():
     print(f"Wrote {len(records)} evaluation records to {EVAL_RECORDS_PATH}")
     print(f"Wrote {len(summaries)} summary records to {SUMMARY_PATH}")
     print(f"Wrote routing analysis to {ROUTING_ANALYSIS_PATH}")
-    print(f"Saved upset plots to {UPSET_2_PATH} and {UPSET_4_PATH}")
-    print(f"Saved comparison upset plot to {UPSET_PATH}")
+    print(f"Saved token-level top-k upset plot to {UPSET_PATH}")
     print(f"Saved routing plots to {USAGE_PLOT_PATH} and {COACTIVATION_PLOT_PATH}")
 
 
