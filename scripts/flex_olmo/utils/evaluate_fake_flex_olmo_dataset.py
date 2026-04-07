@@ -162,7 +162,6 @@ def count_token_level_combinations(topk_experts):
 
 def build_summary(records):
     summaries = []
-    intersection_records = []
 
     by_run = defaultdict(list)
     for record in records:
@@ -181,19 +180,6 @@ def build_summary(records):
             by_language[record["language"]]["correct"] += int(record["is_correct"])
 
         combination_counts = count_combinations(record["activated_experts"] for record in run_records)
-        for combination, count in sorted(combination_counts.items()):
-            matching_records = [
-                record for record in run_records if tuple(record["activated_experts"]) == tuple(combination)
-            ]
-            intersection_records.append(
-                {
-                    "run_label": run_label,
-                    "combination": combination,
-                    "count": count,
-                    "mean_layer_iou": sum(record["mean_layer_iou"] for record in matching_records)
-                    / len(matching_records),
-                }
-            )
 
         layer_pattern_counts = Counter(
             tuple(tuple(layer_combo) for layer_combo in record["layer_activated_experts"])
@@ -242,7 +228,7 @@ def build_summary(records):
             }
         )
 
-    return summaries, intersection_records
+    return summaries
 
 
 def aggregate_routing_analysis(records):
@@ -321,7 +307,7 @@ def main():
 
     records = [evaluate_example(model, example, top_k=top_k) for example in examples]
 
-    summaries, intersection_records = build_summary(records)
+    summaries = build_summary(records)
     routing_analysis_records, routing_aggregate = aggregate_routing_analysis(records)
 
     write_jsonl(records, EVAL_RECORDS_PATH)
