@@ -223,20 +223,42 @@ def plot_entropy_views(records):
 
 
 def plot_corrected_coactivation(records):
+    num_layers = len(records[0]["correct_router_logits_by_layer"])
     num_experts = records[0]["correct_router_logits_by_layer"][0].shape[-1]
-    matrix = torch.zeros((num_experts, num_experts), dtype=torch.float32)
+    layerwise_matrices = [
+        torch.zeros((num_experts, num_experts), dtype=torch.float32)
+        for _ in range(num_layers)
+    ]
     for record in records:
-        matrix += token_pair_coactivation(record["correct_router_logits_by_layer"][0], top_k=2)
+        for layer_idx, layer_router_logits in enumerate(record["correct_router_logits_by_layer"]):
+            layerwise_matrices[layer_idx] += token_pair_coactivation(layer_router_logits, top_k=2)
+
+    matrix = layerwise_matrices[0].clone()
+    for layer_matrix in layerwise_matrices[1:]:
+        matrix += layer_matrix
 
     fig, ax = plt.subplots(figsize=(6, 5))
     sns.heatmap(matrix.numpy(), cmap="viridis", ax=ax)
     ax.set_xlabel("Expert")
     ax.set_ylabel("Expert")
-    ax.set_title("Corrected Token-Level Coactivation")
+    ax.set_title("Corrected Token-Level Coactivation Across All Layers")
     fig.savefig(OUTPUT_DIR / "coactivation_heatmap_fixed.png", dpi=200, bbox_inches="tight")
     plt.close(fig)
 
-    return matrix
+    for layer_idx, layer_matrix in enumerate(layerwise_matrices):
+        fig, ax = plt.subplots(figsize=(6, 5))
+        sns.heatmap(layer_matrix.numpy(), cmap="viridis", ax=ax)
+        ax.set_xlabel("Expert")
+        ax.set_ylabel("Expert")
+        ax.set_title(f"Corrected Token-Level Coactivation Layer {layer_idx}")
+        fig.savefig(
+            OUTPUT_DIR / f"coactivation_heatmap_fixed_layer_{layer_idx}.png",
+            dpi=200,
+            bbox_inches="tight",
+        )
+        plt.close(fig)
+
+    return matrix, layerwise_matrices
 
 
 def save_expert_token_specialization(records):
@@ -259,17 +281,25 @@ def save_expert_token_specialization(records):
 
 
 def plot_domain_expert_usage(records):
+    num_layers = len(records[0]["correct_router_logits_by_layer"])
     num_experts = records[0]["correct_router_logits_by_layer"][0].shape[-1]
     domains = sorted({record["benchmark"] for record in records})
     matrix = np.zeros((len(domains), num_experts), dtype=float)
+    layerwise_matrices = np.zeros((num_layers, len(domains), num_experts), dtype=float)
 
     for row_idx, domain in enumerate(domains):
         usage_counts = torch.zeros(num_experts, dtype=torch.float32)
+        layerwise_usage_counts = [torch.zeros(num_experts, dtype=torch.float32) for _ in range(num_layers)]
         for record in records:
             if record["benchmark"] == domain:
                 usage_counts += top1_usage_counts(record["correct_router_logits_by_layer"][0])
+                for layer_idx, layer_router_logits in enumerate(record["correct_router_logits_by_layer"]):
+                    layerwise_usage_counts[layer_idx] += top1_usage_counts(layer_router_logits)
         usage = usage_counts / usage_counts.sum()
         matrix[row_idx] = usage.numpy()
+        for layer_idx, layer_usage_counts in enumerate(layerwise_usage_counts):
+            layer_usage = layer_usage_counts / layer_usage_counts.sum()
+            layerwise_matrices[layer_idx, row_idx] = layer_usage.numpy()
 
     fig, ax = plt.subplots(figsize=(8, 4))
     sns.heatmap(matrix, cmap="viridis", ax=ax, yticklabels=domains)
@@ -279,7 +309,51 @@ def plot_domain_expert_usage(records):
     fig.savefig(OUTPUT_DIR / "domain_expert_usage.png", dpi=200, bbox_inches="tight")
     plt.close(fig)
 
-    return {domain: matrix[idx].tolist() for idx, domain in enumerate(domains)}
+    expert_axis = np.arange(num_experts, dtype=float)
+    fig, axes = plt.subplots(num_layers, 1, figsize=(9, 2.5 * num_layers), sharex=True)
+    if num_layers == 1:
+        axes = [axes]
+
+    ridge_scale = 8.0
+    ridge_offset = 1.0
+    colors = sns.color_palette("viridis", n_colors=len(domains))
+
+    for layer_idx, ax in enumerate(axes):
+        for domain_idx, domain in enumerate(domains):
+            baseline = domain_idx * ridge_offset
+            values = layerwise_matrices[layer_idx, domain_idx] * ridge_scale
+            ax.fill_between(
+                expert_axis,
+                baseline,
+                baseline + values,
+                color=colors[domain_idx],
+                alpha=0.6,
+            )
+            ax.plot(expert_axis, baseline + values, color=colors[domain_idx], linewidth=1.5)
+
+        ax.set_yticks([idx * ridge_offset for idx in range(len(domains))])
+        ax.set_yticklabels(domains)
+        ax.set_ylabel(f"Layer {layer_idx}")
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.grid(axis="x", linestyle="--", alpha=0.2)
+
+    axes[0].set_title("Layer-wise Domain Expert Usage Ridge Plot")
+    axes[-1].set_xlabel("Expert")
+    axes[-1].set_xticks(list(range(num_experts)))
+    fig.savefig(OUTPUT_DIR / "domain_expert_usage_layerwise_ridge.png", dpi=200, bbox_inches="tight")
+    plt.close(fig)
+
+    return {
+        "aggregate": {domain: matrix[idx].tolist() for idx, domain in enumerate(domains)},
+        "layerwise": {
+            f"layer_{layer_idx}": {
+                domain: layerwise_matrices[layer_idx, domain_idx].tolist()
+                for domain_idx, domain in enumerate(domains)
+            }
+            for layer_idx in range(num_layers)
+        },
+    }
 
 
 def bucket_performance_by_entropy(records):
@@ -351,7 +425,7 @@ def compute_routing_stability(records):
     return stability
 
 
-def save_metrics_json(records, usage, load_balance_cv, corrected_coactivation, domain_usage, expert_tokens, entropy_curve_mean, performance_vs_k, routing_stability):
+def save_metrics_json(records, usage, load_balance_cv, corrected_coactivation, layerwise_coactivation, domain_usage, expert_tokens, entropy_curve_mean, performance_vs_k, routing_stability):
     num_experts = records[0]["correct_router_logits_by_layer"][0].shape[-1]
     first_layer_logits = torch.cat(
         [record["correct_router_logits_by_layer"][0].reshape(-1, num_experts) for record in records],
@@ -372,6 +446,9 @@ def save_metrics_json(records, usage, load_balance_cv, corrected_coactivation, d
         },
         "usage": usage.tolist(),
         "coactivation_matrix": corrected_coactivation.tolist(),
+        "layerwise_coactivation_matrices": [
+            layer_matrix.tolist() for layer_matrix in layerwise_coactivation
+        ],
         "domain_expert_usage": domain_usage,
         "expert_token_specialization": expert_tokens,
         "performance_vs_k": performance_vs_k,
@@ -393,7 +470,7 @@ def main():
     plot_routing_probability_distributions(records)
     usage, load_balance_cv = plot_usage_distribution(records)
     entropy_curve_mean = plot_entropy_views(records)
-    corrected_coactivation = plot_corrected_coactivation(records)
+    corrected_coactivation, layerwise_coactivation = plot_corrected_coactivation(records)
     expert_tokens = save_expert_token_specialization(records)
     domain_usage = plot_domain_expert_usage(records)
     performance_vs_k = evaluate_performance_vs_k(examples)
@@ -403,6 +480,7 @@ def main():
         usage=usage,
         load_balance_cv=load_balance_cv,
         corrected_coactivation=corrected_coactivation,
+        layerwise_coactivation=layerwise_coactivation,
         domain_usage=domain_usage,
         expert_tokens=expert_tokens,
         entropy_curve_mean=entropy_curve_mean,

@@ -45,6 +45,7 @@ ROUTING_ANALYSIS_PATH = OUTPUT_DIR / "routing_analysis.jsonl"
 UPSET_PATH = OUTPUT_DIR / "fake_eval_expert_upset.png"
 USAGE_PLOT_PATH = OUTPUT_DIR / "routing_usage_bar.png"
 COACTIVATION_PLOT_PATH = OUTPUT_DIR / "routing_coactivation_heatmap.png"
+COACTIVATION_LAYERWISE_PLOT_STEM = "routing_coactivation_heatmap_layer"
 
 
 def load_jsonl(path):
@@ -70,6 +71,14 @@ def score_choice(model, question, choice_text, top_k):
     return score, routing
 
 
+def ensure_router_logits_3d(router_logits):
+    if router_logits.ndim == 2:
+        return router_logits.unsqueeze(0)
+    if router_logits.ndim == 4:
+        return router_logits.flatten(0, 1)
+    return router_logits
+
+
 def evaluate_example(model, example, top_k):
     choice_runs = []
 
@@ -92,12 +101,23 @@ def evaluate_example(model, example, top_k):
     predicted = max(choice_runs, key=lambda item: item["score"])
     predicted_idx = predicted["choice_idx"]
     predicted_routing = predicted["routing"]
-    first_layer_router_logits = predicted_routing["router_logits"][0]
-    if first_layer_router_logits.ndim == 2:
-        first_layer_router_logits = first_layer_router_logits.unsqueeze(0)
-    elif first_layer_router_logits.ndim == 4:
-        first_layer_router_logits = first_layer_router_logits.flatten(0, 1)
+    first_layer_router_logits = ensure_router_logits_3d(predicted_routing["router_logits"][0])
     batch_metrics = compute_all_metrics(first_layer_router_logits, top_k=2)
+    layer_batch_routing_metrics = []
+    for layer_idx, layer_router_logits in enumerate(predicted_routing["router_logits"]):
+        layer_metrics = compute_all_metrics(
+            ensure_router_logits_3d(layer_router_logits),
+            top_k=2,
+        )
+        layer_batch_routing_metrics.append(
+            {
+                "layer_idx": layer_idx,
+                "usage": layer_metrics["usage"],
+                "entropy_mean": layer_metrics["entropy_mean"],
+                "coactivation_matrix": layer_metrics["coactivation_matrix"],
+                "offdiag_ratio": layer_metrics["offdiag_ratio"],
+            }
+        )
     layer_combos = flatten_topk_experts(predicted_routing["topk_experts"])
     global_combo = activated_expert_combination(predicted_routing["topk_experts"])
     layer_overlap = layer_iou_summary(layer_combos)
@@ -128,6 +148,7 @@ def evaluate_example(model, example, top_k):
             "coactivation_matrix": batch_metrics["coactivation_matrix"],
             "offdiag_ratio": batch_metrics["offdiag_ratio"],
         },
+        "layer_batch_routing_metrics": layer_batch_routing_metrics,
         "token_topk_combination_counts": {
             ",".join(str(expert) for expert in combo): count
             for combo, count in sorted(token_combination_counts.items())
@@ -236,19 +257,28 @@ def aggregate_routing_analysis(records):
         raise ValueError("No records were provided for routing analysis.")
 
     usage_sum = None
-    coactivation_sum = None
     entropy_total = 0.0
+    layer_coactivation_sums = []
     batch_records = []
 
     for record in records:
         metrics = record["batch_routing_metrics"]
         usage = metrics["usage"].detach().cpu()
-        coactivation = metrics["coactivation_matrix"].detach().cpu()
         entropy = float(metrics["entropy_mean"])
 
         usage_sum = usage.clone() if usage_sum is None else usage_sum + usage
-        coactivation_sum = coactivation.clone() if coactivation_sum is None else coactivation_sum + coactivation
         entropy_total += entropy
+
+        for layer_metrics in record["layer_batch_routing_metrics"]:
+            layer_idx = layer_metrics["layer_idx"]
+            layer_coactivation = layer_metrics["coactivation_matrix"].detach().cpu()
+            while len(layer_coactivation_sums) <= layer_idx:
+                layer_coactivation_sums.append(None)
+            layer_coactivation_sums[layer_idx] = (
+                layer_coactivation.clone()
+                if layer_coactivation_sums[layer_idx] is None
+                else layer_coactivation_sums[layer_idx] + layer_coactivation
+            )
 
         batch_records.append(
             {
@@ -257,13 +287,19 @@ def aggregate_routing_analysis(records):
                 "example_id": record["example_id"],
                 "usage": usage,
                 "entropy_mean": entropy,
-                "coactivation_matrix": coactivation,
+                "coactivation_matrix": metrics["coactivation_matrix"].detach().cpu(),
                 "offdiag_ratio": metrics["offdiag_ratio"],
             }
         )
 
     aggregate_usage = usage_sum / usage_sum.sum()
     aggregate_entropy = entropy_total / len(records)
+    non_null_layer_matrices = [matrix for matrix in layer_coactivation_sums if matrix is not None]
+    if not non_null_layer_matrices:
+        raise ValueError("No layer-wise coactivation matrices were collected.")
+    coactivation_sum = non_null_layer_matrices[0].clone()
+    for matrix in non_null_layer_matrices[1:]:
+        coactivation_sum = coactivation_sum + matrix
     aggregate_offdiag_ratio = compute_offdiagonal_ratio(coactivation_sum)
 
     aggregate_record = {
@@ -272,6 +308,7 @@ def aggregate_routing_analysis(records):
         "usage": aggregate_usage,
         "entropy_mean": aggregate_entropy,
         "coactivation_matrix": coactivation_sum,
+        "layer_coactivation_matrices": layer_coactivation_sums,
         "offdiag_ratio": aggregate_offdiag_ratio,
     }
 
@@ -290,14 +327,29 @@ def save_usage_bar_plot(usage, path):
     plt.close(fig)
 
 
-def save_coactivation_heatmap(matrix, path):
+def save_coactivation_heatmap(matrix, path, title="Aggregate Coactivation Matrix"):
     fig, ax = plt.subplots(figsize=(6, 5))
     sns.heatmap(matrix, cmap="viridis", ax=ax)
     ax.set_xlabel("Expert")
     ax.set_ylabel("Expert")
-    ax.set_title("Aggregate Coactivation Matrix")
+    ax.set_title(title)
     fig.savefig(path, dpi=200, bbox_inches="tight")
     plt.close(fig)
+
+
+def save_layerwise_coactivation_heatmaps(matrices, output_dir):
+    paths = []
+    for layer_idx, matrix in enumerate(matrices):
+        if matrix is None:
+            continue
+        path = output_dir / f"{COACTIVATION_LAYERWISE_PLOT_STEM}_{layer_idx}.png"
+        save_coactivation_heatmap(
+            matrix,
+            path,
+            title=f"Layer {layer_idx} Coactivation Matrix Aggregated Across Examples",
+        )
+        paths.append(path)
+    return paths
 
 
 def main():
@@ -329,12 +381,21 @@ def main():
     )
     save_usage_bar_plot(routing_aggregate["usage"], USAGE_PLOT_PATH)
     save_coactivation_heatmap(routing_aggregate["coactivation_matrix"], COACTIVATION_PLOT_PATH)
+    layerwise_paths = save_layerwise_coactivation_heatmaps(
+        routing_aggregate["layer_coactivation_matrices"],
+        OUTPUT_DIR,
+    )
 
     print(f"Wrote {len(records)} evaluation records to {EVAL_RECORDS_PATH}")
     print(f"Wrote {len(summaries)} summary records to {SUMMARY_PATH}")
     print(f"Wrote routing analysis to {ROUTING_ANALYSIS_PATH}")
     print(f"Saved token-level top-k upset plot to {UPSET_PATH}")
     print(f"Saved routing plots to {USAGE_PLOT_PATH} and {COACTIVATION_PLOT_PATH}")
+    if layerwise_paths:
+        print(
+            "Saved layer-wise coactivation heatmaps to "
+            + ", ".join(str(path) for path in layerwise_paths)
+        )
 
 
 if __name__ == "__main__":
