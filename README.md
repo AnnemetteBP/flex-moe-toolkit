@@ -75,6 +75,36 @@ Each example record logs activated expert combinations per layer, the intersecti
 
 The accuracy from this fake benchmark is only a smoke test for the pipeline. The main purpose is to verify routing logs, expert-combination aggregation, multi-run upset plotting, and figure generation before swapping in a real model and real tokenizer inputs.
 
+## Real FlexOlmo eval datasets
+Use the real-model runner when you want to evaluate one or many JSONL datasets against a real FlexOlmo checkpoint, save per-run routing outputs, and run on CPU or GPU.
+
+```python
+python3 scripts/flex_olmo/utils/evaluate_flex_olmo_datasets.py \
+  --model-path /path/to/flex_olmo_checkpoint \
+  --tokenizer-path /path/to/tokenizer \
+  --dataset /path/to/eval_a.jsonl \
+  --dataset /path/to/eval_b.jsonl \
+  --device cuda:0 \
+  --output-root outputs/flex_olmo/eval_runs
+```
+
+The runner is additive and does not replace the fake smoke-test scripts. It writes one directory per dataset and one subdirectory per run, including:
+
+- `public_only`
+- `single_expert_<idx>` for each non-public expert
+- `combined_top2`
+- `combined_top4`
+- `combined_top7`
+
+Each run directory contains `eval_records.jsonl`, `eval_summary.jsonl`, and `routing_analysis.jsonl`. An overall `run_manifest.json` is also written under the chosen output root.
+
+The JSONL input can be either:
+
+- Multiple-choice: `question`, `choices`, `correct_choice_idx`, with optional `context`, `benchmark`, `language`, `task_type`
+- Target scoring: `prompt`, plus one of `target`, `answer`, `completion`, or `reference`
+
+For remote GPU runs on UCloud over SSH, pass `--device cuda` or `--device cuda:0`. If you want a quick smoke test before a full run, add `--max-examples N`.
+
 ```python
 python3 scripts/flex_olmo/utils/split_state_dict.py \
   --input-dir /path/to/unsharded_checkpoint \
