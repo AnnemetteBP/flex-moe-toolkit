@@ -199,6 +199,10 @@ def main():
             run_specs=run_specs,
             max_length=args.max_length,
             device=device,
+            context={
+                "model_path": args.model_path,
+                "model_name": Path(args.model_path).name or args.model_path,
+            },
         )
         manifest = save_dataset_run_outputs(
             output_root=output_root,

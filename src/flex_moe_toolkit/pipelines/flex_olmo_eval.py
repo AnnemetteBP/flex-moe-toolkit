@@ -34,6 +34,12 @@ class FlexOlmoEvalRunSpec:
     allowed_experts: tuple[int, ...]
 
 
+def with_context(record: dict[str, Any], context: dict[str, Any] | None) -> dict[str, Any]:
+    if not context:
+        return record
+    return {**context, **record}
+
+
 def load_jsonl_records(path: str | Path) -> list[dict[str, Any]]:
     path = Path(path)
     with path.open("r", encoding="utf-8") as handle:
@@ -503,6 +509,7 @@ def evaluate_dataset_across_runs(
     run_specs: list[FlexOlmoEvalRunSpec],
     max_length: int,
     device: torch.device,
+    context: dict[str, Any] | None = None,
 ) -> dict[str, dict[str, Any]]:
     normalized_examples = [
         normalize_eval_example(example, example_index=example_index)
@@ -522,8 +529,14 @@ def evaluate_dataset_across_runs(
             )
             for example in normalized_examples
         ]
+        records = [with_context(record, context) for record in records]
         summaries = build_summary(records)
         routing_analysis_records, routing_aggregate = aggregate_routing_analysis(records)
+        summaries = [with_context(summary, context) for summary in summaries]
+        routing_analysis_records = [
+            with_context(routing_record, context) for routing_record in routing_analysis_records
+        ]
+        routing_aggregate = with_context(routing_aggregate, context)
         results[run_spec.label] = {
             "records": records,
             "summaries": summaries,

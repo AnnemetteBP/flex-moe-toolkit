@@ -1,0 +1,4 @@
+# One remote model path or HF identifier per line
+/remote/path/to/flexolmo-a2-5B
+/remote/path/to/flexolmo-a4-v1-10B
+/remote/path/to/flexolmo-a7-rt-15B

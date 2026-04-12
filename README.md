@@ -115,3 +115,19 @@ python3 scripts/flex_olmo/utils/split_state_dict.py \
   --output-dir /path/to/split_checkpoint \
   --public-expert-idx 0
 ```
+
+## UCloud SSH launcher
+For batch router analysis on UCloud, use the suite runner together with the SSH launcher. The launcher is config-driven and supports multiple remote model paths while keeping `model_name` and `model_path` in every JSONL record.
+
+1. Copy [ucloud_router_suite.env.example](/media/am/AM/flex-moe-toolkit/scripts/flex_olmo/utils/ucloud_router_suite.env.example) to your own config file.
+2. Copy [ucloud_models.txt.example](/media/am/AM/flex-moe-toolkit/scripts/flex_olmo/utils/ucloud_models.txt.example) and [ucloud_datasets.txt.example](/media/am/AM/flex-moe-toolkit/scripts/flex_olmo/utils/ucloud_datasets.txt.example) if you want path lists.
+3. Point `REMOTE_EVAL_SCRIPT` at the eval pipeline path you want to use on UCloud.
+4. Run:
+
+```bash
+bash scripts/flex_olmo/utils/run_ucloud_router_suite.sh \
+  scripts/flex_olmo/utils/ucloud_router_suite.env \
+  --dry-run
+```
+
+Remove `--dry-run` once the generated SSH command looks right.
