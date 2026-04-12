@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import inspect
 import json
 import os
 from pathlib import Path
@@ -171,6 +172,7 @@ def main():
     overall_manifest = {
         "model_path": args.model_path,
         "tokenizer_path": args.tokenizer_path or args.model_path,
+        "model_impl_path": str(inspect.getsourcefile(FlexOlmoForCausalLM)),
         "device": str(device),
         "dtype": args.dtype,
         "max_length": args.max_length,
@@ -178,6 +180,12 @@ def main():
         "run_labels": [run_spec.label for run_spec in run_specs],
         "datasets": {},
     }
+
+    print(f"Using FlexOlmo implementation from {overall_manifest['model_impl_path']}")
+    print(
+        "Configured eval runs: "
+        + ", ".join(run_spec.label for run_spec in run_specs)
+    )
 
     for dataset_path in dataset_paths:
         examples = load_jsonl_records(dataset_path)

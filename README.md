@@ -33,7 +33,9 @@ print(results["layer_expert_matrix"].shape)
 For models that do not expose `output_router_logits=True` in a Hugging Face-compatible way, use router hooks from [src/flex_moe_toolkit/utils/hooks.py](/media/am/AM/flex-moe-toolkit/src/flex_moe_toolkit/utils/hooks.py).
 
 ## FlexOlmo-specific setup
-For the local `models/flex_olmo` implementation, use the FlexOlmo adapter and mode helpers to compare the combined model against backbone-only and expert-restricted runs.
+The copied files under `models/flex_olmo` in this repo are reference snapshots only. For real runs, the active `FlexOlmo` implementation should come from the installed `transformers` checkout in your current environment.
+
+Use the FlexOlmo adapter and mode helpers to compare the combined model against backbone-only and expert-restricted runs.
 
 ```python
 from flex_moe_toolkit.pipelines.flex_olmo import analyze_flex_olmo_modes
@@ -104,6 +106,8 @@ The JSONL input can be either:
 - Target scoring: `prompt`, plus one of `target`, `answer`, `completion`, or `reference`
 
 For remote GPU runs on UCloud over SSH, pass `--device cuda` or `--device cuda:0`. If you want a quick smoke test before a full run, add `--max-examples N`.
+
+When the script starts, it prints the exact `FlexOlmoForCausalLM` source file being used. This is a good sanity check that the run is using your installed `transformers` fork rather than the reference copies in this repo.
 
 ```python
 python3 scripts/flex_olmo/utils/split_state_dict.py \
