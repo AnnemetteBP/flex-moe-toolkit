@@ -177,3 +177,17 @@ python3 scripts/flex_olmo/utils/compare_flex_olmo_checkpoints.py \
 ```
 
 This writes per-example and per-checkpoint summary JSONL files under the chosen output root, plus a consolidated `router_saturation_summary.jsonl`.
+
+## Plotting package
+Plotting can now live separately from the analysis pipelines under [src/flex_moe_toolkit/plotting](/media/am/AM/flex-moe-toolkit/src/flex_moe_toolkit/plotting).
+
+The first standalone entrypoint is:
+
+```bash
+python3 scripts/flex_olmo/utils/plot_routing_jsonl.py \
+  --routing-analysis-jsonl outputs/flex_olmo/combined_flex/routing_analysis.jsonl \
+  --eval-records-jsonl outputs/flex_olmo/combined_flex/fake_eval_router_activity.jsonl \
+  --output-dir outputs/flex_olmo/combined_flex/replotted
+```
+
+This reads existing JSONL outputs and regenerates routing figures without rerunning the model.
