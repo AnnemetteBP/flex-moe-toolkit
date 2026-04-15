@@ -1,0 +1,67 @@
+{
+  "runtime": {
+    "output_root": "outputs/flex_olmo/analysis_runs/ucloud_batch",
+    "device": "cuda",
+    "dtype": "auto",
+    "max_length": 1024,
+    "max_examples": 32
+  },
+  "shared": {
+    "tokenizer_path": "/remote/path/to/tokenizer",
+    "dataset_paths": [
+      "/remote/path/to/eval/math.jsonl",
+      "/remote/path/to/eval/reasoning.jsonl"
+    ]
+  },
+  "model_collections": {
+    "combined_models": [
+      "/remote/path/to/flexolmo-a2-5B",
+      "/remote/path/to/flexolmo-a4-v1-10B",
+      "/remote/path/to/flexolmo-a7-rt-15B"
+    ],
+    "expert_models": [
+      "/remote/path/to/expert-math-5B",
+      "/remote/path/to/expert-code-10B"
+    ],
+    "saturation_checkpoints": [
+      "/remote/path/to/flexolmo-a7-v1-step1000",
+      "/remote/path/to/flexolmo-a7-v1-step5000"
+    ]
+  },
+  "analyses": {
+    "router_suite": {
+      "enabled": true,
+      "model_collections": [
+        "combined_models",
+        "expert_models"
+      ],
+      "output_root": "outputs/flex_olmo/analysis_runs/ucloud_batch/router_suite",
+      "summary_jsonl": "outputs/flex_olmo/analysis_runs/ucloud_batch/router_suite/router_suite_summary.jsonl"
+    },
+    "weight_analysis": {
+      "enabled": true,
+      "model_collections": [
+        "combined_models",
+        "expert_models"
+      ],
+      "public_expert_idx": 0,
+      "output_root": "outputs/flex_olmo/analysis_runs/ucloud_batch/weight_analysis",
+      "output_jsonl": "outputs/flex_olmo/analysis_runs/ucloud_batch/weight_analysis/weight_analysis_summary.jsonl"
+    },
+    "router_saturation": {
+      "enabled": true,
+      "checkpoint_collections": [
+        "saturation_checkpoints"
+      ],
+      "final_checkpoint_path": "/remote/path/to/flexolmo-a7-v1-final",
+      "top_k": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "output_root": "outputs/flex_olmo/analysis_runs/ucloud_batch/router_saturation",
+      "summary_jsonl": "outputs/flex_olmo/analysis_runs/ucloud_batch/router_saturation/router_saturation_summary.jsonl"
+    }
+  }
+}

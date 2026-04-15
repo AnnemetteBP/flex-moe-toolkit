@@ -131,3 +131,49 @@ bash scripts/flex_olmo/utils/run_ucloud_router_suite.sh \
 ```
 
 Remove `--dry-run` once the generated SSH command looks right.
+
+## Config-driven multi-analysis runs
+Use a single JSON config to choose which prepared analyses to run independently, point at combined-model paths and expert-model paths on UCloud, and keep every analysis writing its own JSONL outputs.
+
+Start from [flex_olmo_analysis_config.example.json](/media/am/AM/flex-moe-toolkit/scripts/flex_olmo/utils/flex_olmo_analysis_config.example.json) and enable only the analyses you want:
+
+- `router_suite`
+- `weight_analysis`
+- `router_saturation`
+
+Run locally or remotely:
+
+```bash
+python3 scripts/flex_olmo/utils/run_flex_olmo_analyses.py \
+  --config scripts/flex_olmo/utils/flex_olmo_analysis_config.json \
+  --dry-run
+```
+
+For SSH-driven UCloud runs, use [run_ucloud_flex_analyses.sh](/media/am/AM/flex-moe-toolkit/scripts/flex_olmo/utils/run_ucloud_flex_analyses.sh) with [ucloud_flex_analyses.env.example](/media/am/AM/flex-moe-toolkit/scripts/flex_olmo/utils/ucloud_flex_analyses.env.example). The remote config file should contain the UCloud model paths, the remote eval-dataset paths, and the enabled analyses for that run.
+
+## Weight analysis
+Static weight analysis is separate from the router-logit pipeline. Use the weight-analysis runner to inspect router weights and expert weights across one or many checkpoints.
+
+```bash
+python3 scripts/flex_olmo/utils/analyze_flex_olmo_weights.py \
+  --model-path /path/to/flexolmo-a2-5B \
+  --model-path /path/to/flexolmo-a7-rt-15B \
+  --output-jsonl outputs/flex_olmo/weight_suite_summary.jsonl \
+  --output-dir outputs/flex_olmo/weight_details
+```
+
+The JSONL summary records include model identifiers plus aggregate statistics such as mean router-weight norm and mean off-diagonal expert similarity. The optional detail files include per-layer router similarity matrices, expert similarity matrices, and distances from the designated public expert.
+
+## Router saturation
+Router saturation compares top-k expert selections at checkpoint `t` against a final checkpoint `T` and logs the overlap as a separate analysis without changing the existing routing outputs.
+
+```bash
+python3 scripts/flex_olmo/utils/compare_flex_olmo_checkpoints.py \
+  --checkpoint-path /path/to/flexolmo-a7-v1-5B-step1000 \
+  --checkpoint-path /path/to/flexolmo-a7-v1-5B-step5000 \
+  --final-checkpoint-path /path/to/flexolmo-a7-v1-5B-final \
+  --dataset /path/to/eval/math.jsonl \
+  --output-root outputs/flex_olmo/router_saturation
+```
+
+This writes per-example and per-checkpoint summary JSONL files under the chosen output root, plus a consolidated `router_saturation_summary.jsonl`.
