@@ -1,0 +1,130 @@
+{
+  "expert_models": [
+    "Flex-code-2x7B-1T",
+    "Flex-creative-2x7B-1T",
+    "Flex-math-2x7B-1T",
+    "Flex-news-2x7B-1T",
+    "Flex-pes2o-2x7B-1T",
+    "Flex-public-2x7B-1T",
+    "Flex-public-2x7B-1T-v1",
+    "Flex-public-7B-1T",
+    "Flex-reddit-2x7B-1T"
+  ],
+  "combined_danish": [
+    "Flex-danish-2x7B-5B",
+    "Flex-danish-2x7B-5B-v1",
+    "Flex-danish-2x7B-5B-v2",
+    "Flex-danish-2x7B-10B",
+    "Flex-danish-2x7B-10B-v1",
+    "Flex-danish-2x7B-10B-v2",
+    "Flex-danish-2x7B-15B",
+    "Flex-danish-2x7B-15B-v2",
+    "Flex-danish-2x7B-20B",
+    "Flex-danish-2x7B-20B-v2",
+    "Flex-danish-2x7B-25B",
+    "Flex-danish-2x7B-25B-v2",
+    "Flex-danish-2x7B-30B",
+    "Flex-danish-2x7B-30B-v2",
+    "Flex-danish-2x7B-35B-v2",
+    "Flex-danish-2x7B-40B-v2",
+    "Flex-danish-2x7B-45B-v2",
+    "Flex-danish-2x7B-50B-v2",
+    "Flex-danish-2x7B-55B-v2",
+    "Flex-danish-2x7B-55B-v2-bf16"
+  ],
+  "flexolmo": {
+    "7x7B": {
+      "a2": [
+        "FlexOlmo-7x7B-1T-a2",
+        "FlexOlmo-7x7B-1T-a2-best",
+        "FlexOlmo-7x7B-1T-a2-best2",
+        "FlexOlmo-7x7B-1T-a2-best3"
+      ],
+      "a4": [
+        "FlexOlmo-7x7B-1T-a4",
+        "FlexOlmo-7x7B-1T-a4-best",
+        "FlexOlmo-7x7B-1T-a4-best2",
+        "FlexOlmo-7x7B-1T-a4-best3"
+      ],
+      "a7": [
+        "FlexOlmo-7x7B-1T-a7",
+        "FlexOlmo-7x7B-1T-a7-best",
+        "FlexOlmo-7x7B-1T-a7-best2",
+        "FlexOlmo-7x7B-1T-a7-best3"
+      ]
+    },
+    "8x7B": {
+      "a2": [
+        "FlexOlmo-8x7B-1T-a2-5B",
+        "FlexOlmo-8x7B-1T-a2-5B-v1",
+        "FlexOlmo-8x7B-1T-a2-5B-v2",
+        "FlexOlmo-8x7B-1T-a2-10B",
+        "FlexOlmo-8x7B-1T-a2-10B-v1",
+        "FlexOlmo-8x7B-1T-a2-10B-v2",
+        "FlexOlmo-8x7B-1T-a2-15B",
+        "FlexOlmo-8x7B-1T-a2-15B-v2",
+        "FlexOlmo-8x7B-1T-a2-20B",
+        "FlexOlmo-8x7B-1T-a2-20B-v2",
+        "FlexOlmo-8x7B-1T-a2-25B",
+        "FlexOlmo-8x7B-1T-a2-25B-v2",
+        "FlexOlmo-8x7B-1T-a2-30B",
+        "FlexOlmo-8x7B-1T-a2-30B-v2",
+        "FlexOlmo-8x7B-1T-a2-35B-v2",
+        "FlexOlmo-8x7B-1T-a2-40B-v2",
+        "FlexOlmo-8x7B-1T-a2-45B-v2",
+        "FlexOlmo-8x7B-1T-a2-50B-v2",
+        "FlexOlmo-8x7B-1T-a2-55B-v2"
+      ],
+      "a4": [
+        "FlexOlmo-8x7B-1T-a4-5B",
+        "FlexOlmo-8x7B-1T-a4-5B-v1",
+        "FlexOlmo-8x7B-1T-a4-5B-v2",
+        "FlexOlmo-8x7B-1T-a4-10B",
+        "FlexOlmo-8x7B-1T-a4-10B-v1",
+        "FlexOlmo-8x7B-1T-a4-10B-v2",
+        "FlexOlmo-8x7B-1T-a4-15B",
+        "FlexOlmo-8x7B-1T-a4-15B-v2",
+        "FlexOlmo-8x7B-1T-a4-20B",
+        "FlexOlmo-8x7B-1T-a4-20B-v2",
+        "FlexOlmo-8x7B-1T-a4-25B",
+        "FlexOlmo-8x7B-1T-a4-25B-v2",
+        "FlexOlmo-8x7B-1T-a4-30B-v2",
+        "FlexOlmo-8x7B-1T-a4-35B-v2",
+        "FlexOlmo-8x7B-1T-a4-40B-v2",
+        "FlexOlmo-8x7B-1T-a4-45B-v2",
+        "FlexOlmo-8x7B-1T-a4-50B-v2",
+        "FlexOlmo-8x7B-1T-a4-55B-v2",
+        "FlexOlmo-8x7B-1T-a4-55B-v2-float32",
+        "FlexOlmo-8x7B-1T-a4-55B-v2-rt",
+        "FlexOlmo-8x7B-1T-a4-55B-v2-rt4"
+      ],
+      "a7": [
+        "FlexOlmo-8x7B-1T-a7-5B",
+        "FlexOlmo-8x7B-1T-a7-5B-v1",
+        "FlexOlmo-8x7B-1T-a7-5B-v2",
+        "FlexOlmo-8x7B-1T-a7-10B",
+        "FlexOlmo-8x7B-1T-a7-10B-v1",
+        "FlexOlmo-8x7B-1T-a7-10B-v2",
+        "FlexOlmo-8x7B-1T-a7-15B",
+        "FlexOlmo-8x7B-1T-a7-15B-v2",
+        "FlexOlmo-8x7B-1T-a7-20B",
+        "FlexOlmo-8x7B-1T-a7-20B-v2",
+        "FlexOlmo-8x7B-1T-a7-25B",
+        "FlexOlmo-8x7B-1T-a7-25B-v2",
+        "FlexOlmo-8x7B-1T-a7-30B",
+        "FlexOlmo-8x7B-1T-a7-30B-v2",
+        "FlexOlmo-8x7B-1T-a7-35B-v2",
+        "FlexOlmo-8x7B-1T-a7-40B-v2",
+        "FlexOlmo-8x7B-1T-a7-45B-v2",
+        "FlexOlmo-8x7B-1T-a7-50B-v2",
+        "FlexOlmo-8x7B-1T-a7-55B-v2"
+      ],
+      "a8": [
+        "FlexOlmo-8x7B-1T-a8-55B-v2",
+        "FlexOlmo-8x7B-1T-a8-55B-v2-rt",
+        "FlexOlmo-8x7B-1T-a8-55B-v2-rt4",
+        "FlexOlmo-8x7B-1T-a8-55B-v2-rtp"
+      ]
+    }
+  }
+}

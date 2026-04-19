@@ -73,6 +73,40 @@ def save_layerwise_coactivation_heatmaps(
     return paths
 
 
+def save_layerwise_upset_plots(
+    eval_records: list[dict],
+    output_dir: str | Path,
+    stem: str = "expert_combination_upset_layer",
+) -> list[Path]:
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Assume all records have the same number of layers
+    if not eval_records:
+        return []
+    num_layers = len(eval_records[0].get("layer_token_topk_combination_counts", {}))
+    paths = []
+    for layer_idx in range(num_layers):
+        layer_combinations = Counter()
+        for record in eval_records:
+            layer_counts = record.get("layer_token_topk_combination_counts", {}).get(str(layer_idx), {})
+            layer_combinations.update(
+                {
+                    tuple(int(expert) for expert in combo_key.split(",") if expert != ""): count
+                    for combo_key, count in layer_counts.items()
+                }
+            )
+        if layer_combinations:
+            path = output_dir / f"{stem}_{layer_idx}.png"
+            plot_expert_combination_upset(
+                combination_counts=layer_combinations,
+                path=path,
+                title=f"Token-Level Expert Combinations (Layer {layer_idx})",
+            )
+            paths.append(path)
+    return paths
+
+
 def build_token_combination_counter(eval_records: list[dict]) -> Counter:
     aggregate_counter = Counter()
     for record in eval_records:
@@ -83,6 +117,17 @@ def build_token_combination_counter(eval_records: list[dict]) -> Counter:
                 for combo_key, count in token_counts.items()
             }
         )
+    return aggregate_counter
+
+
+def build_layer_combination_counter(eval_records: list[dict]) -> Counter:
+    aggregate_counter = Counter()
+    for record in eval_records:
+        layer_combos = record.get("layer_activated_experts", [])
+        for layer_combo in layer_combos:
+            if layer_combo:  # skip empty
+                combo = tuple(sorted(int(expert) for expert in layer_combo))
+                aggregate_counter[combo] += 1
     return aggregate_counter
 
 
@@ -115,14 +160,10 @@ def plot_routing_outputs(
 
     if eval_records_path is not None:
         eval_records = load_jsonl_records(eval_records_path)
-        combination_counts = build_token_combination_counter(eval_records)
-        if combination_counts:
-            upset_path = output_dir / "expert_combination_upset.png"
-            plot_expert_combination_upset(
-                combination_counts=combination_counts,
-                path=upset_path,
-                title="Token-Level Top-k Expert Combinations",
-            )
-            result["expert_combination_upset_path"] = str(upset_path)
+        layerwise_upset_paths = save_layerwise_upset_plots(
+            eval_records,
+            output_dir,
+        )
+        result["layerwise_upset_plot_paths"] = [str(path) for path in layerwise_upset_paths]
 
     return result

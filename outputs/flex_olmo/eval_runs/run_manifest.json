@@ -1,0 +1,79 @@
+{
+  "datasets": {
+    "fake_eval_suite": {
+      "num_examples": 9,
+      "runs": {
+        "combined_top2": {
+          "records_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/combined_top2/eval_records.jsonl",
+          "routing_analysis_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/combined_top2/routing_analysis.jsonl",
+          "summary_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/combined_top2/eval_summary.jsonl"
+        },
+        "combined_top4": {
+          "records_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/combined_top4/eval_records.jsonl",
+          "routing_analysis_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/combined_top4/routing_analysis.jsonl",
+          "summary_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/combined_top4/eval_summary.jsonl"
+        },
+        "combined_top7": {
+          "records_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/combined_top7/eval_records.jsonl",
+          "routing_analysis_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/combined_top7/routing_analysis.jsonl",
+          "summary_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/combined_top7/eval_summary.jsonl"
+        },
+        "public_only": {
+          "records_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/public_only/eval_records.jsonl",
+          "routing_analysis_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/public_only/routing_analysis.jsonl",
+          "summary_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/public_only/eval_summary.jsonl"
+        },
+        "single_expert_1": {
+          "records_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_1/eval_records.jsonl",
+          "routing_analysis_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_1/routing_analysis.jsonl",
+          "summary_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_1/eval_summary.jsonl"
+        },
+        "single_expert_2": {
+          "records_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_2/eval_records.jsonl",
+          "routing_analysis_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_2/routing_analysis.jsonl",
+          "summary_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_2/eval_summary.jsonl"
+        },
+        "single_expert_3": {
+          "records_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_3/eval_records.jsonl",
+          "routing_analysis_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_3/routing_analysis.jsonl",
+          "summary_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_3/eval_summary.jsonl"
+        },
+        "single_expert_4": {
+          "records_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_4/eval_records.jsonl",
+          "routing_analysis_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_4/routing_analysis.jsonl",
+          "summary_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_4/eval_summary.jsonl"
+        },
+        "single_expert_5": {
+          "records_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_5/eval_records.jsonl",
+          "routing_analysis_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_5/routing_analysis.jsonl",
+          "summary_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_5/eval_summary.jsonl"
+        },
+        "single_expert_6": {
+          "records_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_6/eval_records.jsonl",
+          "routing_analysis_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_6/routing_analysis.jsonl",
+          "summary_path": "/work/training/flex-moe-toolkit/outputs/flex_olmo/eval_runs/fake_eval_suite/single_expert_6/eval_summary.jsonl"
+        }
+      },
+      "source_path": "/work/training/flex-moe-toolkit/fake_test_models/datasets/fake_eval_suite.jsonl"
+    }
+  },
+  "device": "cuda:0",
+  "dtype": "auto",
+  "max_length": 1024,
+  "model_impl_path": "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/lib/python3.12/site-packages/transformers/models/flex_olmo/modeling_flex_olmo.py",
+  "model_path": "allenai/FlexOlmo-7x7B-1T",
+  "public_expert_idx": 0,
+  "run_labels": [
+    "public_only",
+    "single_expert_1",
+    "single_expert_2",
+    "single_expert_3",
+    "single_expert_4",
+    "single_expert_5",
+    "single_expert_6",
+    "combined_top2",
+    "combined_top4",
+    "combined_top7"
+  ],
+  "tokenizer_path": "allenai/FlexOlmo-7x7B-1T"
+}

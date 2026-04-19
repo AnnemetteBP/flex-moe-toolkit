@@ -283,7 +283,7 @@ def evaluate_example(
         routing = analyze_flex_olmo_routing(
             model,
             winning_inputs,
-            top_k=min(len(run_spec.allowed_experts), model.config.num_experts_per_tok),
+            top_k=2,
         )
 
     first_layer_router_logits = ensure_router_logits_3d(routing["router_logits"][0])
@@ -309,7 +309,7 @@ def evaluate_example(
     layer_combos = flatten_topk_experts(routing["topk_experts"])
     global_combo = activated_expert_combination(routing["topk_experts"])
     layer_overlap = layer_iou_summary(layer_combos)
-    token_combination_counts = count_token_level_combinations(routing["topk_experts"])
+    layer_token_combination_counts = count_token_level_combinations(routing["topk_experts"])
 
     record = {
         "record_type": "evaluation_example",
@@ -340,7 +340,14 @@ def evaluate_example(
         "layer_batch_routing_metrics": layer_batch_routing_metrics,
         "token_topk_combination_counts": {
             ",".join(str(expert) for expert in combo): count
-            for combo, count in sorted(token_combination_counts.items())
+            for combo, count in sorted(sum(layer_token_combination_counts.values(), Counter()).items())
+        },
+        "layer_token_topk_combination_counts": {
+            str(layer_idx): {
+                ",".join(str(expert) for expert in combo): count
+                for combo, count in sorted(layer_counts.items())
+            }
+            for layer_idx, layer_counts in layer_token_combination_counts.items()
         },
         "layer_activated_experts": layer_combos,
         "activated_experts": global_combo,
@@ -357,20 +364,30 @@ def evaluate_example(
     return record
 
 
-def count_token_level_combinations(topk_experts) -> Counter:
-    token_counts = Counter()
+def count_token_level_combinations(topk_experts) -> dict[int, Counter]:
+    layer_counts = {}
 
-    for layer in topk_experts:
-        for batch in layer:
+    for layer_idx, layer in enumerate(topk_experts):
+        token_counts = Counter()
+
+        if hasattr(layer, "ndim") and layer.ndim == 2:
+            layer_batches = [layer]
+        else:
+            layer_batches = layer
+
+        for batch in layer_batches:
             batch_list = batch.tolist() if hasattr(batch, "tolist") else batch
             if not isinstance(batch_list, list):
                 batch_list = [batch_list]
+
             for token in batch_list:
-                experts = token if isinstance(token, list) else [token]
+                experts = token if isinstance(token, (list, tuple)) else [token]
                 combo = tuple(sorted(int(expert_idx) for expert_idx in experts))
                 token_counts[combo] += 1
 
-    return token_counts
+        layer_counts[layer_idx] = token_counts
+
+    return layer_counts
 
 
 def build_summary(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
