@@ -109,6 +109,95 @@ For remote GPU runs on UCloud over SSH, pass `--device cuda` or `--device cuda:0
 
 When the script starts, it prints the exact `FlexOlmoForCausalLM` source file being used. This is a good sanity check that the run is using your installed `transformers` fork rather than the reference copies in this repo.
 
+## MKQA routing analysis
+For prepared bilingual MKQA prompt data, use the dedicated prompt-routing runner. This is the better fit for English/Danish routing analysis before moving on to generation-based evaluation.
+
+```bash
+python3 eval_data/mkqa/run_mkqa_routing_analysis.py \
+  --model-name FlexOlmo-8x7B-1T-a4-55B-v2 \
+  --model-root /path/to/ucloud/models \
+  --data-path eval_data/mkqa/mkqa_da_en_subset.json \
+  --languages en,da \
+  --device cuda:0
+```
+
+The runner:
+
+- loads model names from `model_paths/all_models.txt`
+- resolves the checkpoint via `--model-root` plus `--model-name`, or accepts `--model-path`
+- builds prompt-only English and Danish examples from the prepared MKQA JSON
+- saves prompt-routing records, routing summaries, and aggregate routing analysis
+- stores `input_token_ids`, `predicted_output_token_ids`, and `ground_truth_output_token_ids` by default for later vocabulary-specialization analysis
+- stores aligned expert assignments for prompt tokens plus predicted/ground-truth continuation tokens
+- can optionally save raw prompt router logits/probabilities with `--capture-router-tensors`
+- can optionally save hidden states and token-wise hidden-state norms with `--capture-hidden-states`
+- supports `public_only` and combined `2,4,7` active-expert runs by default
+- can include single-expert runs with `--include-individual-experts`
+
+Post-hoc vocabulary specialization can then be computed from the saved routing records without rerunning the model:
+
+```bash
+python3 eval_data/mkqa/analyze_mkqa_vocab_specialization.py \
+  --routing-root eval_results/mkqa_results/routing/<model_name>/mkqa_en_da \
+  --tokenizer-path /path/to/tokenizer \
+  --output-root eval_results/mkqa_results/vocab_specialization/<model_name>
+```
+
+Domain specialization can be computed from the same saved routing records:
+
+```bash
+python3 eval_data/mkqa/analyze_mkqa_domain_specialization.py \
+  --routing-root eval_results/mkqa_results/routing/<model_name>/mkqa_en_da \
+  --output-root eval_results/mkqa_results/domain_specialization/<model_name>
+```
+
+To sweep multiple checkpoints and analyses from one config, start from [mkqa_analysis_config.example.json](/media/am/AM/flex-moe-toolkit/eval_data/mkqa/mkqa_analysis_config.example.json):
+
+```bash
+python3 eval_data/mkqa/run_mkqa_analysis_suite.py \
+  --config eval_data/mkqa/mkqa_analysis_config.example.json \
+  --dry-run
+```
+
+The MKQA suite can resolve grouped model selections directly from [models.json](/media/am/AM/flex-moe-toolkit/model_paths/models.json). The first-wave selectors are intended to cover:
+
+- `expert_models`
+- `experts_da` (alias for `combined_danish`)
+- `flexolmo.8x7B.a2`
+- `flexolmo.8x7B.a4`
+- `flexolmo.8x7B.a7`
+
+This intentionally excludes `flexolmo.7x7B.*` and `flexolmo.8x7B.a8` for router-analysis sweeps.
+
+The MKQA stack is designed to write structured JSONL outputs under:
+
+- `eval_results/mkqa_results/routing/`
+- `eval_results/mkqa_results/vocab_specialization/`
+- `eval_results/mkqa_results/domain_specialization/`
+
+For MKQA analysis outputs, each JSONL record is written with `model_name` first and includes the resolved `model_path` so UCloud results remain easy to group and merge later.
+
+Two bash entrypoints are included for UCloud-style runs:
+
+```bash
+export MKQA_MODEL_ROOT=/work/training/FlexMoRE/models
+
+bash eval_data/mkqa/run_mkqa_smoke_suite.sh --dry-run
+bash eval_data/mkqa/run_mkqa_full_suite.sh --dry-run
+```
+
+The smoke suite uses one representative model from each first-wave group:
+
+- one `expert_models` checkpoint
+- one `experts_da` checkpoint
+- one `flexolmo.8x7B.a2` checkpoint
+- one `flexolmo.8x7B.a4` checkpoint
+- one `flexolmo.8x7B.a7` checkpoint
+
+The full suite uses the grouped selectors from `models.json` and still excludes `7x7B` and `8x7B.a8`.
+
+If the tokenizer lives in the same model directory on UCloud, you do not need to set a separate tokenizer path. The MKQA runners will default to the resolved model path for tokenizer loading.
+
 ```python
 python3 scripts/flex_olmo/utils/split_state_dict.py \
   --input-dir /path/to/unsharded_checkpoint \

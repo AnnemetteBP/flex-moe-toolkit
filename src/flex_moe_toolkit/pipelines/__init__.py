@@ -10,6 +10,7 @@ from .flex_olmo_eval import (
     evaluate_dataset_across_runs,
     save_dataset_run_outputs,
 )
+from .flex_olmo_routing_dataset import analyze_prompt_dataset_across_runs
 from .flex_olmo_saturation import (
     compute_example_router_saturation,
     summarize_router_saturation,
@@ -23,6 +24,7 @@ __all__ = [
     "analyze_flex_olmo_routing",
     "analyze_flex_olmo_weights",
     "analyze_model_routing",
+    "analyze_prompt_dataset_across_runs",
     "analyze_routing",
     "backbone_only_mode",
     "build_run_specs",

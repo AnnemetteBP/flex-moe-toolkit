@@ -28,10 +28,10 @@ def to_jsonable(value):
     return value
 
 
-def write_jsonl(records, path):
+def write_jsonl(records, path, sort_keys=True):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
 
     with path.open("w", encoding="utf-8") as handle:
         for record in records:
-            handle.write(json.dumps(to_jsonable(record), sort_keys=True) + "\n")
+            handle.write(json.dumps(to_jsonable(record), sort_keys=sort_keys) + "\n")
