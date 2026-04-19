@@ -146,7 +146,14 @@ def slice_continuation_topk_experts(topk_experts, continuation_length: int):
         return []
     sliced = []
     for layer in topk_experts:
-        continuation = layer[:, -continuation_length:, :]
+        if layer.ndim == 2:
+            continuation = layer[-continuation_length:, :].unsqueeze(0)
+        elif layer.ndim == 3:
+            continuation = layer[:, -continuation_length:, :]
+        else:
+            raise ValueError(
+                f"Unexpected top-k expert tensor shape {tuple(layer.shape)} while slicing continuation tokens."
+            )
         sliced.append(continuation.detach().cpu())
     return sliced
 
