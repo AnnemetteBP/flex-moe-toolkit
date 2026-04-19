@@ -190,6 +190,9 @@ export MKQA_MODEL_ROOT=/work/training/FlexMoRE/models
 
 bash eval_data/mkqa/run_mkqa_combined_smoke_suite.sh --dry-run
 bash eval_data/mkqa/run_mkqa_combined_full_suite.sh --dry-run
+bash eval_data/mkqa/run_mkqa_combined_a2_full_suite.sh --dry-run
+bash eval_data/mkqa/run_mkqa_combined_a4_full_suite.sh --dry-run
+bash eval_data/mkqa/run_mkqa_combined_a7_full_suite.sh --dry-run
 
 bash eval_data/mkqa/run_public_expert_smoke_suite.sh --dry-run
 bash eval_data/mkqa/run_public_expert_full_suite.sh --dry-run
@@ -207,6 +210,14 @@ The public/expert smoke suite uses one representative checkpoint for:
 - one `experts_da` checkpoint
 
 The combined full suite uses the grouped selectors from `models.json` and still excludes `7x7B` and `8x7B.a8`. The public/expert full suite is weight-analysis-oriented and resolves `expert_models` plus `experts_da`.
+
+Dedicated full-suite wrappers are also available when you want only one native combined family at a time:
+
+- `bash eval_data/mkqa/run_mkqa_combined_a2_full_suite.sh`
+- `bash eval_data/mkqa/run_mkqa_combined_a4_full_suite.sh`
+- `bash eval_data/mkqa/run_mkqa_combined_a7_full_suite.sh`
+
+These wrappers automatically substitute `MKQA_MODEL_ROOT` into the config before launch, so you do not need to hand-edit temporary JSON files on UCloud.
 
 If the tokenizer lives in the same model directory on UCloud, you do not need to set a separate tokenizer path. The MKQA runners will default to the resolved model path for tokenizer loading.
 
