@@ -9,7 +9,7 @@ import re
 import sys
 
 import torch
-from transformers import AutoTokenizer, FlexOlmoForCausalLM
+from transformers import FlexOlmoForCausalLM
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 SRC_ROOT = PROJECT_ROOT / "src"
@@ -29,6 +29,7 @@ from flex_moe_toolkit.pipelines.flex_olmo_eval import (
     save_dataset_run_outputs,
     sanitize_name,
 )
+from flex_moe_toolkit.utils import load_tokenizer_with_known_fixes
 from flex_moe_toolkit.utils.jsonl import to_jsonable, write_jsonl
 
 
@@ -193,7 +194,7 @@ def load_model_and_tokenizer(model_path: str, tokenizer_path: str | None, device
     model.to(device)
     model.eval()
 
-    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path or model_path)
+    tokenizer = load_tokenizer_with_known_fixes(tokenizer_path or model_path)
     if tokenizer.pad_token_id is None:
         if tokenizer.eos_token_id is None:
             raise ValueError(

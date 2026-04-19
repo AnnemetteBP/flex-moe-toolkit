@@ -9,6 +9,7 @@ from flex_moe_toolkit.utils.router_activity import (
     extract_expert_indices,
     extract_topk_expert_indices,
 )
+from flex_moe_toolkit.utils.tokenizers import load_tokenizer_with_known_fixes
 
 __all__ = [
     "build_upset_data",
@@ -20,4 +21,5 @@ __all__ = [
     "compute_topk_expert_sets",
     "extract_expert_indices",
     "extract_topk_expert_indices",
+    "load_tokenizer_with_known_fixes",
 ]

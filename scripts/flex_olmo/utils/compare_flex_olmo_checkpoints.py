@@ -8,7 +8,7 @@ from pathlib import Path
 import sys
 
 import torch
-from transformers import AutoTokenizer, FlexOlmoForCausalLM
+from transformers import FlexOlmoForCausalLM
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 SRC_ROOT = PROJECT_ROOT / "src"
@@ -26,6 +26,7 @@ from flex_moe_toolkit.pipelines.flex_olmo_saturation import (
     summarize_router_saturation,
 )
 from flex_moe_toolkit.pipelines.flex_olmo_eval import load_jsonl_records, sanitize_name
+from flex_moe_toolkit.utils import load_tokenizer_with_known_fixes
 from flex_moe_toolkit.utils.jsonl import to_jsonable, write_jsonl
 
 
@@ -190,7 +191,7 @@ def main():
     )
 
     final_model = load_model(args.final_checkpoint_path, device=device, dtype_name=args.dtype)
-    tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_path or args.final_checkpoint_path)
+    tokenizer = load_tokenizer_with_known_fixes(args.tokenizer_path or args.final_checkpoint_path)
     if tokenizer.pad_token_id is None and tokenizer.eos_token_id is not None:
         tokenizer.pad_token = tokenizer.eos_token
 

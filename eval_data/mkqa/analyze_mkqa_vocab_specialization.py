@@ -7,8 +7,6 @@ import math
 from pathlib import Path
 import sys
 
-from transformers import AutoTokenizer
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SRC_ROOT = PROJECT_ROOT / "src"
 
@@ -18,6 +16,7 @@ for path in (PROJECT_ROOT, SRC_ROOT):
         sys.path.insert(0, path_str)
 
 from flex_moe_toolkit.utils.jsonl import write_jsonl
+from flex_moe_toolkit.utils import load_tokenizer_with_known_fixes
 
 
 SOURCE_SPECS = {
@@ -239,7 +238,7 @@ def main():
     if unknown_sources:
         raise ValueError(f"Unknown source(s): {unknown_sources}. Available: {sorted(SOURCE_SPECS)}")
 
-    tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_path) if args.tokenizer_path else None
+    tokenizer = load_tokenizer_with_known_fixes(args.tokenizer_path) if args.tokenizer_path else None
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
 
