@@ -18,6 +18,7 @@
       "da"
     ],
     "public_expert_idx": 0,
+    "routing_run_mode": "native_only",
     "combined_active_experts": "2,4,7",
     "include_individual_experts": false,
     "capture_router_tensors": true,

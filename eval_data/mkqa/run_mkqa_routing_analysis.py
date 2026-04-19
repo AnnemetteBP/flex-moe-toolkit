@@ -50,6 +50,17 @@ def parse_args():
     parser.add_argument("--max-length", type=int, default=512)
     parser.add_argument("--public-expert-idx", type=int, default=0)
     parser.add_argument("--combined-active-experts", default="2,4,7")
+    parser.add_argument(
+        "--routing-run-mode",
+        default="restricted_sweep",
+        choices=("restricted_sweep", "native_only", "native_plus_restricted"),
+        help=(
+            "How to construct evaluation runs. "
+            "`native_only` evaluates the checkpoint as-is, which is the correct mode for real a2/a4/a7 checkpoints. "
+            "`restricted_sweep` preserves the older subset-masking behavior. "
+            "`native_plus_restricted` runs both."
+        ),
+    )
     parser.add_argument("--expert-order")
     parser.add_argument("--include-individual-experts", action="store_true")
     parser.add_argument(
@@ -216,6 +227,7 @@ def main():
         ),
         include_individual_experts=args.include_individual_experts,
         expert_order=expert_order,
+        routing_run_mode=args.routing_run_mode,
     )
 
     examples = load_mkqa_examples(
@@ -272,6 +284,9 @@ def main():
         "dtype": args.dtype,
         "languages": languages,
         "num_examples": len(examples),
+        "routing_run_mode": args.routing_run_mode,
+        "model_native_top_k": int(model.config.num_experts_per_tok),
+        "model_num_experts": int(model.config.num_experts),
         "capture_output_token_ids": not args.skip_output_token_capture,
         "default_max_new_tokens": args.default_max_new_tokens,
         "capture_router_tensors": args.capture_router_tensors,

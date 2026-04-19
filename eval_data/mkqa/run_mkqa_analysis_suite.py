@@ -132,6 +132,8 @@ def build_routing_command(model_entry: dict, shared: dict, runtime: dict) -> lis
         "--output-root",
         str(Path(runtime["output_root"]) / "routing" / model_slug(model_entry)),
     ]
+    if shared.get("routing_run_mode") is not None:
+        command.extend(["--routing-run-mode", str(shared["routing_run_mode"])])
     if runtime.get("max_examples") is not None:
         command.extend(["--max-examples", str(runtime["max_examples"])])
     if runtime.get("default_max_new_tokens") is not None:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+from contextlib import nullcontext
 from pathlib import Path
 from typing import Any
 import json
@@ -158,6 +159,13 @@ def slice_continuation_topk_experts(topk_experts, continuation_length: int):
     return sliced
 
 
+def effective_run_top_k(model, run_spec: FlexOlmoEvalRunSpec) -> int:
+    native_top_k = int(model.config.num_experts_per_tok)
+    if not run_spec.apply_restricted_routing:
+        return native_top_k
+    return min(native_top_k, len(run_spec.allowed_experts))
+
+
 def capture_hidden_state_artifacts(
     model,
     inputs: dict[str, torch.Tensor],
@@ -209,11 +217,19 @@ def analyze_prompt_example(
         device=device,
     )
 
-    with restricted_expert_mode(model, allowed_experts=run_spec.allowed_experts):
+    run_top_k = effective_run_top_k(model, run_spec)
+
+    routing_context = (
+        restricted_expert_mode(model, allowed_experts=run_spec.allowed_experts)
+        if run_spec.apply_restricted_routing
+        else nullcontext(model)
+    )
+
+    with routing_context:
         routing = analyze_flex_olmo_routing(
             model,
             inputs,
-            top_k=min(len(run_spec.allowed_experts), model.config.num_experts_per_tok),
+            top_k=run_top_k,
         )
         prompt_topk_experts = [layer.detach().cpu() for layer in routing["topk_experts"]]
         prompt_router_logits_by_layer = []
@@ -267,7 +283,7 @@ def analyze_prompt_example(
                 ground_truth_routing = analyze_flex_olmo_routing(
                     model,
                     ground_truth_inputs,
-                    top_k=min(len(run_spec.allowed_experts), model.config.num_experts_per_tok),
+                    top_k=run_top_k,
                 )
                 ground_truth_output_topk_experts = slice_continuation_topk_experts(
                     ground_truth_routing["topk_experts"],
@@ -296,7 +312,7 @@ def analyze_prompt_example(
                 predicted_routing = analyze_flex_olmo_routing(
                     model,
                     predicted_inputs,
-                    top_k=min(len(run_spec.allowed_experts), model.config.num_experts_per_tok),
+                    top_k=run_top_k,
                 )
                 predicted_output_topk_experts = slice_continuation_topk_experts(
                     predicted_routing["topk_experts"],
@@ -318,7 +334,7 @@ def analyze_prompt_example(
                     }
 
     first_layer_router_logits = ensure_router_logits_3d(routing["router_logits"][0])
-    metrics_top_k = min(len(run_spec.allowed_experts), 2, first_layer_router_logits.shape[-1])
+    metrics_top_k = min(run_top_k, first_layer_router_logits.shape[-1])
     batch_metrics = compute_all_metrics(first_layer_router_logits, top_k=metrics_top_k)
 
     layer_batch_routing_metrics = []
@@ -326,7 +342,7 @@ def analyze_prompt_example(
         normalized_logits = ensure_router_logits_3d(layer_router_logits)
         layer_metrics = compute_all_metrics(
             normalized_logits,
-            top_k=min(len(run_spec.allowed_experts), 2, normalized_logits.shape[-1]),
+            top_k=min(run_top_k, normalized_logits.shape[-1]),
         )
         layer_batch_routing_metrics.append(
             {
@@ -346,8 +362,12 @@ def analyze_prompt_example(
     return {
         "record_type": "routing_example",
         "run_label": run_spec.label,
+        "run_kind": run_spec.run_kind,
+        "routing_restricted": run_spec.apply_restricted_routing,
         "available_experts": run_spec.allowed_experts,
         "num_available_experts": len(run_spec.allowed_experts),
+        "model_native_top_k": int(model.config.num_experts_per_tok),
+        "effective_top_k": int(run_top_k),
         "example_id": example["example_id"],
         "language": example["language"],
         "question": example["question"],
@@ -423,8 +443,12 @@ def summarize_routing_records(records: list[dict[str, Any]]) -> list[dict[str, A
             {
                 "record_type": "routing_summary",
                 "run_label": run_label,
+                "run_kind": run_records[0]["run_kind"],
+                "routing_restricted": run_records[0]["routing_restricted"],
                 "num_examples": total,
                 "available_experts": run_records[0]["available_experts"],
+                "model_native_top_k": run_records[0]["model_native_top_k"],
+                "effective_top_k": run_records[0]["effective_top_k"],
                 "mean_entropy": mean_entropy,
                 "mean_load_balance": mean_load_balance,
                 "mean_layer_iou": (

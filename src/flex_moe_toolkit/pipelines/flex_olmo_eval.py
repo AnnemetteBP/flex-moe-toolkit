@@ -32,6 +32,8 @@ DEFAULT_MULTIPLE_CHOICE_PROMPT = (
 class FlexOlmoEvalRunSpec:
     label: str
     allowed_experts: tuple[int, ...]
+    apply_restricted_routing: bool = True
+    run_kind: str = "restricted_subset"
 
 
 def with_context(record: dict[str, Any], context: dict[str, Any] | None) -> dict[str, Any]:
@@ -216,6 +218,7 @@ def build_run_specs(
     combined_active_counts: tuple[int, ...] = (2, 4, 7),
     include_individual_experts: bool = True,
     expert_order: tuple[int, ...] | None = None,
+    routing_run_mode: str = "restricted_sweep",
 ) -> list[FlexOlmoEvalRunSpec]:
     if expert_order is None:
         expert_order = tuple(range(num_experts))
@@ -224,7 +227,34 @@ def build_run_specs(
             "`expert_order` must list every expert exactly once so combined runs are reproducible."
         )
 
-    run_specs = [FlexOlmoEvalRunSpec(label="public_only", allowed_experts=(public_expert_idx,))]
+    if routing_run_mode not in {"restricted_sweep", "native_only", "native_plus_restricted"}:
+        raise ValueError(
+            "`routing_run_mode` must be one of: `restricted_sweep`, `native_only`, `native_plus_restricted`."
+        )
+
+    run_specs = []
+
+    if routing_run_mode in {"native_only", "native_plus_restricted"}:
+        run_specs.append(
+            FlexOlmoEvalRunSpec(
+                label="native_full",
+                allowed_experts=tuple(expert_order),
+                apply_restricted_routing=False,
+                run_kind="native_full",
+            )
+        )
+
+    if routing_run_mode == "native_only":
+        return run_specs
+
+    run_specs.append(
+        FlexOlmoEvalRunSpec(
+            label="public_only",
+            allowed_experts=(public_expert_idx,),
+            apply_restricted_routing=True,
+            run_kind="public_only",
+        )
+    )
 
     if include_individual_experts:
         for expert_idx in range(num_experts):
@@ -234,6 +264,8 @@ def build_run_specs(
                 FlexOlmoEvalRunSpec(
                     label=f"single_expert_{expert_idx}",
                     allowed_experts=(expert_idx,),
+                    apply_restricted_routing=True,
+                    run_kind="single_expert",
                 )
             )
 
@@ -244,6 +276,8 @@ def build_run_specs(
             FlexOlmoEvalRunSpec(
                 label=f"combined_top{active_count}",
                 allowed_experts=tuple(expert_order[:active_count]),
+                apply_restricted_routing=True,
+                run_kind="restricted_subset",
             )
         )
 
