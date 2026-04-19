@@ -1,0 +1,22 @@
+{
+  "combined_top2": {
+    "records_path": "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/combined_top2/routing_records.jsonl",
+    "routing_analysis_path": "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/combined_top2/routing_analysis.jsonl",
+    "summary_path": "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/combined_top2/routing_summary.jsonl"
+  },
+  "combined_top4": {
+    "records_path": "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/combined_top4/routing_records.jsonl",
+    "routing_analysis_path": "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/combined_top4/routing_analysis.jsonl",
+    "summary_path": "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/combined_top4/routing_summary.jsonl"
+  },
+  "combined_top7": {
+    "records_path": "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/combined_top7/routing_records.jsonl",
+    "routing_analysis_path": "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/combined_top7/routing_analysis.jsonl",
+    "summary_path": "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/combined_top7/routing_summary.jsonl"
+  },
+  "public_only": {
+    "records_path": "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/public_only/routing_records.jsonl",
+    "routing_analysis_path": "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/public_only/routing_analysis.jsonl",
+    "summary_path": "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/public_only/routing_summary.jsonl"
+  }
+}

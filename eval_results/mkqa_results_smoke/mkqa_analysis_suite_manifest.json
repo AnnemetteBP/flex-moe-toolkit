@@ -1,10 +1,10 @@
 {
-  "config_path": "/tmp/mkqa_smoke_config.uvlAQn.json",
+  "config_path": "/tmp/mkqa_smoke_config.ehi6uj.json",
   "num_commands": 15,
   "commands": [
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/run_mkqa_routing_analysis.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/run_mkqa_routing_analysis.py",
       "--data-path",
       "eval_data/mkqa/mkqa_da_en_subset.json",
       "--languages",
@@ -36,8 +36,8 @@
       "model_paths/all_models.txt"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_vocab_specialization.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_vocab_specialization.py",
       "--routing-root",
       "eval_results/mkqa_results_smoke/routing/Flex-code-2x7B-1T/mkqa_en_da",
       "--sources",
@@ -48,8 +48,8 @@
       "eval_results/mkqa_results_smoke/vocab_specialization/Flex-code-2x7B-1T"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_domain_specialization.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_domain_specialization.py",
       "--routing-root",
       "eval_results/mkqa_results_smoke/routing/Flex-code-2x7B-1T/mkqa_en_da",
       "--sources",
@@ -58,8 +58,8 @@
       "eval_results/mkqa_results_smoke/domain_specialization/Flex-code-2x7B-1T"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/run_mkqa_routing_analysis.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/run_mkqa_routing_analysis.py",
       "--data-path",
       "eval_data/mkqa/mkqa_da_en_subset.json",
       "--languages",
@@ -91,8 +91,8 @@
       "model_paths/all_models.txt"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_vocab_specialization.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_vocab_specialization.py",
       "--routing-root",
       "eval_results/mkqa_results_smoke/routing/Flex-danish-2x7B-55B-v2/mkqa_en_da",
       "--sources",
@@ -103,8 +103,8 @@
       "eval_results/mkqa_results_smoke/vocab_specialization/Flex-danish-2x7B-55B-v2"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_domain_specialization.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_domain_specialization.py",
       "--routing-root",
       "eval_results/mkqa_results_smoke/routing/Flex-danish-2x7B-55B-v2/mkqa_en_da",
       "--sources",
@@ -113,8 +113,8 @@
       "eval_results/mkqa_results_smoke/domain_specialization/Flex-danish-2x7B-55B-v2"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/run_mkqa_routing_analysis.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/run_mkqa_routing_analysis.py",
       "--data-path",
       "eval_data/mkqa/mkqa_da_en_subset.json",
       "--languages",
@@ -146,8 +146,8 @@
       "model_paths/all_models.txt"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_vocab_specialization.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_vocab_specialization.py",
       "--routing-root",
       "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a2-55B-v2/mkqa_en_da",
       "--sources",
@@ -158,8 +158,8 @@
       "eval_results/mkqa_results_smoke/vocab_specialization/FlexOlmo-8x7B-1T-a2-55B-v2"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_domain_specialization.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_domain_specialization.py",
       "--routing-root",
       "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a2-55B-v2/mkqa_en_da",
       "--sources",
@@ -168,8 +168,8 @@
       "eval_results/mkqa_results_smoke/domain_specialization/FlexOlmo-8x7B-1T-a2-55B-v2"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/run_mkqa_routing_analysis.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/run_mkqa_routing_analysis.py",
       "--data-path",
       "eval_data/mkqa/mkqa_da_en_subset.json",
       "--languages",
@@ -201,8 +201,8 @@
       "model_paths/all_models.txt"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_vocab_specialization.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_vocab_specialization.py",
       "--routing-root",
       "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a4-55B-v2/mkqa_en_da",
       "--sources",
@@ -213,8 +213,8 @@
       "eval_results/mkqa_results_smoke/vocab_specialization/FlexOlmo-8x7B-1T-a4-55B-v2"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_domain_specialization.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_domain_specialization.py",
       "--routing-root",
       "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a4-55B-v2/mkqa_en_da",
       "--sources",
@@ -223,8 +223,8 @@
       "eval_results/mkqa_results_smoke/domain_specialization/FlexOlmo-8x7B-1T-a4-55B-v2"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/run_mkqa_routing_analysis.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/run_mkqa_routing_analysis.py",
       "--data-path",
       "eval_data/mkqa/mkqa_da_en_subset.json",
       "--languages",
@@ -256,8 +256,8 @@
       "model_paths/all_models.txt"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_vocab_specialization.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_vocab_specialization.py",
       "--routing-root",
       "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da",
       "--sources",
@@ -268,8 +268,8 @@
       "eval_results/mkqa_results_smoke/vocab_specialization/FlexOlmo-8x7B-1T-a7-55B-v2"
     ],
     [
-      "/usr/bin/python3",
-      "/media/am/AM/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_domain_specialization.py",
+      "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/bin/python3",
+      "/work/training/flex-moe-toolkit/eval_data/mkqa/analyze_mkqa_domain_specialization.py",
       "--routing-root",
       "eval_results/mkqa_results_smoke/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da",
       "--sources",
