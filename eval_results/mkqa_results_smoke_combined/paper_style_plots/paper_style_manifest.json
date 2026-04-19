@@ -1,0 +1,57 @@
+{
+  "models": {
+    "FlexOlmo-8x7B-1T-a2-55B-v2": {
+      "coactivation_aggregate": "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a2-55B-v2/coactivation_heatmap_fixed.png",
+      "coactivation_layers": [
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a2-55B-v2/coactivation_heatmap_fixed_layer_7.png",
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a2-55B-v2/coactivation_heatmap_fixed_layer_15.png"
+      ],
+      "coactivation_upset_plots": [
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a2-55B-v2/expert_combination_upset_layer_7.png",
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a2-55B-v2/expert_combination_upset_layer_15.png"
+      ],
+      "domain_figures": [
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a2-55B-v2/domain_specialization_prompt_k1.png",
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a2-55B-v2/domain_specialization_predicted_k1.png",
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a2-55B-v2/domain_specialization_ground_truth_k1.png"
+      ],
+      "vocab_figure": "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a2-55B-v2/vocab_specialization_k1.png"
+    },
+    "FlexOlmo-8x7B-1T-a4-55B-v2": {
+      "coactivation_aggregate": "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a4-55B-v2/coactivation_heatmap_fixed.png",
+      "coactivation_layers": [
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a4-55B-v2/coactivation_heatmap_fixed_layer_7.png",
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a4-55B-v2/coactivation_heatmap_fixed_layer_15.png"
+      ],
+      "coactivation_upset_plots": [
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a4-55B-v2/expert_combination_upset_layer_7.png",
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a4-55B-v2/expert_combination_upset_layer_15.png"
+      ],
+      "domain_figures": [
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a4-55B-v2/domain_specialization_prompt_k1.png",
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a4-55B-v2/domain_specialization_predicted_k1.png",
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a4-55B-v2/domain_specialization_ground_truth_k1.png"
+      ],
+      "vocab_figure": "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a4-55B-v2/vocab_specialization_k1.png"
+    },
+    "FlexOlmo-8x7B-1T-a7-55B-v2": {
+      "coactivation_aggregate": "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a7-55B-v2/coactivation_heatmap_fixed.png",
+      "coactivation_layers": [
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a7-55B-v2/coactivation_heatmap_fixed_layer_7.png",
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a7-55B-v2/coactivation_heatmap_fixed_layer_15.png"
+      ],
+      "coactivation_upset_plots": [
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a7-55B-v2/expert_combination_upset_layer_7.png",
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a7-55B-v2/expert_combination_upset_layer_15.png"
+      ],
+      "domain_figures": [
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a7-55B-v2/domain_specialization_prompt_k1.png",
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a7-55B-v2/domain_specialization_predicted_k1.png",
+        "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a7-55B-v2/domain_specialization_ground_truth_k1.png"
+      ],
+      "vocab_figure": "eval_results/mkqa_results_smoke_combined/paper_style_plots/FlexOlmo-8x7B-1T-a7-55B-v2/vocab_specialization_k1.png"
+    }
+  },
+  "output_root": "eval_results/mkqa_results_smoke_combined/paper_style_plots",
+  "results_root": "eval_results/mkqa_results_smoke_combined"
+}
