@@ -1,0 +1,7 @@
+{
+  "native_full": {
+    "records_path": "eval_results/mkqa_results_smoke_combined/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/native_full/routing_records.jsonl",
+    "routing_analysis_path": "eval_results/mkqa_results_smoke_combined/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/native_full/routing_analysis.jsonl",
+    "summary_path": "eval_results/mkqa_results_smoke_combined/routing/FlexOlmo-8x7B-1T-a7-55B-v2/mkqa_en_da/native_full/routing_summary.jsonl"
+  }
+}
