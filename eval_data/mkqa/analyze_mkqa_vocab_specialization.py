@@ -27,6 +27,28 @@ SOURCE_SPECS = {
 }
 
 
+def normalize_layer_token_experts(layer_assignments) -> list[list[int]]:
+    if not layer_assignments:
+        return []
+
+    first_item = layer_assignments[0]
+
+    # Batched shape serialized from tensors: [batch][token][expert]
+    if isinstance(first_item, list) and first_item and isinstance(first_item[0], list):
+        token_assignments = first_item
+    else:
+        # Unbatched serialized shape: [token][expert] or [token]
+        token_assignments = layer_assignments
+
+    normalized = []
+    for token_experts in token_assignments:
+        if isinstance(token_experts, list):
+            normalized.append([int(expert_idx) for expert_idx in token_experts])
+        else:
+            normalized.append([int(token_experts)])
+    return normalized
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Compute vocabulary-specialization summaries from saved MKQA routing records."
@@ -121,8 +143,8 @@ def collect_counts(records: list[dict], selected_sources: list[str]):
                 continue
 
             for layer_idx, layer_assignments in enumerate(experts_by_layer):
-                batch_assignments = layer_assignments[0] if layer_assignments else []
-                for token_id, token_experts in zip(token_ids, batch_assignments):
+                token_assignments = normalize_layer_token_experts(layer_assignments)
+                for token_id, token_experts in zip(token_ids, token_assignments):
                     for expert_idx in token_experts:
                         counts[source][layer_idx][int(expert_idx)][int(token_id)] += 1
 
