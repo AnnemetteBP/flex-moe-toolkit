@@ -1,0 +1,34 @@
+{
+  "capture_hidden_states": false,
+  "capture_output_token_ids": true,
+  "capture_router_tensors": true,
+  "default_max_new_tokens": 16,
+  "device": "cuda",
+  "dtype": "auto",
+  "hidden_state_layers": [
+    0,
+    -1
+  ],
+  "languages": [
+    "en",
+    "da"
+  ],
+  "model_impl_path": "/work/training/flex-moe-toolkit/.venv-flex-moe-toolkit/lib/python3.12/site-packages/transformers/models/flex_olmo/modeling_flex_olmo.py",
+  "model_name": "Flex-code-2x7B-1T",
+  "model_native_top_k": 2,
+  "model_num_experts": 2,
+  "model_path": "/work/training/FlexMoRE/models/Flex-code-2x7B-1T",
+  "num_examples": 16,
+  "routing_run_mode": "native_only",
+  "run_labels": [
+    "native_full"
+  ],
+  "runs": {
+    "native_full": {
+      "records_path": "eval_results/mkqa_results_smoke/routing/Flex-code-2x7B-1T/mkqa_en_da/native_full/routing_records.jsonl",
+      "routing_analysis_path": "eval_results/mkqa_results_smoke/routing/Flex-code-2x7B-1T/mkqa_en_da/native_full/routing_analysis.jsonl",
+      "summary_path": "eval_results/mkqa_results_smoke/routing/Flex-code-2x7B-1T/mkqa_en_da/native_full/routing_summary.jsonl"
+    }
+  },
+  "tokenizer_path": "/work/training/FlexMoRE/models/Flex-code-2x7B-1T"
+}

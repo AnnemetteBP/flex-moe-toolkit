@@ -1,0 +1,13 @@
+{
+  "runs": {
+    "native_full": {
+      "routing_records_path": "eval_results/mkqa_results_smoke/routing/Flex-danish-2x7B-55B-v2/mkqa_en_da/native_full/routing_records.jsonl",
+      "summary_path": "eval_results/mkqa_results_smoke/domain_specialization/Flex-danish-2x7B-55B-v2/native_full/domain_specialization_summary.jsonl"
+    }
+  },
+  "sources": [
+    "prompt",
+    "predicted",
+    "ground_truth"
+  ]
+}
