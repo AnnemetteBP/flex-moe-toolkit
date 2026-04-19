@@ -133,6 +133,7 @@ def specialization_score(counter: Counter) -> float:
 
 def collect_counts(records: list[dict], selected_sources: list[str]):
     counts = defaultdict(lambda: defaultdict(lambda: defaultdict(Counter)))
+    token_totals = defaultdict(lambda: defaultdict(Counter))
 
     for record in records:
         for source in selected_sources:
@@ -145,13 +146,22 @@ def collect_counts(records: list[dict], selected_sources: list[str]):
             for layer_idx, layer_assignments in enumerate(experts_by_layer):
                 token_assignments = normalize_layer_token_experts(layer_assignments)
                 for token_id, token_experts in zip(token_ids, token_assignments):
+                    for _expert_idx in token_experts:
+                        token_totals[source][layer_idx][int(token_id)] += 1
                     for expert_idx in token_experts:
                         counts[source][layer_idx][int(expert_idx)][int(token_id)] += 1
 
-    return counts
+    return counts, token_totals
 
 
-def build_summary_records(records_path: Path, records: list[dict], counts, tokenizer, top_tokens: int) -> list[dict]:
+def build_summary_records(
+    records_path: Path,
+    records: list[dict],
+    counts,
+    token_totals,
+    tokenizer,
+    top_tokens: int,
+) -> list[dict]:
     summary_records = []
     if not records:
         return summary_records
@@ -160,17 +170,41 @@ def build_summary_records(records_path: Path, records: list[dict], counts, token
 
     for source, per_layer in counts.items():
         for layer_idx, per_expert in sorted(per_layer.items()):
-            expert_specialization = {}
+            expert_mean_specialization = {}
+            expert_token_distribution_concentration = {}
             expert_top_tokens = {}
+            layer_token_totals = token_totals[source][layer_idx]
             for expert_idx, token_counter in sorted(per_expert.items()):
-                expert_specialization[f"expert_{expert_idx}"] = specialization_score(token_counter)
+                token_specialization_values = {
+                    int(token_id): (
+                        count / layer_token_totals[int(token_id)] if layer_token_totals[int(token_id)] else 0.0
+                    )
+                    for token_id, count in token_counter.items()
+                }
+                expert_mean_specialization[f"expert_{expert_idx}"] = (
+                    sum(token_specialization_values.values()) / len(token_specialization_values)
+                    if token_specialization_values
+                    else 0.0
+                )
+                expert_token_distribution_concentration[f"expert_{expert_idx}"] = specialization_score(
+                    token_counter
+                )
                 expert_top_tokens[f"expert_{expert_idx}"] = [
                     {
                         "token_id": token_id,
                         "decoded": decode_token(tokenizer, token_id),
                         "count": count,
+                        "token_total_routes": int(layer_token_totals[int(token_id)]),
+                        "specialization": token_specialization_values[int(token_id)],
                     }
-                    for token_id, count in token_counter.most_common(top_tokens)
+                    for token_id, count in sorted(
+                        token_counter.items(),
+                        key=lambda item: (
+                            token_specialization_values[int(item[0])],
+                            item[1],
+                        ),
+                        reverse=True,
+                    )[:top_tokens]
                 ]
 
             summary_records.append(
@@ -183,10 +217,12 @@ def build_summary_records(records_path: Path, records: list[dict], counts, token
                     "source": source,
                     "layer_idx": layer_idx,
                     "num_experts": len(per_expert),
-                    "specialization_by_expert": expert_specialization,
+                    "token_totals": {str(token_id): int(count) for token_id, count in sorted(layer_token_totals.items())},
+                    "mean_specialization_by_expert": expert_mean_specialization,
+                    "expert_token_distribution_concentration": expert_token_distribution_concentration,
                     "mean_specialization": (
-                        sum(expert_specialization.values()) / len(expert_specialization)
-                        if expert_specialization
+                        sum(expert_mean_specialization.values()) / len(expert_mean_specialization)
+                        if expert_mean_specialization
                         else 0.0
                     ),
                     "top_tokens_by_expert": expert_top_tokens,
@@ -211,11 +247,12 @@ def main():
 
     for records_path in resolve_routing_record_paths(args):
         records = load_jsonl(records_path)
-        counts = collect_counts(records, selected_sources=selected_sources)
+        counts, token_totals = collect_counts(records, selected_sources=selected_sources)
         summary_records = build_summary_records(
             records_path=records_path,
             records=records,
             counts=counts,
+            token_totals=token_totals,
             tokenizer=tokenizer,
             top_tokens=args.top_tokens,
         )

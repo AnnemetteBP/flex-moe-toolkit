@@ -8,7 +8,11 @@ import json
 
 import torch
 
-from flex_moe_toolkit.core.routing_diagnostics import compute_all_metrics, compute_offdiagonal_ratio
+from flex_moe_toolkit.core.routing_diagnostics import (
+    compute_all_metrics,
+    compute_offdiagonal_ratio,
+    normalize_coactivation_counts,
+)
 from flex_moe_toolkit.adapters.flex_olmo import FlexOlmoAdapter
 from flex_moe_toolkit.pipelines.flex_olmo import analyze_flex_olmo_routing, restricted_expert_mode
 from flex_moe_toolkit.pipelines.flex_olmo_eval import FlexOlmoEvalRunSpec
@@ -159,6 +163,85 @@ def slice_continuation_topk_experts(topk_experts, continuation_length: int):
     return sliced
 
 
+def summarize_router_token_distributions(router_logits, topk_experts) -> list[dict[str, torch.Tensor]]:
+    summaries = []
+
+    for layer_idx, (layer_logits, layer_topk_experts) in enumerate(zip(router_logits, topk_experts)):
+        normalized_logits = ensure_router_logits_3d(layer_logits)
+        normalized_topk = ensure_router_logits_3d(layer_topk_experts)
+        probabilities = torch.softmax(normalized_logits, dim=-1)
+        entropy = -(probabilities * torch.log(probabilities.clamp_min(1e-9))).sum(dim=-1)
+
+        top_summary_k = min(2, probabilities.shape[-1])
+        top_probs, top_indices = torch.topk(probabilities, k=top_summary_k, dim=-1)
+
+        top1_probs = top_probs[..., 0]
+        top1_indices = top_indices[..., 0]
+        if top_summary_k > 1:
+            top2_probs = top_probs[..., 1]
+            top2_indices = top_indices[..., 1]
+        else:
+            top2_probs = torch.zeros_like(top1_probs)
+            top2_indices = torch.full_like(top1_indices, -1)
+
+        selected_prob_mass = probabilities.gather(dim=-1, index=normalized_topk).sum(dim=-1)
+
+        summaries.append(
+            {
+                "layer_idx": layer_idx,
+                "top1_expert_ids": top1_indices.detach().cpu(),
+                "top1_probs": top1_probs.detach().cpu(),
+                "top2_expert_ids": top2_indices.detach().cpu(),
+                "top2_probs": top2_probs.detach().cpu(),
+                "top1_top2_margin": (top1_probs - top2_probs).detach().cpu(),
+                "token_entropy": entropy.detach().cpu(),
+                "selected_expert_prob_mass": selected_prob_mass.detach().cpu(),
+            }
+        )
+
+    return summaries
+
+
+def slice_router_token_summaries(
+    router_token_summaries: list[dict[str, torch.Tensor]],
+    suffix_length: int,
+) -> list[dict[str, torch.Tensor]]:
+    if suffix_length <= 0:
+        return []
+
+    sliced = []
+    for layer_summary in router_token_summaries:
+        sliced.append(
+            {
+                key: (
+                    value[:, -suffix_length:].detach().cpu()
+                    if isinstance(value, torch.Tensor) and value.ndim >= 2
+                    else value
+                )
+                for key, value in layer_summary.items()
+            }
+        )
+    return sliced
+
+
+def aggregate_router_token_summaries(router_token_summaries: list[dict[str, torch.Tensor]]) -> list[dict[str, float | int]]:
+    aggregate = []
+    for layer_summary in router_token_summaries:
+        aggregate.append(
+            {
+                "layer_idx": int(layer_summary["layer_idx"]),
+                "mean_top1_prob": float(layer_summary["top1_probs"].float().mean().item()),
+                "mean_top2_prob": float(layer_summary["top2_probs"].float().mean().item()),
+                "mean_top1_top2_margin": float(layer_summary["top1_top2_margin"].float().mean().item()),
+                "mean_token_entropy": float(layer_summary["token_entropy"].float().mean().item()),
+                "mean_selected_expert_prob_mass": float(
+                    layer_summary["selected_expert_prob_mass"].float().mean().item()
+                ),
+            }
+        )
+    return aggregate
+
+
 def effective_run_top_k(model, run_spec: FlexOlmoEvalRunSpec) -> int:
     native_top_k = int(model.config.num_experts_per_tok)
     if not run_spec.apply_restricted_routing:
@@ -234,6 +317,8 @@ def analyze_prompt_example(
         prompt_topk_experts = [layer.detach().cpu() for layer in routing["topk_experts"]]
         prompt_router_logits_by_layer = []
         prompt_router_probs_by_layer = []
+        prompt_router_token_summaries_by_layer = []
+        prompt_router_summary_by_layer = []
         prompt_hidden_states_by_layer = {}
         prompt_hidden_state_norms = {}
         if capture_router_tensors:
@@ -244,6 +329,11 @@ def analyze_prompt_example(
             prompt_router_probs_by_layer = [
                 layer.detach().cpu() for layer in adapter.router_logits_to_probs(routing["router_logits"])
             ]
+        prompt_router_token_summaries_by_layer = summarize_router_token_distributions(
+            routing["router_logits"],
+            routing["topk_experts"],
+        )
+        prompt_router_summary_by_layer = aggregate_router_token_summaries(prompt_router_token_summaries_by_layer)
         if capture_hidden_states:
             (
                 prompt_hidden_states_by_layer,
@@ -262,6 +352,10 @@ def analyze_prompt_example(
         ground_truth_output_hidden_state_norms_by_layer = {}
         predicted_output_hidden_states_by_layer = {}
         predicted_output_hidden_state_norms_by_layer = {}
+        ground_truth_router_token_summaries_by_layer = []
+        ground_truth_router_summary_by_layer = []
+        predicted_router_token_summaries_by_layer = []
+        predicted_router_summary_by_layer = []
         if capture_output_token_ids:
             (
                 ground_truth_output_token_ids,
@@ -288,6 +382,16 @@ def analyze_prompt_example(
                 ground_truth_output_topk_experts = slice_continuation_topk_experts(
                     ground_truth_routing["topk_experts"],
                     continuation_length=len(ground_truth_output_token_ids),
+                )
+                ground_truth_router_token_summaries_by_layer = slice_router_token_summaries(
+                    summarize_router_token_distributions(
+                        ground_truth_routing["router_logits"],
+                        ground_truth_routing["topk_experts"],
+                    ),
+                    suffix_length=len(ground_truth_output_token_ids),
+                )
+                ground_truth_router_summary_by_layer = aggregate_router_token_summaries(
+                    ground_truth_router_token_summaries_by_layer
                 )
                 if capture_hidden_states:
                     hidden_states, hidden_state_norms = capture_hidden_state_artifacts(
@@ -317,6 +421,16 @@ def analyze_prompt_example(
                 predicted_output_topk_experts = slice_continuation_topk_experts(
                     predicted_routing["topk_experts"],
                     continuation_length=len(predicted_output_token_ids),
+                )
+                predicted_router_token_summaries_by_layer = slice_router_token_summaries(
+                    summarize_router_token_distributions(
+                        predicted_routing["router_logits"],
+                        predicted_routing["topk_experts"],
+                    ),
+                    suffix_length=len(predicted_output_token_ids),
+                )
+                predicted_router_summary_by_layer = aggregate_router_token_summaries(
+                    predicted_router_token_summaries_by_layer
                 )
                 if capture_hidden_states:
                     hidden_states, hidden_state_norms = capture_hidden_state_artifacts(
@@ -349,8 +463,17 @@ def analyze_prompt_example(
                 "layer_idx": layer_idx,
                 "usage": layer_metrics["usage"],
                 "entropy_mean": layer_metrics["entropy_mean"],
+                "coactivation_counts": layer_metrics["coactivation_counts"],
+                "activation_counts": layer_metrics["activation_counts"],
                 "coactivation_matrix": layer_metrics["coactivation_matrix"],
                 "offdiag_ratio": layer_metrics["offdiag_ratio"],
+                "mean_top1_prob": prompt_router_summary_by_layer[layer_idx]["mean_top1_prob"],
+                "mean_top2_prob": prompt_router_summary_by_layer[layer_idx]["mean_top2_prob"],
+                "mean_top1_top2_margin": prompt_router_summary_by_layer[layer_idx]["mean_top1_top2_margin"],
+                "mean_token_entropy": prompt_router_summary_by_layer[layer_idx]["mean_token_entropy"],
+                "mean_selected_expert_prob_mass": prompt_router_summary_by_layer[layer_idx][
+                    "mean_selected_expert_prob_mass"
+                ],
             }
         )
 
@@ -378,10 +501,14 @@ def analyze_prompt_example(
         "prompt_topk_experts_by_layer": prompt_topk_experts,
         "prompt_router_logits_by_layer": prompt_router_logits_by_layer if capture_router_tensors else None,
         "prompt_router_probs_by_layer": prompt_router_probs_by_layer if capture_router_tensors else None,
+        "prompt_router_token_summaries_by_layer": prompt_router_token_summaries_by_layer,
+        "prompt_router_summary_by_layer": prompt_router_summary_by_layer,
         "prompt_hidden_states_by_layer": prompt_hidden_states_by_layer if capture_hidden_states else None,
         "prompt_hidden_state_norms_by_layer": prompt_hidden_state_norms if capture_hidden_states else None,
         "ground_truth_output_token_ids": ground_truth_output_token_ids,
         "ground_truth_output_topk_experts_by_layer": ground_truth_output_topk_experts,
+        "ground_truth_router_token_summaries_by_layer": ground_truth_router_token_summaries_by_layer,
+        "ground_truth_router_summary_by_layer": ground_truth_router_summary_by_layer,
         "ground_truth_output_hidden_states_by_layer": (
             ground_truth_output_hidden_states_by_layer if capture_hidden_states else None
         ),
@@ -390,6 +517,8 @@ def analyze_prompt_example(
         ),
         "predicted_output_token_ids": predicted_output_token_ids,
         "predicted_output_topk_experts_by_layer": predicted_output_topk_experts,
+        "predicted_router_token_summaries_by_layer": predicted_router_token_summaries_by_layer,
+        "predicted_router_summary_by_layer": predicted_router_summary_by_layer,
         "predicted_output_hidden_states_by_layer": (
             predicted_output_hidden_states_by_layer if capture_hidden_states else None
         ),
@@ -404,8 +533,15 @@ def analyze_prompt_example(
         "batch_routing_metrics": {
             "usage": batch_metrics["usage"],
             "entropy_mean": batch_metrics["entropy_mean"],
+            "coactivation_counts": batch_metrics["coactivation_counts"],
+            "activation_counts": batch_metrics["activation_counts"],
             "coactivation_matrix": batch_metrics["coactivation_matrix"],
             "offdiag_ratio": batch_metrics["offdiag_ratio"],
+            "mean_top1_prob": prompt_router_summary_by_layer[0]["mean_top1_prob"],
+            "mean_top2_prob": prompt_router_summary_by_layer[0]["mean_top2_prob"],
+            "mean_top1_top2_margin": prompt_router_summary_by_layer[0]["mean_top1_top2_margin"],
+            "mean_token_entropy": prompt_router_summary_by_layer[0]["mean_token_entropy"],
+            "mean_selected_expert_prob_mass": prompt_router_summary_by_layer[0]["mean_selected_expert_prob_mass"],
         },
         "layer_batch_routing_metrics": layer_batch_routing_metrics,
         "token_topk_combination_counts": {
@@ -471,26 +607,58 @@ def aggregate_routing_analysis(records: list[dict[str, Any]]) -> tuple[list[dict
 
     usage_sum = None
     entropy_total = 0.0
-    layer_coactivation_sums = []
+    top1_prob_total = 0.0
+    top2_prob_total = 0.0
+    top1_top2_margin_total = 0.0
+    token_entropy_total = 0.0
+    selected_expert_prob_mass_total = 0.0
+    batch_coactivation_count_sum = None
+    batch_activation_count_sum = None
+    layer_coactivation_count_sums = []
+    layer_activation_count_sums = []
     batch_records = []
 
     for record in records:
         metrics = record["batch_routing_metrics"]
         usage = metrics["usage"].detach().cpu()
         entropy = float(metrics["entropy_mean"])
+        batch_coactivation_counts = metrics["coactivation_counts"].detach().cpu()
+        batch_activation_counts = metrics["activation_counts"].detach().cpu()
 
         usage_sum = usage.clone() if usage_sum is None else usage_sum + usage
         entropy_total += entropy
+        top1_prob_total += float(metrics["mean_top1_prob"])
+        top2_prob_total += float(metrics["mean_top2_prob"])
+        top1_top2_margin_total += float(metrics["mean_top1_top2_margin"])
+        token_entropy_total += float(metrics["mean_token_entropy"])
+        selected_expert_prob_mass_total += float(metrics["mean_selected_expert_prob_mass"])
+        batch_coactivation_count_sum = (
+            batch_coactivation_counts.clone()
+            if batch_coactivation_count_sum is None
+            else batch_coactivation_count_sum + batch_coactivation_counts
+        )
+        batch_activation_count_sum = (
+            batch_activation_counts.clone()
+            if batch_activation_count_sum is None
+            else batch_activation_count_sum + batch_activation_counts
+        )
 
         for layer_metrics in record["layer_batch_routing_metrics"]:
             layer_idx = layer_metrics["layer_idx"]
-            layer_coactivation = layer_metrics["coactivation_matrix"].detach().cpu()
-            while len(layer_coactivation_sums) <= layer_idx:
-                layer_coactivation_sums.append(None)
-            layer_coactivation_sums[layer_idx] = (
-                layer_coactivation.clone()
-                if layer_coactivation_sums[layer_idx] is None
-                else layer_coactivation_sums[layer_idx] + layer_coactivation
+            layer_coactivation_counts = layer_metrics["coactivation_counts"].detach().cpu()
+            layer_activation_counts = layer_metrics["activation_counts"].detach().cpu()
+            while len(layer_coactivation_count_sums) <= layer_idx:
+                layer_coactivation_count_sums.append(None)
+                layer_activation_count_sums.append(None)
+            layer_coactivation_count_sums[layer_idx] = (
+                layer_coactivation_counts.clone()
+                if layer_coactivation_count_sums[layer_idx] is None
+                else layer_coactivation_count_sums[layer_idx] + layer_coactivation_counts
+            )
+            layer_activation_count_sums[layer_idx] = (
+                layer_activation_counts.clone()
+                if layer_activation_count_sums[layer_idx] is None
+                else layer_activation_count_sums[layer_idx] + layer_activation_counts
             )
 
         batch_records.append(
@@ -501,29 +669,52 @@ def aggregate_routing_analysis(records: list[dict[str, Any]]) -> tuple[list[dict
                 "language": record["language"],
                 "usage": usage,
                 "entropy_mean": entropy,
+                "coactivation_counts": batch_coactivation_counts,
+                "activation_counts": batch_activation_counts,
                 "coactivation_matrix": metrics["coactivation_matrix"].detach().cpu(),
-                "offdiag_ratio": metrics["offdiag_ratio"],
+                "offdiag_ratio": float(metrics["offdiag_ratio"]),
+                "mean_top1_prob": float(metrics["mean_top1_prob"]),
+                "mean_top2_prob": float(metrics["mean_top2_prob"]),
+                "mean_top1_top2_margin": float(metrics["mean_top1_top2_margin"]),
+                "mean_token_entropy": float(metrics["mean_token_entropy"]),
+                "mean_selected_expert_prob_mass": float(metrics["mean_selected_expert_prob_mass"]),
             }
         )
 
     aggregate_usage = usage_sum / usage_sum.sum()
     aggregate_entropy = entropy_total / len(records)
-    non_null_layer_matrices = [matrix for matrix in layer_coactivation_sums if matrix is not None]
-    if not non_null_layer_matrices:
+    non_null_layer_counts = [matrix for matrix in layer_coactivation_count_sums if matrix is not None]
+    if not non_null_layer_counts:
         raise ValueError("No layer-wise coactivation matrices were collected.")
 
-    coactivation_sum = non_null_layer_matrices[0].clone()
-    for matrix in non_null_layer_matrices[1:]:
-        coactivation_sum = coactivation_sum + matrix
+    aggregate_coactivation_matrix = normalize_coactivation_counts(
+        batch_coactivation_count_sum,
+        batch_activation_count_sum,
+    )
+    layer_coactivation_matrices = [
+        (
+            normalize_coactivation_counts(layer_counts, layer_activations)
+            if layer_counts is not None and layer_activations is not None
+            else None
+        )
+        for layer_counts, layer_activations in zip(layer_coactivation_count_sums, layer_activation_count_sums)
+    ]
 
     aggregate_record = {
         "record_type": "routing_aggregate",
         "num_batches": len(records),
         "usage": aggregate_usage,
         "entropy_mean": aggregate_entropy,
-        "coactivation_matrix": coactivation_sum,
-        "layer_coactivation_matrices": layer_coactivation_sums,
-        "offdiag_ratio": compute_offdiagonal_ratio(coactivation_sum),
+        "mean_top1_prob": top1_prob_total / len(records),
+        "mean_top2_prob": top2_prob_total / len(records),
+        "mean_top1_top2_margin": top1_top2_margin_total / len(records),
+        "mean_token_entropy": token_entropy_total / len(records),
+        "mean_selected_expert_prob_mass": selected_expert_prob_mass_total / len(records),
+        "coactivation_counts": batch_coactivation_count_sum,
+        "activation_counts": batch_activation_count_sum,
+        "coactivation_matrix": aggregate_coactivation_matrix,
+        "layer_coactivation_matrices": layer_coactivation_matrices,
+        "offdiag_ratio": compute_offdiagonal_ratio(aggregate_coactivation_matrix),
     }
 
     return batch_records + [aggregate_record], aggregate_record

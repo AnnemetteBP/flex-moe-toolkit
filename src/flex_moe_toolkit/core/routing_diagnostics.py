@@ -185,7 +185,7 @@ def compute_entropy(router_logits: torch.Tensor) -> tuple[torch.Tensor, torch.Te
     return entropy_mean, entropy_per_token
 
 
-def compute_coactivation(router_logits: torch.Tensor, top_k: int) -> torch.Tensor:
+def compute_coactivation_counts(router_logits: torch.Tensor, top_k: int) -> tuple[torch.Tensor, torch.Tensor]:
     if router_logits.ndim != 3:
         raise ValueError(
             "`router_logits` must have shape `(B, T, E)`, "
@@ -201,16 +201,52 @@ def compute_coactivation(router_logits: torch.Tensor, top_k: int) -> torch.Tenso
     probabilities = torch.softmax(router_logits, dim=-1)
     topk_indices = torch.topk(probabilities, k=top_k, dim=-1).indices
 
-    matrix = torch.zeros(
+    coactivation_counts = torch.zeros(
         (num_experts, num_experts),
+        dtype=router_logits.dtype,
+        device=router_logits.device,
+    )
+    activation_counts = torch.zeros(
+        (num_experts,),
         dtype=router_logits.dtype,
         device=router_logits.device,
     )
 
     for token_experts in topk_indices.reshape(-1, top_k):
-        matrix[token_experts.unsqueeze(1), token_experts.unsqueeze(0)] += 1
+        activation_counts[token_experts] += 1
+        coactivation_counts[token_experts.unsqueeze(1), token_experts.unsqueeze(0)] += 1
 
-    return matrix
+    return coactivation_counts, activation_counts
+
+
+def normalize_coactivation_counts(
+    coactivation_counts: torch.Tensor,
+    activation_counts: torch.Tensor,
+) -> torch.Tensor:
+    if coactivation_counts.ndim != 2 or coactivation_counts.shape[0] != coactivation_counts.shape[1]:
+        raise ValueError(
+            "`coactivation_counts` must have shape `(E, E)`, "
+            f"received {tuple(coactivation_counts.shape)}."
+        )
+    if activation_counts.ndim != 1 or activation_counts.shape[0] != coactivation_counts.shape[0]:
+        raise ValueError(
+            "`activation_counts` must have shape `(E,)` matching the matrix size, "
+            f"received {tuple(activation_counts.shape)}."
+        )
+
+    safe_denominator = activation_counts.unsqueeze(1).clamp_min(1)
+    normalized = coactivation_counts / safe_denominator
+    normalized = torch.where(
+        activation_counts.unsqueeze(1) > 0,
+        normalized,
+        torch.zeros_like(normalized),
+    )
+    return normalized
+
+
+def compute_coactivation(router_logits: torch.Tensor, top_k: int) -> torch.Tensor:
+    coactivation_counts, activation_counts = compute_coactivation_counts(router_logits, top_k=top_k)
+    return normalize_coactivation_counts(coactivation_counts, activation_counts)
 
 
 def compute_offdiagonal_ratio(M: torch.Tensor) -> float:
@@ -232,12 +268,15 @@ def compute_offdiagonal_ratio(M: torch.Tensor) -> float:
 def compute_all_metrics(router_logits: torch.Tensor, top_k: int) -> dict:
     usage = compute_expert_usage(router_logits)
     entropy_mean, entropy_per_token = compute_entropy(router_logits)
-    coactivation_matrix = compute_coactivation(router_logits, top_k=top_k)
+    coactivation_counts, activation_counts = compute_coactivation_counts(router_logits, top_k=top_k)
+    coactivation_matrix = normalize_coactivation_counts(coactivation_counts, activation_counts)
     offdiag_ratio = compute_offdiagonal_ratio(coactivation_matrix)
 
     return {
         "usage": usage,
         "entropy_mean": entropy_mean,
+        "coactivation_counts": coactivation_counts,
+        "activation_counts": activation_counts,
         "coactivation_matrix": coactivation_matrix,
         "offdiag_ratio": offdiag_ratio,
     }

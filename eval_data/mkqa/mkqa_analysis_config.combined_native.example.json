@@ -1,0 +1,37 @@
+{
+  "runtime": {
+    "output_root": "eval_results/mkqa_results_combined",
+    "device": "cuda",
+    "dtype": "auto",
+    "max_length": 512,
+    "default_max_new_tokens": 16
+  },
+  "shared": {
+    "data_path": "eval_data/mkqa/mkqa_da_en_subset.json",
+    "languages": ["en", "da"],
+    "model_root": "__MODEL_ROOT__",
+    "model_registry": "model_paths/all_models.txt",
+    "model_catalog": "model_paths/models.json",
+    "tokenizer_path": null,
+    "public_expert_idx": 0,
+    "routing_run_mode": "native_only",
+    "combined_active_experts": "2,4,7",
+    "capture_router_tensors": true,
+    "capture_hidden_states": false,
+    "hidden_state_layers": [0, -1],
+    "capture_output_token_ids": true,
+    "vocab_sources": "prompt,predicted,ground_truth",
+    "top_tokens": 20,
+    "model_group_selectors": [
+      "flexolmo.8x7B.a2",
+      "flexolmo.8x7B.a4",
+      "flexolmo.8x7B.a7"
+    ]
+  },
+  "analyses": {
+    "routing": { "enabled": true },
+    "vocab_specialization": { "enabled": true },
+    "domain_specialization": { "enabled": true },
+    "weights": { "enabled": false }
+  }
+}

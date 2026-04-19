@@ -1,0 +1,23 @@
+{
+  "runtime": {
+    "output_root": "eval_results/public_expert_results_smoke",
+    "device": "cpu",
+    "dtype": "auto"
+  },
+  "shared": {
+    "model_root": "__MODEL_ROOT__",
+    "model_registry": "model_paths/all_models.txt",
+    "model_catalog": "model_paths/models.json",
+    "public_expert_idx": 0
+  },
+  "analyses": {
+    "routing": { "enabled": false },
+    "vocab_specialization": { "enabled": false },
+    "domain_specialization": { "enabled": false },
+    "weights": { "enabled": true }
+  },
+  "models": [
+    { "enabled": true, "model_name": "Flex-code-2x7B-1T" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-55B-v2" }
+  ]
+}

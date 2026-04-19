@@ -8,7 +8,11 @@ import json
 
 import torch
 
-from flex_moe_toolkit.core.routing_diagnostics import compute_all_metrics, compute_offdiagonal_ratio
+from flex_moe_toolkit.core.routing_diagnostics import (
+    compute_all_metrics,
+    compute_offdiagonal_ratio,
+    normalize_coactivation_counts,
+)
 from flex_moe_toolkit.pipelines.flex_olmo import analyze_flex_olmo_routing, restricted_expert_mode
 from flex_moe_toolkit.utils.jsonl import write_jsonl
 from flex_moe_toolkit.utils.router_activity import (
@@ -335,6 +339,8 @@ def evaluate_example(
                 "layer_idx": layer_idx,
                 "usage": layer_metrics["usage"],
                 "entropy_mean": layer_metrics["entropy_mean"],
+                "coactivation_counts": layer_metrics["coactivation_counts"],
+                "activation_counts": layer_metrics["activation_counts"],
                 "coactivation_matrix": layer_metrics["coactivation_matrix"],
                 "offdiag_ratio": layer_metrics["offdiag_ratio"],
             }
@@ -368,6 +374,8 @@ def evaluate_example(
         "batch_routing_metrics": {
             "usage": batch_metrics["usage"],
             "entropy_mean": batch_metrics["entropy_mean"],
+            "coactivation_counts": batch_metrics["coactivation_counts"],
+            "activation_counts": batch_metrics["activation_counts"],
             "coactivation_matrix": batch_metrics["coactivation_matrix"],
             "offdiag_ratio": batch_metrics["offdiag_ratio"],
         },
@@ -496,7 +504,10 @@ def aggregate_routing_analysis(records: list[dict[str, Any]]) -> tuple[list[dict
 
     usage_sum = None
     entropy_total = 0.0
-    layer_coactivation_sums = []
+    batch_coactivation_count_sum = None
+    batch_activation_count_sum = None
+    layer_coactivation_count_sums = []
+    layer_activation_count_sums = []
     batch_records = []
 
     for record in records:
@@ -504,18 +515,38 @@ def aggregate_routing_analysis(records: list[dict[str, Any]]) -> tuple[list[dict
         usage = metrics["usage"].detach().cpu()
         entropy = float(metrics["entropy_mean"])
 
+        batch_coactivation_counts = metrics["coactivation_counts"].detach().cpu()
+        batch_activation_counts = metrics["activation_counts"].detach().cpu()
+
         usage_sum = usage.clone() if usage_sum is None else usage_sum + usage
         entropy_total += entropy
+        batch_coactivation_count_sum = (
+            batch_coactivation_counts.clone()
+            if batch_coactivation_count_sum is None
+            else batch_coactivation_count_sum + batch_coactivation_counts
+        )
+        batch_activation_count_sum = (
+            batch_activation_counts.clone()
+            if batch_activation_count_sum is None
+            else batch_activation_count_sum + batch_activation_counts
+        )
 
         for layer_metrics in record["layer_batch_routing_metrics"]:
             layer_idx = layer_metrics["layer_idx"]
-            layer_coactivation = layer_metrics["coactivation_matrix"].detach().cpu()
-            while len(layer_coactivation_sums) <= layer_idx:
-                layer_coactivation_sums.append(None)
-            layer_coactivation_sums[layer_idx] = (
-                layer_coactivation.clone()
-                if layer_coactivation_sums[layer_idx] is None
-                else layer_coactivation_sums[layer_idx] + layer_coactivation
+            layer_coactivation_counts = layer_metrics["coactivation_counts"].detach().cpu()
+            layer_activation_counts = layer_metrics["activation_counts"].detach().cpu()
+            while len(layer_coactivation_count_sums) <= layer_idx:
+                layer_coactivation_count_sums.append(None)
+                layer_activation_count_sums.append(None)
+            layer_coactivation_count_sums[layer_idx] = (
+                layer_coactivation_counts.clone()
+                if layer_coactivation_count_sums[layer_idx] is None
+                else layer_coactivation_count_sums[layer_idx] + layer_coactivation_counts
+            )
+            layer_activation_count_sums[layer_idx] = (
+                layer_activation_counts.clone()
+                if layer_activation_count_sums[layer_idx] is None
+                else layer_activation_count_sums[layer_idx] + layer_activation_counts
             )
 
         batch_records.append(
@@ -525,6 +556,8 @@ def aggregate_routing_analysis(records: list[dict[str, Any]]) -> tuple[list[dict
                 "example_id": record["example_id"],
                 "usage": usage,
                 "entropy_mean": entropy,
+                "coactivation_counts": batch_coactivation_counts,
+                "activation_counts": batch_activation_counts,
                 "coactivation_matrix": metrics["coactivation_matrix"].detach().cpu(),
                 "offdiag_ratio": metrics["offdiag_ratio"],
             }
@@ -532,22 +565,33 @@ def aggregate_routing_analysis(records: list[dict[str, Any]]) -> tuple[list[dict
 
     aggregate_usage = usage_sum / usage_sum.sum()
     aggregate_entropy = entropy_total / len(records)
-    non_null_layer_matrices = [matrix for matrix in layer_coactivation_sums if matrix is not None]
-    if not non_null_layer_matrices:
+    non_null_layer_counts = [matrix for matrix in layer_coactivation_count_sums if matrix is not None]
+    if not non_null_layer_counts:
         raise ValueError("No layer-wise coactivation matrices were collected.")
 
-    coactivation_sum = non_null_layer_matrices[0].clone()
-    for matrix in non_null_layer_matrices[1:]:
-        coactivation_sum = coactivation_sum + matrix
+    aggregate_coactivation_matrix = normalize_coactivation_counts(
+        batch_coactivation_count_sum,
+        batch_activation_count_sum,
+    )
+    layer_coactivation_matrices = [
+        (
+            normalize_coactivation_counts(layer_counts, layer_activations)
+            if layer_counts is not None and layer_activations is not None
+            else None
+        )
+        for layer_counts, layer_activations in zip(layer_coactivation_count_sums, layer_activation_count_sums)
+    ]
 
     aggregate_record = {
         "record_type": "routing_aggregate",
         "num_batches": len(records),
         "usage": aggregate_usage,
         "entropy_mean": aggregate_entropy,
-        "coactivation_matrix": coactivation_sum,
-        "layer_coactivation_matrices": layer_coactivation_sums,
-        "offdiag_ratio": compute_offdiagonal_ratio(coactivation_sum),
+        "coactivation_counts": batch_coactivation_count_sum,
+        "activation_counts": batch_activation_count_sum,
+        "coactivation_matrix": aggregate_coactivation_matrix,
+        "layer_coactivation_matrices": layer_coactivation_matrices,
+        "offdiag_ratio": compute_offdiagonal_ratio(aggregate_coactivation_matrix),
     }
 
     return batch_records + [aggregate_record], aggregate_record

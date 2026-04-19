@@ -97,6 +97,7 @@ def build_domain_specialization_records(records: list[dict], selected_sources: l
     run_label = records[0]["run_label"]
 
     counts = defaultdict(lambda: defaultdict(lambda: defaultdict(Counter)))
+    domain_token_totals = defaultdict(Counter)
 
     for record in records:
         language = record["language"]
@@ -106,6 +107,8 @@ def build_domain_specialization_records(records: list[dict], selected_sources: l
             experts_by_layer = record.get(expert_field) or []
             if not token_ids or not experts_by_layer:
                 continue
+
+            domain_token_totals[source][language] += len(token_ids)
 
             for layer_idx, layer_assignments in enumerate(experts_by_layer):
                 token_assignments = normalize_layer_token_experts(layer_assignments)
@@ -118,7 +121,13 @@ def build_domain_specialization_records(records: list[dict], selected_sources: l
         for layer_idx, per_expert in sorted(per_layer.items()):
             for expert_idx, language_counter in sorted(per_expert.items()):
                 total_assignments = sum(language_counter.values())
-                specialization = {
+                language_specialization = {
+                    language: count / domain_token_totals[source][language]
+                    if domain_token_totals[source][language]
+                    else 0.0
+                    for language, count in sorted(language_counter.items())
+                }
+                expert_conditioned_distribution = {
                     language: count / total_assignments if total_assignments else 0.0
                     for language, count in sorted(language_counter.items())
                 }
@@ -132,8 +141,10 @@ def build_domain_specialization_records(records: list[dict], selected_sources: l
                         "layer_idx": layer_idx,
                         "expert_idx": expert_idx,
                         "assignment_count": total_assignments,
+                        "language_token_totals": dict(sorted(domain_token_totals[source].items())),
                         "language_assignment_counts": dict(sorted(language_counter.items())),
-                        "language_specialization": specialization,
+                        "language_specialization": language_specialization,
+                        "expert_conditioned_language_distribution": expert_conditioned_distribution,
                     }
                 )
     return summary_records

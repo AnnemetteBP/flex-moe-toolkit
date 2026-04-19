@@ -9,6 +9,7 @@ import sys
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 MKQA_DIR = PROJECT_ROOT / "eval_data" / "mkqa"
+WEIGHTS_SCRIPT = PROJECT_ROOT / "scripts" / "flex_olmo" / "utils" / "analyze_flex_olmo_weights.py"
 
 
 def parse_args():
@@ -207,6 +208,32 @@ def build_domain_command(model_entry: dict, shared: dict, runtime: dict) -> list
     ]
 
 
+def build_weights_command(model_entry: dict, shared: dict, runtime: dict) -> list[str]:
+    model_output_root = Path(runtime["output_root"]) / "weight_analysis" / model_slug(model_entry)
+    summary_path = model_output_root / "weight_analysis_summary.jsonl"
+    details_dir = model_output_root / "details"
+
+    command = [
+        sys.executable,
+        str(WEIGHTS_SCRIPT),
+        "--output-jsonl",
+        str(summary_path),
+        "--output-dir",
+        str(details_dir),
+        "--device",
+        str(runtime.get("device", "cpu")),
+        "--dtype",
+        str(runtime.get("dtype", "auto")),
+        "--public-expert-idx",
+        str(shared.get("public_expert_idx", 0)),
+    ]
+    if model_entry.get("model_path"):
+        command.extend(["--model-path", str(model_entry["model_path"])])
+    else:
+        command.extend(["--model-path", str(Path(shared["model_root"]) / str(model_entry["model_name"]))])
+    return command
+
+
 def run_command(command: list[str], dry_run: bool):
     print("Command:")
     print(" ".join(command))
@@ -238,6 +265,8 @@ def main():
             all_commands.append(build_vocab_command(model_entry, shared, runtime))
         if analyses.get("domain_specialization", {}).get("enabled", True):
             all_commands.append(build_domain_command(model_entry, shared, runtime))
+        if analyses.get("weights", {}).get("enabled", False):
+            all_commands.append(build_weights_command(model_entry, shared, runtime))
 
     manifest_path = Path(runtime["output_root"]) / "mkqa_analysis_suite_manifest.json"
     manifest_path.write_text(

@@ -151,50 +151,62 @@ python3 eval_data/mkqa/analyze_mkqa_domain_specialization.py \
   --output-root eval_results/mkqa_results/domain_specialization/<model_name>
 ```
 
-To sweep multiple checkpoints and analyses from one config, start from [mkqa_analysis_config.example.json](/media/am/AM/flex-moe-toolkit/eval_data/mkqa/mkqa_analysis_config.example.json):
+To sweep multiple checkpoints and analyses from one config, start from one of the split suite configs:
+
+- combined native FlexOlmo routing suite: [mkqa_analysis_config.combined_native.example.json](/media/am/AM/flex-moe-toolkit/eval_data/mkqa/mkqa_analysis_config.combined_native.example.json)
+- public/expert comparison suite: [mkqa_analysis_config.public_expert.example.json](/media/am/AM/flex-moe-toolkit/eval_data/mkqa/mkqa_analysis_config.public_expert.example.json)
+
+For example:
 
 ```bash
 python3 eval_data/mkqa/run_mkqa_analysis_suite.py \
-  --config eval_data/mkqa/mkqa_analysis_config.example.json \
+  --config eval_data/mkqa/mkqa_analysis_config.combined_native.example.json \
   --dry-run
 ```
 
-The MKQA suite can resolve grouped model selections directly from [models.json](/media/am/AM/flex-moe-toolkit/model_paths/models.json). The first-wave selectors are intended to cover:
+The MKQA suite can resolve grouped model selections directly from [models.json](/media/am/AM/flex-moe-toolkit/model_paths/models.json). The split configs use them differently:
 
-- `expert_models`
-- `experts_da` (alias for `combined_danish`)
 - `flexolmo.8x7B.a2`
 - `flexolmo.8x7B.a4`
 - `flexolmo.8x7B.a7`
+- `expert_models`
+- `experts_da`
 
-This intentionally excludes `flexolmo.7x7B.*` and `flexolmo.8x7B.a8` for router-analysis sweeps.
+The combined native suite intentionally excludes `flexolmo.7x7B.*` and `flexolmo.8x7B.a8` for router-analysis sweeps and evaluates `a2/a4/a7` checkpoints in `native_only` mode.
 
 The MKQA stack is designed to write structured JSONL outputs under:
 
 - `eval_results/mkqa_results/routing/`
 - `eval_results/mkqa_results/vocab_specialization/`
 - `eval_results/mkqa_results/domain_specialization/`
+- `eval_results/public_expert_results/weight_analysis/`
 
 For MKQA analysis outputs, each JSONL record is written with `model_name` first and includes the resolved `model_path` so UCloud results remain easy to group and merge later.
 
-Two bash entrypoints are included for UCloud-style runs:
+Separate bash entrypoints are included for UCloud-style runs:
 
 ```bash
 export MKQA_MODEL_ROOT=/work/training/FlexMoRE/models
 
-bash eval_data/mkqa/run_mkqa_smoke_suite.sh --dry-run
-bash eval_data/mkqa/run_mkqa_full_suite.sh --dry-run
+bash eval_data/mkqa/run_mkqa_combined_smoke_suite.sh --dry-run
+bash eval_data/mkqa/run_mkqa_combined_full_suite.sh --dry-run
+
+bash eval_data/mkqa/run_public_expert_smoke_suite.sh --dry-run
+bash eval_data/mkqa/run_public_expert_full_suite.sh --dry-run
 ```
 
-The smoke suite uses one representative model from each first-wave group:
+The combined smoke suite uses one representative checkpoint for:
 
-- one `expert_models` checkpoint
-- one `experts_da` checkpoint
 - one `flexolmo.8x7B.a2` checkpoint
 - one `flexolmo.8x7B.a4` checkpoint
 - one `flexolmo.8x7B.a7` checkpoint
 
-The full suite uses the grouped selectors from `models.json` and still excludes `7x7B` and `8x7B.a8`.
+The public/expert smoke suite uses one representative checkpoint for:
+
+- one `expert_models` checkpoint
+- one `experts_da` checkpoint
+
+The combined full suite uses the grouped selectors from `models.json` and still excludes `7x7B` and `8x7B.a8`. The public/expert full suite is weight-analysis-oriented and resolves `expert_models` plus `experts_da`.
 
 If the tokenizer lives in the same model directory on UCloud, you do not need to set a separate tokenizer path. The MKQA runners will default to the resolved model path for tokenizer loading.
 
