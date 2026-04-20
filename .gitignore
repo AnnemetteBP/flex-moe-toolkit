@@ -6,3 +6,5 @@ __pycache__
 
 allenai/
 gsm8k_golddaen/
+
+eval_results/

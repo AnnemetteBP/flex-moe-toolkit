@@ -1,6 +1,13 @@
 import torch
 
 
+def _analysis_forward_kwargs(inputs: dict) -> dict:
+    return {
+        **inputs,
+        "use_cache": False,
+    }
+
+
 def capture_router_logits(model, inputs, adapter=None):
     """
     Run model and return router logits.
@@ -13,7 +20,7 @@ def capture_router_logits(model, inputs, adapter=None):
         model.config.output_router_logits = True
 
     with torch.no_grad():
-        outputs = model(**inputs)
+        outputs = model(**_analysis_forward_kwargs(inputs))
 
     router_logits = outputs.router_logits
 

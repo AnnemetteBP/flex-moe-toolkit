@@ -41,7 +41,7 @@ class FlexOlmoAdapter(BaseAdapter):
                 handles.append(layer.mlp.gate.register_forward_hook(hook_fn))
 
             with torch.no_grad():
-                model(**inputs)
+                model(**inputs, use_cache=False)
         finally:
             for handle in handles:
                 handle.remove()

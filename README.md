@@ -112,11 +112,19 @@ When the script starts, it prints the exact `FlexOlmoForCausalLM` source file be
 ## MKQA routing analysis
 For prepared bilingual MKQA prompt data, use the dedicated prompt-routing runner. This is the better fit for English/Danish routing analysis before moving on to generation-based evaluation.
 
+The MKQA benchmark assets now live under:
+
+- `eval/benchmarks/mkqa/data/`
+- `eval/benchmarks/mkqa/configs/`
+- `eval/benchmarks/mkqa/runners/`
+- `eval/benchmarks/mkqa/analyses/`
+- `eval/benchmarks/mkqa/plotting/`
+
 ```bash
-python3 eval_data/mkqa/run_mkqa_routing_analysis.py \
+python3 eval/benchmarks/mkqa/runners/run_mkqa_routing_analysis.py \
   --model-name FlexOlmo-8x7B-1T-a4-55B-v2 \
   --model-root /path/to/ucloud/models \
-  --data-path eval_data/mkqa/mkqa_da_en_subset.json \
+  --data-path eval/benchmarks/mkqa/data/mkqa_da_en_subset.json \
   --languages en,da \
   --device cuda:0
 ```
@@ -137,30 +145,30 @@ The runner:
 Post-hoc vocabulary specialization can then be computed from the saved routing records without rerunning the model:
 
 ```bash
-python3 eval_data/mkqa/analyze_mkqa_vocab_specialization.py \
-  --routing-root eval_results/mkqa_results/routing/<model_name>/mkqa_en_da \
+python3 eval/benchmarks/mkqa/analyses/analyze_mkqa_vocab_specialization.py \
+  --routing-root eval_results/mkqa/full/flexolmo/a4/routing/<model_name>/mkqa_en_da \
   --tokenizer-path /path/to/tokenizer \
-  --output-root eval_results/mkqa_results/vocab_specialization/<model_name>
+  --output-root eval_results/mkqa/full/flexolmo/a4/vocab_specialization/<model_name>
 ```
 
 Domain specialization can be computed from the same saved routing records:
 
 ```bash
-python3 eval_data/mkqa/analyze_mkqa_domain_specialization.py \
-  --routing-root eval_results/mkqa_results/routing/<model_name>/mkqa_en_da \
-  --output-root eval_results/mkqa_results/domain_specialization/<model_name>
+python3 eval/benchmarks/mkqa/analyses/analyze_mkqa_domain_specialization.py \
+  --routing-root eval_results/mkqa/full/flexolmo/a4/routing/<model_name>/mkqa_en_da \
+  --output-root eval_results/mkqa/full/flexolmo/a4/domain_specialization/<model_name>
 ```
 
 To sweep multiple checkpoints and analyses from one config, start from one of the split suite configs:
 
-- combined native FlexOlmo routing suite: [mkqa_analysis_config.combined_native.example.json](/media/am/AM/flex-moe-toolkit/eval_data/mkqa/mkqa_analysis_config.combined_native.example.json)
-- public/expert comparison suite: [mkqa_analysis_config.public_expert.example.json](/media/am/AM/flex-moe-toolkit/eval_data/mkqa/mkqa_analysis_config.public_expert.example.json)
+- combined native FlexOlmo routing suite: [mkqa_analysis_config.combined_native.example.json](/media/am/AM/flex-moe-toolkit/eval/benchmarks/mkqa/configs/mkqa_analysis_config.combined_native.example.json)
+- public/expert comparison suite: [mkqa_analysis_config.public_expert.example.json](/media/am/AM/flex-moe-toolkit/eval/benchmarks/mkqa/configs/mkqa_analysis_config.public_expert.example.json)
 
 For example:
 
 ```bash
-python3 eval_data/mkqa/run_mkqa_analysis_suite.py \
-  --config eval_data/mkqa/mkqa_analysis_config.combined_native.example.json \
+python3 eval/benchmarks/mkqa/runners/run_mkqa_analysis_suite.py \
+  --config eval/benchmarks/mkqa/configs/mkqa_analysis_config.combined_native.example.json \
   --dry-run
 ```
 
@@ -176,10 +184,22 @@ The combined native suite intentionally excludes `flexolmo.7x7B.*` and `flexolmo
 
 The MKQA stack is designed to write structured JSONL outputs under:
 
-- `eval_results/mkqa_results/routing/`
-- `eval_results/mkqa_results/vocab_specialization/`
-- `eval_results/mkqa_results/domain_specialization/`
-- `eval_results/public_expert_results/weight_analysis/`
+- `eval_results/mkqa/full/flexolmo/<a_family>/routing/`
+- `eval_results/mkqa/full/flexolmo/<a_family>/vocab_specialization/`
+- `eval_results/mkqa/full/flexolmo/<a_family>/domain_specialization/`
+- `eval_results/mkqa/full/experts/weight_analysis/`
+
+For example, the full A4 native FlexOlmo suite now writes under:
+
+- `eval_results/mkqa/full/flexolmo/a4/routing/`
+- `eval_results/mkqa/full/flexolmo/a4/vocab_specialization/`
+- `eval_results/mkqa/full/flexolmo/a4/domain_specialization/`
+
+Mixed benchmark bundles and smoke runs also live under `eval_results/mkqa/`, for example:
+
+- `eval_results/mkqa/full/mixed/`
+- `eval_results/mkqa/smoke/mixed/`
+- `eval_results/mkqa/smoke/flexolmo/multi_family/`
 
 For MKQA analysis outputs, each JSONL record is written with `model_name` first and includes the resolved `model_path` so UCloud results remain easy to group and merge later.
 
@@ -188,14 +208,14 @@ Separate bash entrypoints are included for UCloud-style runs:
 ```bash
 export MKQA_MODEL_ROOT=/work/training/FlexMoRE/models
 
-bash eval_data/mkqa/run_mkqa_combined_smoke_suite.sh --dry-run
-bash eval_data/mkqa/run_mkqa_combined_full_suite.sh --dry-run
-bash eval_data/mkqa/run_mkqa_combined_a2_full_suite.sh --dry-run
-bash eval_data/mkqa/run_mkqa_combined_a4_full_suite.sh --dry-run
-bash eval_data/mkqa/run_mkqa_combined_a7_full_suite.sh --dry-run
+bash eval/benchmarks/mkqa/runners/run_mkqa_combined_smoke_suite.sh --dry-run
+bash eval/benchmarks/mkqa/runners/run_mkqa_combined_full_suite.sh --dry-run
+bash eval/benchmarks/mkqa/runners/run_mkqa_combined_a2_full_suite.sh --dry-run
+bash eval/benchmarks/mkqa/runners/run_mkqa_combined_a4_full_suite.sh --dry-run
+bash eval/benchmarks/mkqa/runners/run_mkqa_combined_a7_full_suite.sh --dry-run
 
-bash eval_data/mkqa/run_public_expert_smoke_suite.sh --dry-run
-bash eval_data/mkqa/run_public_expert_full_suite.sh --dry-run
+bash eval/benchmarks/mkqa/runners/run_public_expert_smoke_suite.sh --dry-run
+bash eval/benchmarks/mkqa/runners/run_public_expert_full_suite.sh --dry-run
 ```
 
 The combined smoke suite uses one representative checkpoint for:
@@ -213,9 +233,9 @@ The combined full suite uses the grouped selectors from `models.json` and still 
 
 Dedicated full-suite wrappers are also available when you want only one native combined family at a time:
 
-- `bash eval_data/mkqa/run_mkqa_combined_a2_full_suite.sh`
-- `bash eval_data/mkqa/run_mkqa_combined_a4_full_suite.sh`
-- `bash eval_data/mkqa/run_mkqa_combined_a7_full_suite.sh`
+- `bash eval/benchmarks/mkqa/runners/run_mkqa_combined_a2_full_suite.sh`
+- `bash eval/benchmarks/mkqa/runners/run_mkqa_combined_a4_full_suite.sh`
+- `bash eval/benchmarks/mkqa/runners/run_mkqa_combined_a7_full_suite.sh`
 
 These wrappers automatically substitute `MKQA_MODEL_ROOT` into the config before launch, so you do not need to hand-edit temporary JSON files on UCloud.
 

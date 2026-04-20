@@ -310,6 +310,7 @@ def evaluate_example(
             outputs = model(
                 input_ids=candidate_inputs["input_ids"],
                 attention_mask=candidate_inputs["attention_mask"],
+                use_cache=False,
             )
         choice_scores = compute_sequence_scores(outputs.logits, candidate_inputs["labels"])
         predicted_choice_idx = max(range(len(choice_scores)), key=lambda idx: choice_scores[idx])

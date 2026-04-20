@@ -259,6 +259,7 @@ def capture_hidden_state_artifacts(
             input_ids=inputs["input_ids"],
             attention_mask=inputs.get("attention_mask"),
             output_hidden_states=True,
+            use_cache=False,
         )
     selected = select_hidden_state_layers(outputs.hidden_states, selected_layers)
     return selected, hidden_state_norms_by_layer(selected)
