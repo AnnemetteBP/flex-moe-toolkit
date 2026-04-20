@@ -1,6 +1,6 @@
 {
   "runtime": {
-    "output_root": "eval_results/mkqa/full/flexolmo/a2",
+    "output_root": "eval_results/mkqa/full/flexolmo/a8",
     "device": "cuda",
     "dtype": "auto",
     "max_length": 512,
@@ -23,7 +23,7 @@
     "vocab_sources": "prompt,predicted,ground_truth",
     "top_tokens": 20,
     "model_group_selectors": [
-      "flexolmo.8x7B.a2"
+      "flexolmo.8x7B.a8"
     ]
   },
   "analyses": {

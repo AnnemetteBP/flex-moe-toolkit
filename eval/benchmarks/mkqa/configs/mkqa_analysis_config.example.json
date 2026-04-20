@@ -43,6 +43,9 @@
     "routing": {
       "enabled": true
     },
+    "accuracy": {
+      "enabled": true
+    },
     "vocab_specialization": {
       "enabled": true
     },

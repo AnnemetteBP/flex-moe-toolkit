@@ -210,6 +210,20 @@ def build_domain_command(model_entry: dict, shared: dict, runtime: dict) -> list
     ]
 
 
+def build_accuracy_command(model_entry: dict, shared: dict, runtime: dict) -> list[str]:
+    routing_root = Path(runtime["output_root"]) / "routing" / model_slug(model_entry)
+    return [
+        sys.executable,
+        str(ANALYSES_DIR / "score_mkqa_generation_accuracy.py"),
+        "--routing-root",
+        str(routing_root),
+        "--model-name",
+        str(model_slug(model_entry)),
+        "--output-root",
+        str(Path(runtime["output_root"]) / "accuracy"),
+    ]
+
+
 def build_weights_command(model_entry: dict, shared: dict, runtime: dict) -> list[str]:
     model_output_root = Path(runtime["output_root"]) / "weight_analysis" / model_slug(model_entry)
     summary_path = model_output_root / "weight_analysis_summary.jsonl"
@@ -263,6 +277,8 @@ def main():
     for model_entry in models:
         if analyses.get("routing", {}).get("enabled", True):
             all_commands.append(build_routing_command(model_entry, shared, runtime))
+        if analyses.get("accuracy", {}).get("enabled", False):
+            all_commands.append(build_accuracy_command(model_entry, shared, runtime))
         if analyses.get("vocab_specialization", {}).get("enabled", True):
             all_commands.append(build_vocab_command(model_entry, shared, runtime))
         if analyses.get("domain_specialization", {}).get("enabled", True):

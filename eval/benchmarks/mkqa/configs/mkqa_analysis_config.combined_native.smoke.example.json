@@ -26,6 +26,7 @@
   },
   "analyses": {
     "routing": { "enabled": true },
+    "accuracy": { "enabled": true },
     "vocab_specialization": { "enabled": true },
     "domain_specialization": { "enabled": true },
     "weights": { "enabled": false }
