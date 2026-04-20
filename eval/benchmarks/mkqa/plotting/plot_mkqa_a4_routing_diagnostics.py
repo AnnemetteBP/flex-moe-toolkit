@@ -154,6 +154,15 @@ def flatten_token_expert_ids(value) -> list[int]:
     return [int(value)]
 
 
+def flatten_numeric_values(value) -> list[float]:
+    if isinstance(value, list):
+        flattened = []
+        for item in value:
+            flattened.extend(flatten_numeric_values(item))
+        return flattened
+    return [float(value)]
+
+
 def per_layer_top1_share(records: list[dict], num_experts: int, target_expert_idx: int) -> list[float]:
     num_layers = len(records[0]["prompt_router_token_summaries_by_layer"])
     shares = []
@@ -192,6 +201,16 @@ def aggregate_top1_usage(records: list[dict], num_experts: int) -> np.ndarray:
     return counts / total
 
 
+def aggregate_rank_usage(records: list[dict], num_experts: int, rank_field: str) -> np.ndarray:
+    counts = np.zeros(num_experts, dtype=float)
+    for record in records:
+        for layer_summary in record["prompt_router_token_summaries_by_layer"]:
+            for expert_idx in flatten_token_expert_ids(layer_summary[rank_field]):
+                counts[expert_idx] += 1.0
+    total = float(counts.sum()) or 1.0
+    return counts / total
+
+
 def language_specific_public_share(records: list[dict], num_experts: int, public_expert_idx: int) -> dict[str, list[float]]:
     by_language = {}
     languages = sorted({record["language"] for record in records})
@@ -202,6 +221,85 @@ def language_specific_public_share(records: list[dict], num_experts: int, public
             num_experts=num_experts,
             target_expert_idx=public_expert_idx,
         )
+    return by_language
+
+
+def aggregate_rank_share_by_language(
+    records: list[dict],
+    num_experts: int,
+    rank_field: str,
+) -> dict[str, np.ndarray]:
+    by_language = {}
+    for language in sorted({record["language"] for record in records}):
+        language_records = [record for record in records if record["language"] == language]
+        matrix = np.zeros((len(language_records[0]["prompt_router_token_summaries_by_layer"]), num_experts), dtype=float)
+        for layer_idx in range(matrix.shape[0]):
+            counts = np.zeros(num_experts, dtype=float)
+            for record in language_records:
+                rank_ids = record["prompt_router_token_summaries_by_layer"][layer_idx][rank_field]
+                for expert_idx in flatten_token_expert_ids(rank_ids):
+                    counts[expert_idx] += 1.0
+            total = float(counts.sum()) or 1.0
+            matrix[layer_idx] = counts / total
+        by_language[language] = matrix
+    return by_language
+
+
+def mean_layer_metric_by_language(records: list[dict], metric_key: str) -> dict[str, np.ndarray]:
+    by_language = {}
+    for language in sorted({record["language"] for record in records}):
+        language_records = [record for record in records if record["language"] == language]
+        rows = []
+        for record in language_records:
+            rows.append(
+                [
+                    float(layer_metrics[metric_key])
+                    for layer_metrics in record["layer_batch_routing_metrics"]
+                ]
+            )
+        by_language[language] = np.mean(np.array(rows, dtype=float), axis=0)
+    return by_language
+
+
+def mean_competitor_gap_by_language(
+    records: list[dict],
+    num_experts: int,
+    public_expert_idx: int,
+) -> dict[str, dict[str, np.ndarray]]:
+    by_language = {}
+    num_layers = len(records[0]["prompt_router_token_summaries_by_layer"])
+    for language in sorted({record["language"] for record in records}):
+        language_records = [record for record in records if record["language"] == language]
+        public_vs_runner_up = np.zeros(num_layers, dtype=float)
+        public_vs_danish = np.full(num_layers, np.nan, dtype=float)
+        runner_up_id = np.full(num_layers, -1, dtype=int)
+        for layer_idx in range(num_layers):
+            probs = np.zeros(num_experts, dtype=float)
+            for record in language_records:
+                layer_summary = record["prompt_router_token_summaries_by_layer"][layer_idx]
+                top1_ids = flatten_token_expert_ids(layer_summary["top1_expert_ids"])
+                top1_probs = flatten_numeric_values(layer_summary["top1_probs"])
+                top2_ids = flatten_token_expert_ids(layer_summary["top2_expert_ids"])
+                top2_probs = flatten_numeric_values(layer_summary["top2_probs"])
+                for expert_idx, prob in zip(top1_ids, top1_probs):
+                    probs[expert_idx] += float(prob)
+                for expert_idx, prob in zip(top2_ids, top2_probs):
+                    probs[expert_idx] += float(prob)
+            denom = float(len(language_records))
+            mean_probs = probs / denom
+            public_prob = mean_probs[public_expert_idx]
+            competitors = mean_probs.copy()
+            competitors[public_expert_idx] = -np.inf
+            strongest_idx = int(np.argmax(competitors))
+            runner_up_id[layer_idx] = strongest_idx
+            public_vs_runner_up[layer_idx] = public_prob - mean_probs[strongest_idx]
+            if num_experts > 7:
+                public_vs_danish[layer_idx] = public_prob - mean_probs[7]
+        by_language[language] = {
+            "public_minus_runner_up": public_vs_runner_up,
+            "public_minus_danish": public_vs_danish,
+            "runner_up_id": runner_up_id,
+        }
     return by_language
 
 
@@ -372,6 +470,167 @@ def plot_top_combinations_all_models(
     plt.close(fig)
 
 
+def plot_rank_heatmaps_for_focus_models(
+    focus_models: list[str],
+    model_rows: dict[str, dict],
+    expert_labels: dict[int, str],
+    rank_key: str,
+    title_prefix: str,
+    output_path: Path,
+) -> None:
+    fig, axes = plt.subplots(
+        len(focus_models),
+        2,
+        figsize=(13.5, max(4.0 * len(focus_models), 4.5)),
+        sharex=True,
+        sharey=True,
+    )
+    axes = np.atleast_2d(axes)
+    languages = ("en", "da")
+    for row_idx, model_name in enumerate(focus_models):
+        for col_idx, language in enumerate(languages):
+            ax = axes[row_idx, col_idx]
+            matrix = model_rows[model_name][rank_key].get(language)
+            if matrix is None:
+                ax.axis("off")
+                continue
+            sns.heatmap(
+                matrix.T,
+                cmap="mako",
+                vmin=0.0,
+                vmax=1.0,
+                ax=ax,
+                cbar=(row_idx == 0 and col_idx == len(languages) - 1),
+                cbar_kws={"label": "Share of Tokens"},
+            )
+            ax.set_title(f"{model_name.replace('FlexOlmo-8x7B-1T-', '')} | {language.upper()}")
+            ax.set_xlabel("Layer")
+            if col_idx == 0:
+                ax.set_ylabel("Expert")
+                ax.set_yticks(np.arange(len(expert_labels)) + 0.5)
+                ax.set_yticklabels([expert_label(idx, expert_labels) for idx in range(matrix.shape[1])], rotation=0)
+            else:
+                ax.set_ylabel("")
+    fig.suptitle(title_prefix, y=0.995)
+    fig.tight_layout(rect=(0, 0, 1, 0.98))
+    fig.savefig(output_path, dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+
+def plot_competitor_gap_curves(
+    focus_models: list[str],
+    model_rows: dict[str, dict],
+    expert_labels: dict[int, str],
+    output_path: Path,
+) -> None:
+    fig, axes = plt.subplots(1, len(focus_models), figsize=(5.4 * len(focus_models), 4.8), sharey=True)
+    if len(focus_models) == 1:
+        axes = [axes]
+    for ax, model_name in zip(axes, focus_models):
+        gap_data = model_rows[model_name]["competitor_gaps"]
+        for language in ("en", "da"):
+            values = gap_data.get(language, {}).get("public_minus_runner_up")
+            if values is None:
+                continue
+            ax.plot(values, label=f"{language.upper()}: public - strongest competitor", color=LANGUAGE_COLORS[language], linewidth=2.0)
+        danish_gap = gap_data.get("da", {}).get("public_minus_danish")
+        if danish_gap is not None and not np.all(np.isnan(danish_gap)):
+            ax.plot(danish_gap, label="DA: public - danish", color="#54a24b", linewidth=1.8, linestyle="--")
+        ax.axhline(0.0, color="black", linewidth=0.8, alpha=0.5)
+        ax.set_title(model_name.replace("FlexOlmo-8x7B-1T-", ""))
+        ax.set_xlabel("Layer")
+        ax.set_ylabel("Mean Probability Gap")
+        ax.grid(True, axis="y", alpha=0.25)
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.suptitle("Public-vs-Specialist Competition by Layer", y=0.995)
+    fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, 0.965), ncol=min(3, len(labels)), frameon=False)
+    fig.tight_layout(rect=(0, 0, 1, 0.92))
+    fig.savefig(output_path, dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+
+def plot_router_confidence_curves(
+    focus_models: list[str],
+    model_rows: dict[str, dict],
+    output_path: Path,
+) -> None:
+    metric_panels = [
+        ("layer_entropy", "Mean Token Entropy"),
+        ("layer_margin", "Mean Top1-Top2 Margin"),
+        ("layer_selected_mass", "Mean Selected Expert Probability Mass"),
+    ]
+    fig, axes = plt.subplots(len(metric_panels), len(focus_models), figsize=(5.4 * len(focus_models), 10.8), sharex=True)
+    axes = np.atleast_2d(axes)
+    for row_idx, (metric_key, metric_title) in enumerate(metric_panels):
+        for col_idx, model_name in enumerate(focus_models):
+            ax = axes[row_idx, col_idx]
+            for language in ("en", "da"):
+                values = model_rows[model_name][metric_key].get(language)
+                if values is None:
+                    continue
+                ax.plot(values, label=language.upper(), color=LANGUAGE_COLORS[language], linewidth=2.0)
+            ax.set_title(f"{model_name.replace('FlexOlmo-8x7B-1T-', '')} | {metric_title}")
+            ax.set_xlabel("Layer")
+            ax.grid(True, axis="y", alpha=0.25)
+            if col_idx == 0:
+                ax.set_ylabel(metric_title)
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    fig.suptitle("Router Confidence and Sharpness by Layer", y=0.995)
+    fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, 0.975), ncol=2, frameon=False)
+    fig.tight_layout(rect=(0, 0, 1, 0.96))
+    fig.savefig(output_path, dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+
+def plot_runner_up_identity_heatmaps(
+    focus_models: list[str],
+    model_rows: dict[str, dict],
+    expert_labels: dict[int, str],
+    output_path: Path,
+) -> None:
+    fig, axes = plt.subplots(
+        len(focus_models),
+        2,
+        figsize=(13.5, max(4.0 * len(focus_models), 4.5)),
+        sharex=True,
+        sharey=True,
+    )
+    axes = np.atleast_2d(axes)
+    languages = ("en", "da")
+    num_experts = len(expert_labels)
+    for row_idx, model_name in enumerate(focus_models):
+        for col_idx, language in enumerate(languages):
+            ax = axes[row_idx, col_idx]
+            runner_up_ids = model_rows[model_name]["competitor_gaps"].get(language, {}).get("runner_up_id")
+            if runner_up_ids is None:
+                ax.axis("off")
+                continue
+            matrix = np.zeros((num_experts, len(runner_up_ids)), dtype=float)
+            for layer_idx, expert_idx in enumerate(runner_up_ids):
+                if expert_idx >= 0:
+                    matrix[int(expert_idx), layer_idx] = 1.0
+            sns.heatmap(
+                matrix,
+                cmap="crest",
+                vmin=0.0,
+                vmax=1.0,
+                ax=ax,
+                cbar=False,
+            )
+            ax.set_title(f"{model_name.replace('FlexOlmo-8x7B-1T-', '')} | {language.upper()}")
+            ax.set_xlabel("Layer")
+            if col_idx == 0:
+                ax.set_ylabel("Strongest Non-Public Expert")
+                ax.set_yticks(np.arange(num_experts) + 0.5)
+                ax.set_yticklabels([expert_label(idx, expert_labels) for idx in range(num_experts)], rotation=0)
+            else:
+                ax.set_ylabel("")
+    fig.suptitle("Runner-Up Expert Identity by Layer", y=0.995)
+    fig.tight_layout(rect=(0, 0, 1, 0.98))
+    fig.savefig(output_path, dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+
 def write_readme(model_names: list[str], focus_models: list[str], model_rows: dict[str, dict], expert_labels: dict[int, str], output_path: Path) -> None:
     lines = [
         "# A4 Routing Diagnostics",
@@ -389,6 +648,11 @@ def write_readme(model_names: list[str], focus_models: list[str], model_rows: di
         "- `a4_layer_dominance_heatmap.png`: per-layer share captured by the dominant expert.",
         "- `a4_public_share_da_minus_en_heatmap.png`: Danish minus English public top-1 share by layer.",
         "- `a4_all_top_combinations_by_language.png`: most common prompt expert tuples for every analyzed A4 checkpoint, stacked by English vs Danish token counts.",
+        "- `a4_focus_top1_heatmaps_by_language.png`: expert-by-layer top-1 share heatmaps for representative A4 checkpoints.",
+        "- `a4_focus_top2_heatmaps_by_language.png`: expert-by-layer top-2 share heatmaps for representative A4 checkpoints.",
+        "- `a4_focus_public_competition_curves.png`: mean probability gap between the public expert and its strongest competitor by layer.",
+        "- `a4_focus_router_confidence_curves.png`: layer-wise entropy, top1-top2 margin, and selected probability mass by language.",
+        "- `a4_focus_runner_up_identity_heatmaps.png`: which non-public expert is the strongest runner-up at each layer.",
         "",
         "## Quick Read",
         "",
@@ -403,10 +667,16 @@ def write_readme(model_names: list[str], focus_models: list[str], model_rows: di
         top_combo_count = top_combo_row["total"]
         en_count = top_combo_row.get("en", 0)
         da_count = top_combo_row.get("da", 0)
+        da_runner_up = row["competitor_gaps"].get("da", {}).get("runner_up_id")
+        late_danish_layers = 0
+        if da_runner_up is not None:
+            late_slice = da_runner_up[len(da_runner_up) // 2 :]
+            late_danish_layers = int(np.sum(late_slice == 7))
         lines.append(
             f"- `{model_name}`: public top-1 share = {row['top1_usage'][0]:.3%}; "
             f"most common prompt combination = `{format_combo(top_combo, expert_labels)}` "
-            f"({top_combo_count} tokens: en={en_count}, da={da_count})."
+            f"({top_combo_count} tokens: en={en_count}, da={da_count}); "
+            f"danish is strongest DA runner-up in {late_danish_layers} late layers."
         )
 
     output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -432,8 +702,30 @@ def main() -> int:
         num_experts = int(records[0]["num_available_experts"])
         model_rows[model_name] = {
             "top1_usage": aggregate_top1_usage(records, num_experts=num_experts),
+            "top2_usage": aggregate_rank_usage(records, num_experts=num_experts, rank_field="top2_expert_ids"),
             "layer_dominant_share": per_layer_dominant_share(records, num_experts=num_experts),
             "public_share_by_language": language_specific_public_share(
+                records,
+                num_experts=num_experts,
+                public_expert_idx=args.public_expert_idx,
+            ),
+            "top1_by_language": aggregate_rank_share_by_language(
+                records,
+                num_experts=num_experts,
+                rank_field="top1_expert_ids",
+            ),
+            "top2_by_language": aggregate_rank_share_by_language(
+                records,
+                num_experts=num_experts,
+                rank_field="top2_expert_ids",
+            ),
+            "layer_entropy": mean_layer_metric_by_language(records, metric_key="mean_token_entropy"),
+            "layer_margin": mean_layer_metric_by_language(records, metric_key="mean_top1_top2_margin"),
+            "layer_selected_mass": mean_layer_metric_by_language(
+                records,
+                metric_key="mean_selected_expert_prob_mass",
+            ),
+            "competitor_gaps": mean_competitor_gap_by_language(
                 records,
                 num_experts=num_experts,
                 public_expert_idx=args.public_expert_idx,
@@ -463,6 +755,39 @@ def main() -> int:
         model_rows=model_rows,
         expert_labels=expert_labels,
         output_path=output_root / "a4_all_top_combinations_by_language.png",
+    )
+    plot_rank_heatmaps_for_focus_models(
+        focus_models=focus_models,
+        model_rows=model_rows,
+        expert_labels=expert_labels,
+        rank_key="top1_by_language",
+        title_prefix="Top-1 Expert Share by Layer and Language",
+        output_path=output_root / "a4_focus_top1_heatmaps_by_language.png",
+    )
+    plot_rank_heatmaps_for_focus_models(
+        focus_models=focus_models,
+        model_rows=model_rows,
+        expert_labels=expert_labels,
+        rank_key="top2_by_language",
+        title_prefix="Top-2 Expert Share by Layer and Language",
+        output_path=output_root / "a4_focus_top2_heatmaps_by_language.png",
+    )
+    plot_competitor_gap_curves(
+        focus_models=focus_models,
+        model_rows=model_rows,
+        expert_labels=expert_labels,
+        output_path=output_root / "a4_focus_public_competition_curves.png",
+    )
+    plot_router_confidence_curves(
+        focus_models=focus_models,
+        model_rows=model_rows,
+        output_path=output_root / "a4_focus_router_confidence_curves.png",
+    )
+    plot_runner_up_identity_heatmaps(
+        focus_models=focus_models,
+        model_rows=model_rows,
+        expert_labels=expert_labels,
+        output_path=output_root / "a4_focus_runner_up_identity_heatmaps.png",
     )
     write_readme(
         model_names=model_names,
