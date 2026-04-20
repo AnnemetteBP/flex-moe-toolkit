@@ -128,6 +128,20 @@ def find_model_names(routing_root: Path) -> list[str]:
     return sorted(names)
 
 
+def resolve_records_path(routing_root: Path, model_name: str) -> Path:
+    candidate_paths = [
+        routing_root / model_name / "mkqa_en_da" / "native_full" / "routing_records.jsonl",
+        routing_root / "mkqa_en_da" / "native_full" / "routing_records.jsonl",
+    ]
+    for path in candidate_paths:
+        if path.exists():
+            return path
+    raise FileNotFoundError(
+        f"Could not find routing_records.jsonl for model `{model_name}` under `{routing_root}`. "
+        f"Tried: {', '.join(str(path) for path in candidate_paths)}"
+    )
+
+
 def score_records(records: list[dict]) -> tuple[list[dict], dict]:
     scored_rows = []
     aggregate = {
@@ -236,7 +250,7 @@ def main() -> int:
 
     summary_rows = []
     for model_name in model_names:
-        records_path = routing_root / model_name / "mkqa_en_da" / "native_full" / "routing_records.jsonl"
+        records_path = resolve_records_path(routing_root, model_name)
         records = load_jsonl(records_path)
         scored_rows, summary = score_records(records)
         model_output_dir = output_root / model_name / "native_full"
