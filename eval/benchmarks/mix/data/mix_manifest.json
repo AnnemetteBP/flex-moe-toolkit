@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "datasets": [
+    {
+      "name": "mkqa_en_da",
+      "path": "eval/benchmarks/mix/data/mkqa_en_da_subset.jsonl",
+      "num_examples": 1000,
+      "domain": "language",
+      "scoring_mode": "qa",
+      "phase": 1,
+      "notes": "Bilingual paired subset with 500 English/Danish question pairs exported as 1000 prompt examples.",
+      "prompting": {
+        "format": "raw_prompt",
+        "chat_template": {
+          "enabled": false
+        }
+      },
+      "generation": {
+        "max_new_tokens": 24
+      },
+      "tokenization": {
+        "prompt_add_special_tokens": true,
+        "reference_add_special_tokens": false,
+        "decode_skip_special_tokens": true
+      }
+    },
+    {
+      "name": "gsm8k_subset",
+      "path": "eval/benchmarks/mix/data/gsm8k_subset.jsonl",
+      "num_examples": 500,
+      "domain": "math",
+      "scoring_mode": "qa",
+      "phase": 1,
+      "notes": "Math subset using extracted final answers after the GSM8K #### marker.",
+      "prompting": {
+        "format": "raw_prompt",
+        "chat_template": {
+          "enabled": false
+        }
+      },
+      "generation": {
+        "max_new_tokens": 96
+      },
+      "tokenization": {
+        "prompt_add_special_tokens": true,
+        "reference_add_special_tokens": false,
+        "decode_skip_special_tokens": true
+      }
+    },
+    {
+      "name": "mbpp_subset",
+      "path": "eval/benchmarks/mix/data/mbpp_subset.jsonl",
+      "num_examples": 500,
+      "domain": "code",
+      "scoring_mode": "code_generation",
+      "phase": 1,
+      "notes": "Code-generation subset. Evaluation will need a code-aware scoring path, not plain exact-match QA scoring.",
+      "prompting": {
+        "format": "raw_prompt",
+        "chat_template": {
+          "enabled": false
+        }
+      },
+      "generation": {
+        "max_new_tokens": 256
+      },
+      "tokenization": {
+        "prompt_add_special_tokens": true,
+        "reference_add_special_tokens": false,
+        "decode_skip_special_tokens": true
+      }
+    },
+    {
+      "name": "pubmedqa_subset",
+      "path": "eval/benchmarks/mix/data/pubmedqa_subset.jsonl",
+      "num_examples": 500,
+      "domain": "academic",
+      "scoring_mode": "classification",
+      "phase": 1,
+      "notes": "Biomedical QA subset used as an academic / pes2o-aligned diagnostic domain.",
+      "prompting": {
+        "format": "raw_prompt",
+        "chat_template": {
+          "enabled": false
+        }
+      },
+      "generation": {
+        "max_new_tokens": 8
+      },
+      "tokenization": {
+        "prompt_add_special_tokens": true,
+        "reference_add_special_tokens": false,
+        "decode_skip_special_tokens": true
+      }
+    },
+    {
+      "name": "ag_news_subset",
+      "path": "eval/benchmarks/mix/data/ag_news_subset.jsonl",
+      "num_examples": 500,
+      "domain": "news",
+      "scoring_mode": "classification",
+      "phase": 2,
+      "notes": "News-domain classification subset with deterministic labels.",
+      "prompting": {
+        "format": "raw_prompt",
+        "chat_template": {
+          "enabled": false
+        }
+      },
+      "generation": {
+        "max_new_tokens": 8
+      },
+      "tokenization": {
+        "prompt_add_special_tokens": true,
+        "reference_add_special_tokens": false,
+        "decode_skip_special_tokens": true
+      }
+    },
+    {
+      "name": "common_gen_subset",
+      "path": "eval/benchmarks/mix/data/common_gen_subset.jsonl",
+      "num_examples": 500,
+      "domain": "creative",
+      "scoring_mode": "generation",
+      "phase": 2,
+      "notes": "Creative constrained-generation subset.",
+      "prompting": {
+        "format": "raw_prompt",
+        "chat_template": {
+          "enabled": false
+        }
+      },
+      "generation": {
+        "max_new_tokens": 64
+      },
+      "tokenization": {
+        "prompt_add_special_tokens": true,
+        "reference_add_special_tokens": false,
+        "decode_skip_special_tokens": true
+      }
+    }
+  ]
+}

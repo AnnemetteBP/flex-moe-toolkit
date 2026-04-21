@@ -45,12 +45,14 @@ def tokenize_prompt(
     prompt: str,
     max_length: int,
     device: torch.device,
+    add_special_tokens: bool = True,
 ) -> dict[str, torch.Tensor]:
     encoded = tokenizer(
         prompt,
         return_tensors="pt",
         truncation=True,
         max_length=max_length,
+        add_special_tokens=add_special_tokens,
     )
     return move_batch_to_device(encoded, device)
 
@@ -111,10 +113,21 @@ def slice_hidden_states_by_suffix(
     }
 
 
-def tokenize_reference_answer(tokenizer, answer_text: str | None) -> list[int]:
+def tokenize_reference_answer(
+    tokenizer,
+    answer_text: str | None,
+    add_special_tokens: bool = False,
+) -> list[int]:
     if not answer_text:
         return []
-    return tokenizer.encode(answer_text, add_special_tokens=False)
+    return tokenizer.encode(answer_text, add_special_tokens=add_special_tokens)
+
+
+def decode_token_ids(tokenizer, token_ids: list[int]) -> list[str]:
+    decoded = []
+    for token_id in token_ids:
+        decoded.append(tokenizer.decode([int(token_id)], skip_special_tokens=False))
+    return decoded
 
 
 def generate_output_token_ids(
@@ -123,8 +136,14 @@ def generate_output_token_ids(
     inputs: dict[str, torch.Tensor],
     reference_answer: str | None,
     default_max_new_tokens: int,
+    reference_add_special_tokens: bool = False,
+    decode_skip_special_tokens: bool = True,
 ) -> tuple[list[int], list[int], str]:
-    ground_truth_output_token_ids = tokenize_reference_answer(tokenizer, reference_answer)
+    ground_truth_output_token_ids = tokenize_reference_answer(
+        tokenizer,
+        reference_answer,
+        add_special_tokens=reference_add_special_tokens,
+    )
     max_new_tokens = len(ground_truth_output_token_ids) if ground_truth_output_token_ids else default_max_new_tokens
     max_new_tokens = max(1, max_new_tokens)
 
@@ -142,7 +161,10 @@ def generate_output_token_ids(
 
     prompt_length = int(inputs["input_ids"].shape[-1])
     predicted_output_token_ids = generated[0, prompt_length:].detach().cpu().tolist()
-    predicted_output_text = tokenizer.decode(predicted_output_token_ids, skip_special_tokens=True)
+    predicted_output_text = tokenizer.decode(
+        predicted_output_token_ids,
+        skip_special_tokens=decode_skip_special_tokens,
+    )
     return ground_truth_output_token_ids, predicted_output_token_ids, predicted_output_text
 
 
@@ -294,11 +316,19 @@ def analyze_prompt_example(
     capture_hidden_states: bool = False,
     hidden_state_layers: list[int] | None = None,
 ) -> dict[str, Any]:
+    tokenization_config = dict(example.get("tokenization_config", {}))
+    generation_config = dict(example.get("generation_config", {}))
+    prompt_add_special_tokens = bool(tokenization_config.get("prompt_add_special_tokens", True))
+    reference_add_special_tokens = bool(tokenization_config.get("reference_add_special_tokens", False))
+    decode_skip_special_tokens = bool(tokenization_config.get("decode_skip_special_tokens", True))
+    effective_default_max_new_tokens = int(generation_config.get("max_new_tokens", default_max_new_tokens))
+
     inputs = tokenize_prompt(
         tokenizer=tokenizer,
         prompt=example["prompt"],
         max_length=max_length,
         device=device,
+        add_special_tokens=prompt_add_special_tokens,
     )
 
     run_top_k = effective_run_top_k(model, run_spec)
@@ -367,7 +397,9 @@ def analyze_prompt_example(
                 tokenizer=tokenizer,
                 inputs=inputs,
                 reference_answer=example.get("reference_answer"),
-                default_max_new_tokens=default_max_new_tokens,
+                default_max_new_tokens=effective_default_max_new_tokens,
+                reference_add_special_tokens=reference_add_special_tokens,
+                decode_skip_special_tokens=decode_skip_special_tokens,
             )
             prompt_token_ids = inputs["input_ids"][0].detach().cpu().tolist()
             if ground_truth_output_token_ids:
@@ -482,6 +514,7 @@ def analyze_prompt_example(
     global_combo = activated_expert_combination(routing["topk_experts"])
     layer_overlap = layer_iou_summary(layer_combos)
     token_combination_counts = count_token_level_combinations(routing["topk_experts"])
+    input_token_ids = inputs["input_ids"][0].detach().cpu().tolist()
 
     return {
         "record_type": "routing_example",
@@ -497,8 +530,11 @@ def analyze_prompt_example(
         "question": example["question"],
         "reference_answer": example.get("reference_answer"),
         "prompt": example["prompt"],
+        "generation_config": generation_config,
+        "tokenization_config": tokenization_config,
         "num_input_tokens": int(inputs["input_ids"].shape[-1]),
-        "input_token_ids": inputs["input_ids"][0].detach().cpu().tolist(),
+        "input_token_ids": input_token_ids,
+        "input_tokens_decoded": decode_token_ids(tokenizer, input_token_ids),
         "prompt_topk_experts_by_layer": prompt_topk_experts,
         "prompt_router_logits_by_layer": prompt_router_logits_by_layer if capture_router_tensors else None,
         "prompt_router_probs_by_layer": prompt_router_probs_by_layer if capture_router_tensors else None,
@@ -507,6 +543,7 @@ def analyze_prompt_example(
         "prompt_hidden_states_by_layer": prompt_hidden_states_by_layer if capture_hidden_states else None,
         "prompt_hidden_state_norms_by_layer": prompt_hidden_state_norms if capture_hidden_states else None,
         "ground_truth_output_token_ids": ground_truth_output_token_ids,
+        "ground_truth_output_tokens_decoded": decode_token_ids(tokenizer, ground_truth_output_token_ids),
         "ground_truth_output_topk_experts_by_layer": ground_truth_output_topk_experts,
         "ground_truth_router_token_summaries_by_layer": ground_truth_router_token_summaries_by_layer,
         "ground_truth_router_summary_by_layer": ground_truth_router_summary_by_layer,
@@ -517,6 +554,7 @@ def analyze_prompt_example(
             ground_truth_output_hidden_state_norms_by_layer if capture_hidden_states else None
         ),
         "predicted_output_token_ids": predicted_output_token_ids,
+        "predicted_output_tokens_decoded": decode_token_ids(tokenizer, predicted_output_token_ids),
         "predicted_output_topk_experts_by_layer": predicted_output_topk_experts,
         "predicted_router_token_summaries_by_layer": predicted_router_token_summaries_by_layer,
         "predicted_router_summary_by_layer": predicted_router_summary_by_layer,

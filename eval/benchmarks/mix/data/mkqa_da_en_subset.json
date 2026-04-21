@@ -1,0 +1,3502 @@
+[
+  {
+    "pair_id": "mkqa_pair_00000",
+    "question_da": "hvor lang tid tog det at bygge tvillinge tårnene",
+    "question_en": "how long did it take the twin towers to be built",
+    "answer_da": "11.0 år",
+    "answer_en": "11.0 years"
+  },
+  {
+    "pair_id": "mkqa_pair_00001",
+    "question_da": "hvor stammer udråbet great scott fra",
+    "question_en": "where did the phrase great scott come from",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00002",
+    "question_da": "hvem synger love you like there's no tomorrow",
+    "question_en": "who sings love you like there's no tomorrow",
+    "answer_da": "Chris Young",
+    "answer_en": "Chris Young"
+  },
+  {
+    "pair_id": "mkqa_pair_00003",
+    "question_da": "hvor mange sæsoner er der af scream queens",
+    "question_en": "how many seasons of scream queens are there",
+    "answer_da": "2.0",
+    "answer_en": "2.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00004",
+    "question_da": "hvornår var sidste gang Lakers spillede slutspillet",
+    "question_en": "when was the last time the lakers made the playoffs",
+    "answer_da": "2013",
+    "answer_en": "2013"
+  },
+  {
+    "pair_id": "mkqa_pair_00005",
+    "question_da": "hvor mange episoder i en sæson af stranger things",
+    "question_en": "how many episodes in a season of stranger things",
+    "answer_da": "3.0",
+    "answer_en": "3.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00006",
+    "question_da": "Hvem synger jeg hører dig banke, men du kan ikke komme ind",
+    "question_en": "who sings i hear you knocking but you can't come in",
+    "answer_da": "Dave Edmunds",
+    "answer_en": "Dave Edmunds"
+  },
+  {
+    "pair_id": "mkqa_pair_00007",
+    "question_da": "hvem opfandt showet the voice",
+    "question_en": "who came up with the show the voice",
+    "answer_da": "John de Mol",
+    "answer_en": "John de Mol"
+  },
+  {
+    "pair_id": "mkqa_pair_00008",
+    "question_da": "Hvornår gjorde den vilde Vesten start og",
+    "question_en": "when did the wild west start and end",
+    "answer_da": "1865",
+    "answer_en": "1865"
+  },
+  {
+    "pair_id": "mkqa_pair_00009",
+    "question_da": "hvor kom logoet for starbucks fra",
+    "question_en": "where did the logo for starbucks come from",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00010",
+    "question_da": "hvornår spillede  rams play i super bowl",
+    "question_en": "when did the rams play in the super bowl",
+    "answer_da": "1999",
+    "answer_en": "1999"
+  },
+  {
+    "pair_id": "mkqa_pair_00011",
+    "question_da": "hvem sang sangen oh what a night",
+    "question_en": "who sang the song oh what a night",
+    "answer_da": "The Four Seasons",
+    "answer_en": "The Four Seasons"
+  },
+  {
+    "pair_id": "mkqa_pair_00012",
+    "question_da": "hvem sang i want to be with you everywhere",
+    "question_en": "who sang i want to be with you everywhere",
+    "answer_da": "Fleetwood Mac",
+    "answer_en": "Fleetwood Mac"
+  },
+  {
+    "pair_id": "mkqa_pair_00013",
+    "question_da": "hvem spillede mary magdalene i jesus christ superstar",
+    "question_en": "who played mary magdalene in jesus christ superstar",
+    "answer_da": "Yvonne Elliman",
+    "answer_en": "Yvonne Elliman"
+  },
+  {
+    "pair_id": "mkqa_pair_00014",
+    "question_da": "hvem skrev klagesangene i bibelen",
+    "question_en": "who wrote the book of lamentations in the bible",
+    "answer_da": "Jeremias",
+    "answer_en": "Jeremiah"
+  },
+  {
+    "pair_id": "mkqa_pair_00015",
+    "question_da": "hvem har de fleste følgere på instagram",
+    "question_en": "who has the most instagram followers on instagram",
+    "answer_da": "Cristiano Ronaldo",
+    "answer_en": "Cristiano Ronaldo"
+  },
+  {
+    "pair_id": "mkqa_pair_00016",
+    "question_da": "hvad  episode af the office  er the roast",
+    "question_en": "what episode of the office is the roast",
+    "answer_da": "Stress Relief",
+    "answer_en": "Stress Relief"
+  },
+  {
+    "pair_id": "mkqa_pair_00017",
+    "question_da": "hvem producere flest pistacienødder i verden",
+    "question_en": "who produces the most pistachios in the world",
+    "answer_da": "Iran",
+    "answer_en": "Iran"
+  },
+  {
+    "pair_id": "mkqa_pair_00018",
+    "question_da": "hvad hedder arizona cardinals stadion",
+    "question_en": "what is the name of the arizona cardinals stadium",
+    "answer_da": "University of Phoenix Stadium",
+    "answer_en": "State Farm Stadium"
+  },
+  {
+    "pair_id": "mkqa_pair_00019",
+    "question_da": "hvem synge i've never been to me",
+    "question_en": "who sang i've never been to me",
+    "answer_da": "Charlene",
+    "answer_en": "Charlene"
+  },
+  {
+    "pair_id": "mkqa_pair_00020",
+    "question_da": "hvor mange stater dækker the rocky mountains over",
+    "question_en": "how many states does the rocky mountains cover",
+    "answer_da": "6.0",
+    "answer_en": "6.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00021",
+    "question_da": "mary havde et lille lam  lille lam  lille lam mary havde et  lille lam",
+    "question_en": "mary had a little lamb little lamb little lamb mary had a little lamb",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00022",
+    "question_da": "hvem sang let's go all the way",
+    "question_en": "who sang let's go all the way",
+    "answer_da": "Sly Fox",
+    "answer_en": "Sly Fox"
+  },
+  {
+    "pair_id": "mkqa_pair_00023",
+    "question_da": "hvem vandt america's got talent i 2015",
+    "question_en": "who won america's got talent in 2015",
+    "answer_da": "Paul Zerdin",
+    "answer_en": "Paul Zerdin"
+  },
+  {
+    "pair_id": "mkqa_pair_00024",
+    "question_da": "hvad er aldersgrænsen for pigespejdere",
+    "question_en": "what is the age limit for girl scouts",
+    "answer_da": "5.0 18.0 år",
+    "answer_en": "5.0 18.0 years"
+  },
+  {
+    "pair_id": "mkqa_pair_00025",
+    "question_da": "hvornår var det sidste gang the steelers spillede imod the panthers",
+    "question_en": "when was the last time the steelers played the panthers",
+    "answer_da": "2019-08-29",
+    "answer_en": "2019-08-29"
+  },
+  {
+    "pair_id": "mkqa_pair_00026",
+    "question_da": "hvornår vandt republikanerne sidst flest stemmer i præsident valgkampen the popular vote",
+    "question_en": "when was the last time republicans won the popular vote",
+    "answer_da": "2004",
+    "answer_en": "2004"
+  },
+  {
+    "pair_id": "mkqa_pair_00027",
+    "question_da": "hvornår var det sidste gang the cubs vandt World Series",
+    "question_en": "when was the last time the cubs won the world series",
+    "answer_da": "2016",
+    "answer_en": "2016"
+  },
+  {
+    "pair_id": "mkqa_pair_00028",
+    "question_da": "hvornår kom den nye pundmønt ud",
+    "question_en": "when did the new pound coin come out",
+    "answer_da": "2017-03-28",
+    "answer_en": "2017-03-28"
+  },
+  {
+    "pair_id": "mkqa_pair_00029",
+    "question_da": "hvad hedder verdens syv kontinenter",
+    "question_en": "what are the names of the seven continents of the world",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00030",
+    "question_da": "hvornår blev michael jordan udtaget til nba",
+    "question_en": "when was michael jordan drafted to the nba",
+    "answer_da": "1984",
+    "answer_en": "1984"
+  },
+  {
+    "pair_id": "mkqa_pair_00031",
+    "question_da": "hvornår er forfatningen sidste gang blevet ændret",
+    "question_en": "when is the last time the constitution was amended",
+    "answer_da": "1992",
+    "answer_en": "1992"
+  },
+  {
+    "pair_id": "mkqa_pair_00032",
+    "question_da": "hvem var skuespillerne i singing in the rain",
+    "question_en": "who were the characters in singing in the rain",
+    "answer_da": "Donald O'Connor",
+    "answer_en": "Donald O'Connor"
+  },
+  {
+    "pair_id": "mkqa_pair_00033",
+    "question_da": "hvor lang er den gennemsnitlige fragt togvogn",
+    "question_en": "how long is the average freight train car",
+    "answer_da": "55.0 67.0 fod",
+    "answer_en": "55.0 67.0 feet"
+  },
+  {
+    "pair_id": "mkqa_pair_00034",
+    "question_da": "hvem synger i'll make a man out of you",
+    "question_en": "who sings i'll make a man out of you",
+    "answer_da": "Donny Osmond",
+    "answer_en": "Donny Osmond"
+  },
+  {
+    "pair_id": "mkqa_pair_00035",
+    "question_da": "hvornår vandt tom brady hans første ring",
+    "question_en": "when did tom brady win his first ring",
+    "answer_da": "2002",
+    "answer_en": "2002"
+  },
+  {
+    "pair_id": "mkqa_pair_00036",
+    "question_da": "hvor vil World Cup holdes",
+    "question_en": "where is the world cup going to be held",
+    "answer_da": "Qatar",
+    "answer_en": "Qatar"
+  },
+  {
+    "pair_id": "mkqa_pair_00037",
+    "question_da": "hvad er navnene på tweenies karakterne",
+    "question_en": "what are the names of the tweenies characters",
+    "answer_da": "Judy",
+    "answer_en": "Judy"
+  },
+  {
+    "pair_id": "mkqa_pair_00038",
+    "question_da": "hvem spiller sort panter i sort panter film",
+    "question_en": "who plays black panther in the movie black panther",
+    "answer_da": "Chadwick Boseman",
+    "answer_en": "Chadwick Boseman"
+  },
+  {
+    "pair_id": "mkqa_pair_00039",
+    "question_da": "hvem var den første person der lavede slime",
+    "question_en": "who was the first person who made slime",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00040",
+    "question_da": "Hvilket kanalnummer er CW på DirecTV",
+    "question_en": "what channel number is the cw on directv",
+    "answer_da": "385.0",
+    "answer_en": "385.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00041",
+    "question_da": "hvornår slutter gumballs fantastiske verden",
+    "question_en": "when does the amazing world of gumball end",
+    "answer_da": "2019-06-24",
+    "answer_en": "2019-06-24"
+  },
+  {
+    "pair_id": "mkqa_pair_00042",
+    "question_da": "hvem sang what is love baby don't hurt me",
+    "question_en": "who sang what is love baby don't hurt me",
+    "answer_da": "Haddaway",
+    "answer_en": "Haddaway"
+  },
+  {
+    "pair_id": "mkqa_pair_00043",
+    "question_da": "hvad er den aktive ingrediens i alle fda-godkendte håndrensere",
+    "question_en": "what is the active ingredient in all fda approved hand sanitizers",
+    "answer_da": "ethanol",
+    "answer_en": "ethanol"
+  },
+  {
+    "pair_id": "mkqa_pair_00044",
+    "question_da": "Hvornår blev genie in a bottle udgivet?",
+    "question_en": "when did genie in a bottle come out",
+    "answer_da": "1999",
+    "answer_en": "1999"
+  },
+  {
+    "pair_id": "mkqa_pair_00045",
+    "question_da": "joan jett hit me with your best shot",
+    "question_en": "joan jett hit me with your best shot",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00046",
+    "question_da": "hvem er hovedpersonerne i filmen Broen over floden Kwai",
+    "question_en": "who starred in the movie bridge over the river kwai",
+    "answer_da": "William Holden",
+    "answer_en": "William Holden"
+  },
+  {
+    "pair_id": "mkqa_pair_00047",
+    "question_da": "hvad var navnene på ridderne om det runde bord",
+    "question_en": "what were the names of the knights of the round table",
+    "answer_da": "Galahad",
+    "answer_en": "Gareth"
+  },
+  {
+    "pair_id": "mkqa_pair_00048",
+    "question_da": "hvem er værten i america has talent",
+    "question_en": "who is the host of america has talent",
+    "answer_da": "Simon Cowell",
+    "answer_en": "Simon Cowell"
+  },
+  {
+    "pair_id": "mkqa_pair_00049",
+    "question_da": "hvem synger lord it's hard to be humble",
+    "question_en": "who sings lord it's hard to be humble",
+    "answer_da": "Mac Davis",
+    "answer_en": "Mac Davis"
+  },
+  {
+    "pair_id": "mkqa_pair_00050",
+    "question_da": "hvordan kommer jeg til highway 85 herfra",
+    "question_en": "how do i get to highway 85 from here",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00051",
+    "question_da": "hvem sang sangen Take Me to Church",
+    "question_en": "who sang the song take me to church",
+    "answer_da": "Hozier",
+    "answer_en": "Hozier"
+  },
+  {
+    "pair_id": "mkqa_pair_00052",
+    "question_da": "hvilke flag har the union jack i dem",
+    "question_en": "what flags have the union jack in them",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00053",
+    "question_da": "hvornår kom filmen need for speed ud",
+    "question_en": "when did need for speed the movie come out",
+    "answer_da": "2014-03-14",
+    "answer_en": "2014-03-14"
+  },
+  {
+    "pair_id": "mkqa_pair_00054",
+    "question_da": "hvem er modellerne på price is right",
+    "question_en": "who are the models on price is right",
+    "answer_da": "Melissa Ordway",
+    "answer_en": "James O'Halloran"
+  },
+  {
+    "pair_id": "mkqa_pair_00055",
+    "question_da": "hvem anførte norden i borgerkrigen",
+    "question_en": "who led the north in the civil war",
+    "answer_da": "Abraham Lincoln",
+    "answer_en": "Abraham Lincoln"
+  },
+  {
+    "pair_id": "mkqa_pair_00056",
+    "question_da": "hvem spillede sne hvide i once upon a time",
+    "question_en": "who played snow white in once upon a time",
+    "answer_da": "Ginnifer Goodwin",
+    "answer_en": "Ginnifer Goodwin"
+  },
+  {
+    "pair_id": "mkqa_pair_00057",
+    "question_da": "hvem var den ældste mand der nogensinde har levet",
+    "question_en": "who was the oldest man who ever lived",
+    "answer_da": "Jeanne Calment",
+    "answer_en": "Jeanne Calment"
+  },
+  {
+    "pair_id": "mkqa_pair_00058",
+    "question_da": "hvem synger i know you rider sang",
+    "question_en": "who wrote the song i know you rider",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00059",
+    "question_da": "hvor mange gange har australien vundet cricket verdensmesterskabet",
+    "question_en": "how many times has australia won the cricket world cup",
+    "answer_da": "5.0",
+    "answer_en": "5.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00060",
+    "question_da": "Hvad hedder storm i atlantic?",
+    "question_en": "what's the name of the storm in the atlantic",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00061",
+    "question_da": "hvem sang i will always love you først dolly parton eller whitney houston",
+    "question_en": "who sang i will always love you first dolly parton or whitney houston",
+    "answer_da": "Porter Wagoner",
+    "answer_en": "Porter Wagoner"
+  },
+  {
+    "pair_id": "mkqa_pair_00062",
+    "question_da": "hvad hedder den første præsident for amerika",
+    "question_en": "what is the name of the first president of america",
+    "answer_da": "George Washington",
+    "answer_en": "George Washington"
+  },
+  {
+    "pair_id": "mkqa_pair_00063",
+    "question_da": "hvad er navnet på gymnasiet i Delta-kliken",
+    "question_en": "what is the name of the college in animal house",
+    "answer_da": "faber college",
+    "answer_en": "faber college"
+  },
+  {
+    "pair_id": "mkqa_pair_00064",
+    "question_da": "skuespillere i filmen 60 sekunder",
+    "question_en": "actors in the movie gone in 60 seconds",
+    "answer_da": "Angelina Jolie",
+    "answer_en": "Angelina Jolie"
+  },
+  {
+    "pair_id": "mkqa_pair_00065",
+    "question_da": "hvor mange sæsoner er der af the cosby show",
+    "question_en": "how many seasons are there of the cosby show",
+    "answer_da": "8.0 De fire årstider",
+    "answer_en": "8.0 seasons"
+  },
+  {
+    "pair_id": "mkqa_pair_00066",
+    "question_da": "hvornår blev det første cricket world cup afholdt",
+    "question_en": "when was the first cricket world cup held",
+    "answer_da": "1975",
+    "answer_en": "1975"
+  },
+  {
+    "pair_id": "mkqa_pair_00067",
+    "question_da": "hvem spiller bailey i a dog's purpose",
+    "question_en": "who plays bailey in a dog's purpose",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00068",
+    "question_da": "hvem er underverdenens gud i græsk mytologi",
+    "question_en": "who is the god of the underworld in greek mythology",
+    "answer_da": "Hades",
+    "answer_en": "Hades"
+  },
+  {
+    "pair_id": "mkqa_pair_00069",
+    "question_da": "hvornår kom don't smile at me ud",
+    "question_en": "when did don't smile at me come out",
+    "answer_da": "2017-08-11",
+    "answer_en": "2017-08-11"
+  },
+  {
+    "pair_id": "mkqa_pair_00070",
+    "question_da": "hvem spillede charlene darling i andy griffith showet",
+    "question_en": "who played charlene darling on the andy griffith show",
+    "answer_da": "Maggie Peterson",
+    "answer_en": "Maggie Peterson"
+  },
+  {
+    "pair_id": "mkqa_pair_00071",
+    "question_da": "hvem er kaptajn for west indies i cricket",
+    "question_en": "who is the captain of west indies in cricket",
+    "answer_da": "Jason Holder",
+    "answer_en": "Jason Holder"
+  },
+  {
+    "pair_id": "mkqa_pair_00072",
+    "question_da": "hvad er den største sø i new zealand",
+    "question_en": "what is the largest lake in new zealand",
+    "answer_da": "Lake Taupo",
+    "answer_en": "Lake Taupo"
+  },
+  {
+    "pair_id": "mkqa_pair_00073",
+    "question_da": "hvem er forfatteren til a long way gone",
+    "question_en": "who is the author of a long way gone",
+    "answer_da": "Ishmael Beah",
+    "answer_en": "Ishmael Beah"
+  },
+  {
+    "pair_id": "mkqa_pair_00074",
+    "question_da": "hvornår forlod usa vietnamkrigen",
+    "question_en": "when did the us leave the vietnam war",
+    "answer_da": "1973-03-29",
+    "answer_en": "1973-03-29"
+  },
+  {
+    "pair_id": "mkqa_pair_00075",
+    "question_da": "hvem spillede harley quinn i the suicide squad",
+    "question_en": "who played harley quinn in the suicide squad",
+    "answer_da": "Margot Robbie",
+    "answer_en": "Margot Robbie"
+  },
+  {
+    "pair_id": "mkqa_pair_00076",
+    "question_da": "hvor mange bor i staten maine",
+    "question_en": "what is the population of the state of maine",
+    "answer_da": "1338000.0",
+    "answer_en": "1338000.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00077",
+    "question_da": "hvem spillede tj i head of the class",
+    "question_en": "who played tj on head of the class",
+    "answer_da": "Billy Connolly",
+    "answer_en": "Billy Connolly"
+  },
+  {
+    "pair_id": "mkqa_pair_00078",
+    "question_da": "tag mig til lufthavnen i charlotte north carolina",
+    "question_en": "take me to the charlotte north carolina airport",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00079",
+    "question_da": "hvem spiller peter quill i guardians of the galaxy",
+    "question_en": "who played peter quill in guardians of the galaxy",
+    "answer_da": "Chris Pratt",
+    "answer_en": "Chris Pratt"
+  },
+  {
+    "pair_id": "mkqa_pair_00080",
+    "question_da": "hvornår blev samsung galaxy s6  lanceret",
+    "question_en": "when was the samsung galaxy s6 edge released",
+    "answer_da": "2015-04-10",
+    "answer_en": "2015-04-10"
+  },
+  {
+    "pair_id": "mkqa_pair_00081",
+    "question_da": "100 ting at nå inden high school cast",
+    "question_en": "100 things to do before high school cast",
+    "answer_da": "Jack DeSena",
+    "answer_en": "Jack DeSena"
+  },
+  {
+    "pair_id": "mkqa_pair_00082",
+    "question_da": "Hvem synger nogen, som jeg plejede at vide",
+    "question_en": "who sings someone that i used to know",
+    "answer_da": "Gotye",
+    "answer_en": "Gotye"
+  },
+  {
+    "pair_id": "mkqa_pair_00083",
+    "question_da": "hvor mange liter er der i en whisky tønde",
+    "question_en": "how many gallons are in a whiskey barrel",
+    "answer_da": "53.0 Imperial gallon",
+    "answer_en": "53.0 gallons"
+  },
+  {
+    "pair_id": "mkqa_pair_00084",
+    "question_da": "hvem kæmpede USA i mod i den revolutionære krig",
+    "question_en": "who did america fight in the revolutionary war",
+    "answer_da": "Storbritannien",
+    "answer_en": "Great Britain"
+  },
+  {
+    "pair_id": "mkqa_pair_00085",
+    "question_da": "hvornår kom bennie and the jets ud",
+    "question_en": "when did bennie and the jets come out",
+    "answer_da": "2000",
+    "answer_en": "2000"
+  },
+  {
+    "pair_id": "mkqa_pair_00086",
+    "question_da": "hvornår var USA sidst uden gæld",
+    "question_en": "when was the last time the united states was out of debt",
+    "answer_da": "1835-01-08",
+    "answer_en": "1835-01-08"
+  },
+  {
+    "pair_id": "mkqa_pair_00087",
+    "question_da": "Hvem sang sangen you are my everything",
+    "question_en": "who sang the song you're my everything",
+    "answer_da": "The Temptations",
+    "answer_en": "Santa Esmeralda"
+  },
+  {
+    "pair_id": "mkqa_pair_00088",
+    "question_da": "hvor langt er der her fra til oklahoma city",
+    "question_en": "how far is it from here to oklahoma city",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00089",
+    "question_da": "hvem sang sangen i love the nightlife",
+    "question_en": "who sang the song i love the nightlife",
+    "answer_da": "Alicia Bridges",
+    "answer_en": "Alicia Bridges"
+  },
+  {
+    "pair_id": "mkqa_pair_00090",
+    "question_da": "hold, der aldrig har vundet en verdensserie",
+    "question_en": "teams that have never won a world series",
+    "answer_da": "Seattle Mariners",
+    "answer_en": "Seattle Mariners"
+  },
+  {
+    "pair_id": "mkqa_pair_00091",
+    "question_da": "hvem var kendt som jomfruen fra orleans",
+    "question_en": "who was known as the maid of orleans",
+    "answer_da": "Jeanne d'Arc",
+    "answer_en": "Joan of Arc"
+  },
+  {
+    "pair_id": "mkqa_pair_00092",
+    "question_da": "hvem løb den første drømmemil",
+    "question_en": "who ran the first sub four minute mile",
+    "answer_da": "Roger Bannister",
+    "answer_en": "Roger Bannister"
+  },
+  {
+    "pair_id": "mkqa_pair_00093",
+    "question_da": "hvem sang  i've got spurs that jingle jangle jingle",
+    "question_en": "who sang i've got spurs that jingle jangle jingle",
+    "answer_da": "Gene Autry",
+    "answer_en": "Gene Autry"
+  },
+  {
+    "pair_id": "mkqa_pair_00094",
+    "question_da": "hvad var det første slag i vietnamkrigen",
+    "question_en": "what was the first battle in the vietnam war",
+    "answer_da": "Battle of Ia Drang",
+    "answer_en": "Battle of Ia Drang"
+  },
+  {
+    "pair_id": "mkqa_pair_00095",
+    "question_da": "hvem spillede dette års super bowl",
+    "question_en": "who played in this year's super bowl",
+    "answer_da": "St. Louis Rams",
+    "answer_en": "Los Angeles Rams"
+  },
+  {
+    "pair_id": "mkqa_pair_00096",
+    "question_da": "hvem er den nuværende  surgeon general i usa",
+    "question_en": "who is the current surgeon general of the united states",
+    "answer_da": "Jerome Adams",
+    "answer_en": "Jerome Adams"
+  },
+  {
+    "pair_id": "mkqa_pair_00097",
+    "question_da": "hvem spillede rachel i den originale blade runner",
+    "question_en": "who played rachel in the original blade runner",
+    "answer_da": "Sean Young",
+    "answer_en": "Sean Young"
+  },
+  {
+    "pair_id": "mkqa_pair_00098",
+    "question_da": "hvor ligger den længste bro i usa",
+    "question_en": "where is the longest bridge in the united states located",
+    "answer_da": "Lake Pontchartrain",
+    "answer_en": "Lake Pontchartrain"
+  },
+  {
+    "pair_id": "mkqa_pair_00099",
+    "question_da": "hvem fandt på ideen til Fars dag",
+    "question_en": "who came up with the idea of father's day",
+    "answer_da": "Sonora Smart Dodd",
+    "answer_en": "Sonora Smart Dodd"
+  },
+  {
+    "pair_id": "mkqa_pair_00100",
+    "question_da": "hvor stammer efternavnet Guzman fra",
+    "question_en": "where does the last name guzman originate from",
+    "answer_da": "Spanien",
+    "answer_en": "Spain"
+  },
+  {
+    "pair_id": "mkqa_pair_00101",
+    "question_da": "hvem synger sangen please don't go",
+    "question_en": "who sings the song please don't go",
+    "answer_da": "KC and the Sunshine Band",
+    "answer_en": "KC and the Sunshine Band"
+  },
+  {
+    "pair_id": "mkqa_pair_00102",
+    "question_da": "hvem har rekorden  for de fleste rushing yards  i en kamp",
+    "question_en": "who holds the record for most rushing yards in a game",
+    "answer_da": "Adrian Peterson",
+    "answer_en": "Adrian Peterson"
+  },
+  {
+    "pair_id": "mkqa_pair_00103",
+    "question_da": "billeder af samantha fra sex and the city",
+    "question_en": "pictures of samantha from sex and the city",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00104",
+    "question_da": "who is the richest person to ever live",
+    "question_en": "who is the richest person to ever live",
+    "answer_da": "Musa 1. af Mali",
+    "answer_en": "Mansa Musa"
+  },
+  {
+    "pair_id": "mkqa_pair_00105",
+    "question_da": "hvilken youtuber i verden har flest abonnenter",
+    "question_en": "who is the most subscribed youtuber in the world",
+    "answer_da": "T-Series",
+    "answer_en": "T-Series"
+  },
+  {
+    "pair_id": "mkqa_pair_00106",
+    "question_da": "Hvor ligger times square i new york?",
+    "question_en": "where is times square located in new york city",
+    "answer_da": "USA",
+    "answer_en": "United States of America"
+  },
+  {
+    "pair_id": "mkqa_pair_00107",
+    "question_da": "slår fuldt hus en straight i poker",
+    "question_en": "does full house beat a straight in poker",
+    "answer_da": "yes",
+    "answer_en": "yes"
+  },
+  {
+    "pair_id": "mkqa_pair_00108",
+    "question_da": "hvilken radiostation er  pittsburgh pirates",
+    "question_en": "what radio station are the pittsburgh pirates on",
+    "answer_da": "KDKA-FM",
+    "answer_en": "KDKA-FM"
+  },
+  {
+    "pair_id": "mkqa_pair_00109",
+    "question_da": "hvem er træner for toronto raptors",
+    "question_en": "who is the coach for the toronto raptors",
+    "answer_da": "Nick Nurse",
+    "answer_en": "Nick Nurse"
+  },
+  {
+    "pair_id": "mkqa_pair_00110",
+    "question_da": "hvem skrev sangen you were always on my mind",
+    "question_en": "who wrote the song you were always on my mind",
+    "answer_da": "Johnny Christopher",
+    "answer_en": "Johnny Christopher"
+  },
+  {
+    "pair_id": "mkqa_pair_00111",
+    "question_da": "hvem er skuespilleren som spiller john wick",
+    "question_en": "who is the actor that plays john wick",
+    "answer_da": "Keanu Reeves",
+    "answer_en": "Keanu Reeves"
+  },
+  {
+    "pair_id": "mkqa_pair_00112",
+    "question_da": "hvem synger take a look at me now",
+    "question_en": "who sings take a look at me now",
+    "answer_da": "Phil Collins",
+    "answer_en": "Phil Collins"
+  },
+  {
+    "pair_id": "mkqa_pair_00113",
+    "question_da": "hvem synger back in the high life again",
+    "question_en": "who sings back in the high life again",
+    "answer_da": "Steve Winwood",
+    "answer_en": "Steve Winwood"
+  },
+  {
+    "pair_id": "mkqa_pair_00114",
+    "question_da": "hvem synger going to the chapel and we're gonna get married",
+    "question_en": "who sings going to the chapel and we're gonna get married",
+    "answer_da": "The Dixie Cups",
+    "answer_en": "The Dixie Cups"
+  },
+  {
+    "pair_id": "mkqa_pair_00115",
+    "question_da": "hvor foregik den første verdenskrig",
+    "question_en": "where did the first world war take place",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00116",
+    "question_da": "hvad er det amerikanske flag lavet af",
+    "question_en": "what is the american flag made out of",
+    "answer_da": "Nylon",
+    "answer_en": "nylon"
+  },
+  {
+    "pair_id": "mkqa_pair_00117",
+    "question_da": "hvor kommer frihedsgudinden fra",
+    "question_en": "where does the statue of liberty come from",
+    "answer_da": "Liberty Island",
+    "answer_en": "Liberty Island"
+  },
+  {
+    "pair_id": "mkqa_pair_00118",
+    "question_da": "hvem synger come together right now over me",
+    "question_en": "who sings come together right now over me",
+    "answer_da": "The Beatles",
+    "answer_en": "The Beatles"
+  },
+  {
+    "pair_id": "mkqa_pair_00119",
+    "question_da": "hvem har hovedrollen i programmet arrow",
+    "question_en": "who is the main actor in the show arrow",
+    "answer_da": "Katie Cassidy",
+    "answer_en": "Katie Cassidy"
+  },
+  {
+    "pair_id": "mkqa_pair_00120",
+    "question_da": "hvem har den bedste rekord i the major league",
+    "question_en": "who has the best record in the major league",
+    "answer_da": "New York Yankees",
+    "answer_en": "New York Yankees"
+  },
+  {
+    "pair_id": "mkqa_pair_00121",
+    "question_da": "hvem sang now that we found love what are we gonna do with it",
+    "question_en": "who sang now that we found love what are we gonna do with it",
+    "answer_da": "Heavy D",
+    "answer_en": "Heavy D"
+  },
+  {
+    "pair_id": "mkqa_pair_00122",
+    "question_da": "hvem spillede belle i skønheden og udyret",
+    "question_en": "who played belle in beauty and the beast",
+    "answer_da": "Emma Watson",
+    "answer_en": "Emma Watson"
+  },
+  {
+    "pair_id": "mkqa_pair_00123",
+    "question_da": "hvornår var while my guitar gently weeps written",
+    "question_en": "when was while my guitar gently weeps written",
+    "answer_da": "1968",
+    "answer_en": "1968"
+  },
+  {
+    "pair_id": "mkqa_pair_00124",
+    "question_da": "hvem sang sangen fox on the run",
+    "question_en": "who sang the song fox on the run",
+    "answer_da": "Sweet",
+    "answer_en": "The Sweet"
+  },
+  {
+    "pair_id": "mkqa_pair_00125",
+    "question_da": "hvad er ti i tiende",
+    "question_en": "what is 10 to the power of 10",
+    "answer_da": "10000000000.0",
+    "answer_en": "10000000000.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00126",
+    "question_da": "hvad var magnituden på northridge jordskælvet",
+    "question_en": "what was the magnitude of the northridge earthquake",
+    "answer_da": "6.7",
+    "answer_en": "6.7"
+  },
+  {
+    "pair_id": "mkqa_pair_00127",
+    "question_da": "hvem sang bartender i really did it this time",
+    "question_en": "who sings bartender i really did it this time",
+    "answer_da": "Rehab",
+    "answer_en": "Rehab"
+  },
+  {
+    "pair_id": "mkqa_pair_00128",
+    "question_da": "hvad er det nuværende indbyggerantal i phoenix arizona",
+    "question_en": "what is the current population of phoenix arizona",
+    "answer_da": "1626000.0",
+    "answer_en": "1626000.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00129",
+    "question_da": "kørende gennem sneen i en  åben  en-hestes kane",
+    "question_en": "dashing through the snow on a one horse open sleigh",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00130",
+    "question_da": "hvem har flest grammys gennem tidene",
+    "question_en": "who has the most grammys of all time",
+    "answer_da": "Georg Solti",
+    "answer_en": "Georg Solti"
+  },
+  {
+    "pair_id": "mkqa_pair_00131",
+    "question_da": "hvad er den nuværende befolkningstal i albuquerque new mexico",
+    "question_en": "what is the current population of albuquerque new mexico",
+    "answer_da": "558545.0",
+    "answer_en": "558545.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00132",
+    "question_da": "hvem sang sangen  i can see clearly now",
+    "question_en": "who sang the song i can see clearly now",
+    "answer_da": "Ray Charles",
+    "answer_en": "Ray Charles"
+  },
+  {
+    "pair_id": "mkqa_pair_00133",
+    "question_da": "hvem var den første præsident i Sydafrika",
+    "question_en": "who was the first president in south africa",
+    "answer_da": "Nelson Mandela",
+    "answer_en": "Nelson Mandela"
+  },
+  {
+    "pair_id": "mkqa_pair_00134",
+    "question_da": "hvem er dette års hall of fame inductees",
+    "question_en": "who are this year's hall of fame inductees",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00135",
+    "question_da": "hvornår blev friheds gudinden  bygget",
+    "question_en": "when did they build the statue of liberty",
+    "answer_da": "1875-09",
+    "answer_en": "1875-09"
+  },
+  {
+    "pair_id": "mkqa_pair_00136",
+    "question_da": "hvordan siger du det er tid at gå hjem på spansk",
+    "question_en": "how do you say time to go home in spanish",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00137",
+    "question_da": "Hvem skrev sangen here comes the sun?",
+    "question_en": "who wrote the song here comes the sun",
+    "answer_da": "George Harrison",
+    "answer_en": "George Harrison"
+  },
+  {
+    "pair_id": "mkqa_pair_00138",
+    "question_da": "hvad var den første film i farver",
+    "question_en": "what was the first movie to have color",
+    "answer_da": "With Our King and Queen Through India",
+    "answer_en": "With Our King and Queen Through India"
+  },
+  {
+    "pair_id": "mkqa_pair_00139",
+    "question_da": "hvor mange episoder er der i sæson two af my hero academia",
+    "question_en": "how many episodes are in season two of my hero academia",
+    "answer_da": "25.0 Afsnit (tv-serie)",
+    "answer_en": "25.0 episodes"
+  },
+  {
+    "pair_id": "mkqa_pair_00140",
+    "question_da": "hvem gjorde ain't no sunshine when she's gone",
+    "question_en": "who did ain't no sunshine when she's gone",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00141",
+    "question_da": "hvornår kommer premier League programmet ud",
+    "question_en": "when does the premier league schedule come out",
+    "answer_da": "2019-06-13",
+    "answer_en": "2019-06-13"
+  },
+  {
+    "pair_id": "mkqa_pair_00142",
+    "question_da": "hvem synger sugar pie honey bunch",
+    "question_en": "who sings the song sugar pie honey bunch",
+    "answer_da": "Four Tops",
+    "answer_en": "Four Tops"
+  },
+  {
+    "pair_id": "mkqa_pair_00143",
+    "question_da": "hvor spilles hall of fame-spillet",
+    "question_en": "where is the hall of fame game played",
+    "answer_da": "USA",
+    "answer_en": "Tom Benson Hall of Fame Stadium"
+  },
+  {
+    "pair_id": "mkqa_pair_00144",
+    "question_da": "hvad er vinder præmien i vild med dans",
+    "question_en": "what is the prize for winning so you think you can dance",
+    "answer_da": "250000.0 amerikansk dollar",
+    "answer_en": "250000.0 US dollars"
+  },
+  {
+    "pair_id": "mkqa_pair_00145",
+    "question_da": "hvem synger sangen fly me to the moon",
+    "question_en": "who sings the song fly me to the moon",
+    "answer_da": "Frank Sinatra",
+    "answer_en": "Frank Sinatra"
+  },
+  {
+    "pair_id": "mkqa_pair_00146",
+    "question_da": "hvornår kom power rangers mystic force ud",
+    "question_en": "when did power rangers mystic force come out",
+    "answer_da": "2006-02-20",
+    "answer_en": "2006-02-20"
+  },
+  {
+    "pair_id": "mkqa_pair_00147",
+    "question_da": "hvor mange kampe spiller hvert nba hold",
+    "question_en": "how many nba games does each team play",
+    "answer_da": "82.0",
+    "answer_en": "82.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00148",
+    "question_da": "hvordan kommer jeg til Clear Lake Iowa",
+    "question_en": "how do i get to clear lake iowa",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00149",
+    "question_da": "hvem er pigen der spiller i fifty shades of grey",
+    "question_en": "who is the girl that plays in fifty shades of grey",
+    "answer_da": "Dakota Johnson",
+    "answer_en": "Dakota Johnson"
+  },
+  {
+    "pair_id": "mkqa_pair_00150",
+    "question_da": "hvem spiller katten i katten i hatten",
+    "question_en": "who plays the cat in cat in the hat",
+    "answer_da": "Mike Myers",
+    "answer_en": "Mike Myers"
+  },
+  {
+    "pair_id": "mkqa_pair_00151",
+    "question_da": "once i was 7 years old sangen",
+    "question_en": "once i was 7 years old the song",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00152",
+    "question_da": "Hvem gør stemmen af Vinnie på Family Guy",
+    "question_en": "who does the voice of vinnie on family guy",
+    "answer_da": "Tony Sirico",
+    "answer_en": "Tony Sirico"
+  },
+  {
+    "pair_id": "mkqa_pair_00153",
+    "question_da": "hvem sang  what doesn't kill you makes you stronger",
+    "question_en": "who sang what doesn't kill you makes you stronger",
+    "answer_da": "Kelly Clarkson",
+    "answer_en": "Kelly Clarkson"
+  },
+  {
+    "pair_id": "mkqa_pair_00154",
+    "question_da": "hvem vandt the world series de sidste fem år",
+    "question_en": "who won the world series the last five years",
+    "answer_da": "Houston Astros",
+    "answer_en": "Houston Astros"
+  },
+  {
+    "pair_id": "mkqa_pair_00155",
+    "question_da": "hvornår blev call of duty world at war udsendt",
+    "question_en": "when did call of duty world at war come out",
+    "answer_da": "2008-11-11",
+    "answer_en": "2008-11-11"
+  },
+  {
+    "pair_id": "mkqa_pair_00156",
+    "question_da": "hvem har haft flest nummer 1 hits i country musik",
+    "question_en": "who has the most number one country hits",
+    "answer_da": "George Strait",
+    "answer_en": "George Strait"
+  },
+  {
+    "pair_id": "mkqa_pair_00157",
+    "question_da": "hvem sang sangen what condition my condition was in",
+    "question_en": "who sang the song what condition my condition was in",
+    "answer_da": "Bettye LaVette",
+    "answer_en": "Bettye LaVette"
+  },
+  {
+    "pair_id": "mkqa_pair_00158",
+    "question_da": "hvem spillede moren i  Dengang i 70'erne",
+    "question_en": "who played the mom in that 70s show",
+    "answer_da": "Debra Jo Rupp",
+    "answer_en": "Debra Jo Rupp"
+  },
+  {
+    "pair_id": "mkqa_pair_00159",
+    "question_da": "hvad er indbyggerantallet i sumter south carolina",
+    "question_en": "what is the population of sumter south carolina",
+    "answer_da": "39982.0",
+    "answer_en": "39982.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00160",
+    "question_da": "hvornår er der gay parade i chicago illinois",
+    "question_en": "when is the gay parade in chicago illinois",
+    "answer_da": "2019-06-30",
+    "answer_en": "2019-06-30"
+  },
+  {
+    "pair_id": "mkqa_pair_00161",
+    "question_da": "hvem spillede gaston i filmen skønheden og udyret",
+    "question_en": "who played gaston in the movie beauty and the beast",
+    "answer_da": "Luke Evans",
+    "answer_en": "Luke Evans"
+  },
+  {
+    "pair_id": "mkqa_pair_00162",
+    "question_da": "hvor kommer udtrykket going to hell in a handbasket fra",
+    "question_en": "where does the expression going to hell in a handbasket come from",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00163",
+    "question_da": "hvor mange helligdage er der i den katolske kirke",
+    "question_en": "how many holy days of obligation are there in the catholic church",
+    "answer_da": "6.0",
+    "answer_en": "6.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00164",
+    "question_da": "hvem synger wild thing you make my heart sing",
+    "question_en": "who sings wild thing you make my heart sing",
+    "answer_da": "The Troggs",
+    "answer_en": "The Troggs"
+  },
+  {
+    "pair_id": "mkqa_pair_00165",
+    "question_da": "Har der nogensinde været en orkan ved navn Kathy",
+    "question_en": "has there ever been a hurricane named kathy",
+    "answer_da": "yes",
+    "answer_en": "yes"
+  },
+  {
+    "pair_id": "mkqa_pair_00166",
+    "question_da": "hvem sang sangen have you ever seen the rain",
+    "question_en": "who sang the song have you ever seen the rain",
+    "answer_da": "Creedence Clearwater Revival",
+    "answer_en": "Creedence Clearwater Revival"
+  },
+  {
+    "pair_id": "mkqa_pair_00167",
+    "question_da": "hvornår blev menneskerettighedserklæringen skrevet",
+    "question_en": "when was the declaration of human rights written",
+    "answer_da": "1948",
+    "answer_en": "1948"
+  },
+  {
+    "pair_id": "mkqa_pair_00168",
+    "question_da": "hvor bliver tv showet stranger things filmet",
+    "question_en": "where is the tv show stranger things filmed",
+    "answer_da": "Atlanta",
+    "answer_en": "Atlanta"
+  },
+  {
+    "pair_id": "mkqa_pair_00169",
+    "question_da": "hvilke hold spiller i the atlantic sun conference",
+    "question_en": "what teams are in the atlantic sun conference",
+    "answer_da": "Lipscomb Bisons",
+    "answer_en": "Lipscomb Bisons"
+  },
+  {
+    "pair_id": "mkqa_pair_00170",
+    "question_da": "hvem skrev sangen you broke up with me",
+    "question_en": "who wrote the song you broke up with me",
+    "answer_da": "Walker Hayes",
+    "answer_en": "Walker Hayes"
+  },
+  {
+    "pair_id": "mkqa_pair_00171",
+    "question_da": "hvad er navnene på karaktererne i Løve konge",
+    "question_en": "what are the names of the characters in the lion king",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00172",
+    "question_da": "hvad er den varmeste temperatur der er målt i new york nogensinde",
+    "question_en": "what is the hottest temperature recorded in new york",
+    "answer_da": "108.0 Fahrenheit-skalaen",
+    "answer_en": "108.0 °F"
+  },
+  {
+    "pair_id": "mkqa_pair_00173",
+    "question_da": "hvem har majoriteten i kongressen lige nu",
+    "question_en": "who has the majority in congress right now",
+    "answer_da": "Republikanske parti",
+    "answer_en": "Republican Party"
+  },
+  {
+    "pair_id": "mkqa_pair_00174",
+    "question_da": "hvor fandt slaget om gettysburg sted",
+    "question_en": "where did the battle of gettysburg take place",
+    "answer_da": "Pennsylvania",
+    "answer_en": "Pennsylvania"
+  },
+  {
+    "pair_id": "mkqa_pair_00175",
+    "question_da": "hvornår spiller kvindefodboldholdet",
+    "question_en": "when do the women's soccer team play",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00176",
+    "question_da": "hvornår vandt chicago cubs world series",
+    "question_en": "when did chicago cubs win the world series",
+    "answer_da": "2016",
+    "answer_en": "2016"
+  },
+  {
+    "pair_id": "mkqa_pair_00177",
+    "question_da": "hvem rykkede op i premier league sidste år",
+    "question_en": "who got promoted to the premier league last year",
+    "answer_da": "Cardiff City F.C.",
+    "answer_en": "Cardiff City F.C."
+  },
+  {
+    "pair_id": "mkqa_pair_00178",
+    "question_da": "hvilket ord på det Engelske sprog har flest stavelser",
+    "question_en": "what word in the english language has the most syllables",
+    "answer_da": "Pneumonoultramicroscopicsilicovolcanoconiosis",
+    "answer_en": "pneumonoultramicroscopicsilicovolcanoconiosis"
+  },
+  {
+    "pair_id": "mkqa_pair_00179",
+    "question_da": "hvad er delstats hovedstaden i  new mexico",
+    "question_en": "what is the state capital of new mexico",
+    "answer_da": "Santa Fe",
+    "answer_en": "Santa Fe"
+  },
+  {
+    "pair_id": "mkqa_pair_00180",
+    "question_da": "hvem har verdensrekorden i at holde vejret længst",
+    "question_en": "who holds the world record for holding their breath the longest",
+    "answer_da": "Tom Sietas",
+    "answer_en": "Tom Sietas"
+  },
+  {
+    "pair_id": "mkqa_pair_00181",
+    "question_da": "hvem er skurken i guardians of the galaxy",
+    "question_en": "who was the bad guy in guardians of the galaxy",
+    "answer_da": "Ronan Anklageren",
+    "answer_en": "Ronan the Accuser"
+  },
+  {
+    "pair_id": "mkqa_pair_00182",
+    "question_da": "er irland en del af Det Forenede Kongerige",
+    "question_en": "is the republic of ireland part of the united kingdom",
+    "answer_da": "no",
+    "answer_en": "no"
+  },
+  {
+    "pair_id": "mkqa_pair_00183",
+    "question_da": "hvornår blev første episode af only fools and horses lavet",
+    "question_en": "when was the first episode of only fools and horses made",
+    "answer_da": "1981-09-08",
+    "answer_en": "1981-09-08"
+  },
+  {
+    "pair_id": "mkqa_pair_00184",
+    "question_da": "hvornår var det sidste gang nadal vandt wimbledon",
+    "question_en": "when was the last time nadal won wimbledon",
+    "answer_da": "2010",
+    "answer_en": "2010"
+  },
+  {
+    "pair_id": "mkqa_pair_00185",
+    "question_da": "hvem spiller avery i dog with a blog",
+    "question_en": "who plays avery in dog with a blog",
+    "answer_da": "G. Hannelius",
+    "answer_en": "G Hannelius"
+  },
+  {
+    "pair_id": "mkqa_pair_00186",
+    "question_da": "hvem skrev digtet twinkle twinkle little star",
+    "question_en": "who wrote the poem twinkle twinkle little star",
+    "answer_da": "Jane Taylor",
+    "answer_en": "Jane Taylor"
+  },
+  {
+    "pair_id": "mkqa_pair_00187",
+    "question_da": "hvem synger never met a girl like you before",
+    "question_en": "who sings never met a girl like you before",
+    "answer_da": "Edwyn Collins",
+    "answer_en": "Edwyn Collins"
+  },
+  {
+    "pair_id": "mkqa_pair_00188",
+    "question_da": "hvornår blev  Five Nights at Freddy's lavet",
+    "question_en": "when was five nights at freddy's made",
+    "answer_da": "2014-08-08",
+    "answer_en": "2014-08-08"
+  },
+  {
+    "pair_id": "mkqa_pair_00189",
+    "question_da": "hvornår kom filmen Black Panther ud",
+    "question_en": "when did the movie black panther come out",
+    "answer_da": "2018-02-16",
+    "answer_en": "2018-02-16"
+  },
+  {
+    "pair_id": "mkqa_pair_00190",
+    "question_da": "Hvem spillede i i walk the line",
+    "question_en": "who played johnny cash in i walk the line",
+    "answer_da": "Joaquin Phoenix",
+    "answer_en": "Joaquin Phoenix"
+  },
+  {
+    "pair_id": "mkqa_pair_00191",
+    "question_da": "hvem synger all i need is the air that i breath",
+    "question_en": "who sings all i need is the air that i breathe",
+    "answer_da": "The Hollies",
+    "answer_en": "The Hollies"
+  },
+  {
+    "pair_id": "mkqa_pair_00192",
+    "question_da": "hvem sang didn't i blow your mind this time",
+    "question_en": "who sang didn't i blow your mind this time",
+    "answer_da": "The Delfonics",
+    "answer_en": "The Delfonics"
+  },
+  {
+    "pair_id": "mkqa_pair_00193",
+    "question_da": "hvornår udkom charlie og chokoladefabrikken",
+    "question_en": "when did charlie and the chocolate factory come out",
+    "answer_da": "2005-07-10",
+    "answer_en": "2005-07-10"
+  },
+  {
+    "pair_id": "mkqa_pair_00194",
+    "question_da": "Hvem er med i fimen league of their own?",
+    "question_en": "cast of the movie league of their own",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00195",
+    "question_da": "hvad er den lovlige drikkealder i Tyrkiet",
+    "question_en": "what is the legal drinking age in turkey",
+    "answer_da": "18.0 år",
+    "answer_en": "18.0 years"
+  },
+  {
+    "pair_id": "mkqa_pair_00196",
+    "question_da": "sang Tom Cruise i Rock of Ages",
+    "question_en": "did tom cruise sing in rock of ages",
+    "answer_da": "yes",
+    "answer_en": "yes"
+  },
+  {
+    "pair_id": "mkqa_pair_00197",
+    "question_da": "hvor ligger golf hall of fame",
+    "question_en": "where is the golf hall of fame located",
+    "answer_da": "USA",
+    "answer_en": "United States of America"
+  },
+  {
+    "pair_id": "mkqa_pair_00198",
+    "question_da": "hvornår åbnede skønhed og udyret på broadway",
+    "question_en": "when did beauty and the beast open on broadway",
+    "answer_da": "1994-04-18",
+    "answer_en": "1994-04-18"
+  },
+  {
+    "pair_id": "mkqa_pair_00199",
+    "question_da": "hvor finder Captain America Winter Soldier sted",
+    "question_en": "where does captain america winter soldier take place",
+    "answer_da": "Washington D.C.",
+    "answer_en": "Washington, D.C."
+  },
+  {
+    "pair_id": "mkqa_pair_00200",
+    "question_da": "hvem er den ældste person der nogensinde er blevet registreret",
+    "question_en": "who is the oldest living person ever recorded",
+    "answer_da": "Jeanne Calment",
+    "answer_en": "Jeanne Calment"
+  },
+  {
+    "pair_id": "mkqa_pair_00201",
+    "question_da": "hvad er titlerne på matrix filmene",
+    "question_en": "what are the names of the matrix movies",
+    "answer_da": "The Matrix trilogi",
+    "answer_en": "The Matrix trilogy"
+  },
+  {
+    "pair_id": "mkqa_pair_00202",
+    "question_da": "hvad hedder hunden i toy story",
+    "question_en": "what is the dogs name from toy story",
+    "answer_da": "Slinky Dog",
+    "answer_en": "Slinky Dog"
+  },
+  {
+    "pair_id": "mkqa_pair_00203",
+    "question_da": "hvad var det sidste vulkanudbrud i USA",
+    "question_en": "what was the last volcanic eruption in the united states",
+    "answer_da": "2018",
+    "answer_en": "2018"
+  },
+  {
+    "pair_id": "mkqa_pair_00204",
+    "question_da": "hvem skrev i got you under my skin",
+    "question_en": "who wrote i got you under my skin",
+    "answer_da": "Cole Porter",
+    "answer_en": "Cole Porter"
+  },
+  {
+    "pair_id": "mkqa_pair_00205",
+    "question_da": "hvor lang tid varede den længste  major league baseball kamp",
+    "question_en": "what was the longest major league baseball game in history",
+    "answer_da": "længste professionelle baseball kamp ",
+    "answer_en": "Longest professional baseball game"
+  },
+  {
+    "pair_id": "mkqa_pair_00206",
+    "question_da": "hvem er den første baseman for yankees",
+    "question_en": "who is the first baseman for the yankees",
+    "answer_da": "Edwin Encarnación",
+    "answer_en": "Edwin Encarnación"
+  },
+  {
+    "pair_id": "mkqa_pair_00207",
+    "question_da": "hvordan er vejret i vancouver canada",
+    "question_en": "what is the weather like in vancouver canada",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00208",
+    "question_da": "hvem var den første person som gik på månen",
+    "question_en": "who was the first person that walked on the moon",
+    "answer_da": "Neil Armstrong",
+    "answer_en": "Neil Armstrong"
+  },
+  {
+    "pair_id": "mkqa_pair_00209",
+    "question_da": "Hvor mange nfl fodboldhold i california?",
+    "question_en": "how many nfl football teams are in california",
+    "answer_da": "4.0",
+    "answer_en": "4.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00210",
+    "question_da": "hvornår gik der et menneske på månen",
+    "question_en": "when did the man walk on the moon",
+    "answer_da": "juli 20, 1969",
+    "answer_en": "july 20, 1969"
+  },
+  {
+    "pair_id": "mkqa_pair_00211",
+    "question_da": "hvor mange ivy league skoler er der i USA",
+    "question_en": "how many ivy league schools are there in the united states",
+    "answer_da": "8.0",
+    "answer_en": "8.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00212",
+    "question_da": "hvem sang sangen walk like a man",
+    "question_en": "who sang the song walk like a man",
+    "answer_da": "Frankie Valli",
+    "answer_en": "Frankie Valli"
+  },
+  {
+    "pair_id": "mkqa_pair_00213",
+    "question_da": "hvem skrev  take it to the limit af the eagles",
+    "question_en": "who wrote take it to the limit by the eagles",
+    "answer_da": "Randy Meisner",
+    "answer_en": "Randy Meisner"
+  },
+  {
+    "pair_id": "mkqa_pair_00214",
+    "question_da": "hvornår regnede det sidste gang i Lima Peru",
+    "question_en": "when was the last time it rained in lima peru",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00215",
+    "question_da": "hvor er tv programmet the kitchen filmet",
+    "question_en": "where is the tv show the kitchen filmed",
+    "answer_da": "USA",
+    "answer_en": "United States of America"
+  },
+  {
+    "pair_id": "mkqa_pair_00216",
+    "question_da": "hvem er den ældste stadig spillende nba spiller",
+    "question_en": "who is the oldest nba player still playing",
+    "answer_da": "Vince Carter",
+    "answer_en": "Vince Carter"
+  },
+  {
+    "pair_id": "mkqa_pair_00217",
+    "question_da": "hvad er harry potter's i ordre",
+    "question_en": "what are the harry potter's in order",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00218",
+    "question_da": "hvem spiller onkel josh i girl meets world",
+    "question_en": "who plays uncle josh in girl meets world",
+    "answer_da": "Uriah Shelton",
+    "answer_en": "Uriah Shelton"
+  },
+  {
+    "pair_id": "mkqa_pair_00219",
+    "question_da": "hvad er jordens diameter ved ækvator",
+    "question_en": "what is the diameter of the earth at the equator",
+    "answer_da": "7917.5 mil",
+    "answer_en": "7917.5 miles"
+  },
+  {
+    "pair_id": "mkqa_pair_00220",
+    "question_da": "der spillede chelsea på two and a half men?",
+    "question_en": "who played chelsea on two and a half men",
+    "answer_da": "Jennifer Bini Taylor",
+    "answer_en": "Jennifer Taylor"
+  },
+  {
+    "pair_id": "mkqa_pair_00221",
+    "question_da": "hvornår kommer den tredje sæson af rick and morty ud",
+    "question_en": "when does the third season of rick and morty come out",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00222",
+    "question_da": "Hvor mange  amerikanske tropper døde under vietnamkrigen?",
+    "question_en": "how many us troops died in the vietnam war",
+    "answer_da": "58220.0",
+    "answer_en": "58220.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00223",
+    "question_da": "hvem sagde hverken en låner eller en udlåner",
+    "question_en": "who said neither a borrower or a lender be",
+    "answer_da": "Polonius",
+    "answer_en": "Polonius"
+  },
+  {
+    "pair_id": "mkqa_pair_00224",
+    "question_da": "Hvem sang I did it my way first?",
+    "question_en": "who sang i did it my way first",
+    "answer_da": "Frank Sinatra",
+    "answer_en": "Frank Sinatra"
+  },
+  {
+    "pair_id": "mkqa_pair_00225",
+    "question_da": "hvem sang sangen jim dandy to the rescue",
+    "question_en": "who sang the song jim dandy to the rescue",
+    "answer_da": "LaVern Baker",
+    "answer_en": "Black Oak Arkansas"
+  },
+  {
+    "pair_id": "mkqa_pair_00226",
+    "question_da": "hvor befinder verdens største butik sig",
+    "question_en": "where is the biggest store in the world",
+    "answer_da": "Sydkorea",
+    "answer_en": "South Korea"
+  },
+  {
+    "pair_id": "mkqa_pair_00227",
+    "question_da": "hvem er den højest lønnede mlb baseball spiller",
+    "question_en": "who is the highest paid mlb baseball player",
+    "answer_da": "Mike Trout",
+    "answer_en": "Mike Trout"
+  },
+  {
+    "pair_id": "mkqa_pair_00228",
+    "question_da": "hvem sang those were the days my friends",
+    "question_en": "who sang those were the days my friends",
+    "answer_da": "Mary Hopkin",
+    "answer_en": "Mary Hopkin"
+  },
+  {
+    "pair_id": "mkqa_pair_00229",
+    "question_da": "hvornår blev raiders of the lost ark udgivet",
+    "question_en": "when was raiders of the lost ark released",
+    "answer_da": "1981-06-12",
+    "answer_en": "1981-06-12"
+  },
+  {
+    "pair_id": "mkqa_pair_00230",
+    "question_da": "hvad var den allerførste fastfood restaurant",
+    "question_en": "what was the very first fast food restaurant",
+    "answer_da": "McDonald's",
+    "answer_en": "McDonald's"
+  },
+  {
+    "pair_id": "mkqa_pair_00231",
+    "question_da": "Vis mig et billede af et fiskerdyr",
+    "question_en": "show me a picture of a fisher animal",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00232",
+    "question_da": "hvad er uks laveste aldersbegrænsning for at forlade skolen",
+    "question_en": "what is the minimum school leaving age in the uk",
+    "answer_da": "18.0 år",
+    "answer_en": "18.0 years"
+  },
+  {
+    "pair_id": "mkqa_pair_00233",
+    "question_da": "hvem spiller gandalf i ringenes herre",
+    "question_en": "who plays gandalf in lord of the rings",
+    "answer_da": "Ian McKellen",
+    "answer_en": "Ian McKellen"
+  },
+  {
+    "pair_id": "mkqa_pair_00234",
+    "question_da": "hvem sang these boots are made for walking",
+    "question_en": "who sang these boots were made for walking",
+    "answer_da": "Nancy Sinatra",
+    "answer_en": "Nancy Sinatra"
+  },
+  {
+    "pair_id": "mkqa_pair_00235",
+    "question_da": "hvornår starter the us open tennisturnering",
+    "question_en": "when does the us open tennis tournament start",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00236",
+    "question_da": "hvem er den ældeste aktive spiller i nfl",
+    "question_en": "who was the oldest player to play in the nfl",
+    "answer_da": "George Blanda",
+    "answer_en": "George Blanda"
+  },
+  {
+    "pair_id": "mkqa_pair_00237",
+    "question_da": "vis mig et billede af ferdinand tyren",
+    "question_en": "show me a picture of ferdinand the bull",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00238",
+    "question_da": "hvem har den største  jumbotron i nfl",
+    "question_en": "who has the biggest jumbotron in the nfl",
+    "answer_da": "Houston Texans",
+    "answer_en": "Houston Texans"
+  },
+  {
+    "pair_id": "mkqa_pair_00239",
+    "question_da": "hvem der afspiller will horton on days of our lives",
+    "question_en": "who plays will horton on days of our lives",
+    "answer_da": "Dylan Patton",
+    "answer_en": "Dylan Patton"
+  },
+  {
+    "pair_id": "mkqa_pair_00240",
+    "question_da": "hvem er senatorerne i staten californien",
+    "question_en": "who are the senators from the state of california",
+    "answer_da": "Dianne Feinstein",
+    "answer_en": "Dianne Feinstein"
+  },
+  {
+    "pair_id": "mkqa_pair_00241",
+    "question_da": "hvad er alle  paw patrols karakters navne",
+    "question_en": "what are all the paw patrol characters names",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00242",
+    "question_da": "hvor spiller fedex cuppen denne weekend",
+    "question_en": "where is the fedex cup being played this weekend",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00243",
+    "question_da": "hvem sang sangen first time ever i saw your face",
+    "question_en": "who sang the song first time ever i saw your face",
+    "answer_da": "Roberta Flack",
+    "answer_en": "Roberta Flack"
+  },
+  {
+    "pair_id": "mkqa_pair_00244",
+    "question_da": "hvad vejer en iphone 7",
+    "question_en": "what is the weight of an iphone 7",
+    "answer_da": "4.87 Ounce",
+    "answer_en": "4.87 ounces"
+  },
+  {
+    "pair_id": "mkqa_pair_00245",
+    "question_da": "i hvilken fase af cellecyklussen forekommer dna-replikation",
+    "question_en": "dna replication occurs in which phase of the cell cycle",
+    "answer_da": "s-fase",
+    "answer_en": "S phase"
+  },
+  {
+    "pair_id": "mkqa_pair_00246",
+    "question_da": "hvem erstattede johnny carson på tonight show",
+    "question_en": "who replaced johnny carson on the tonight show",
+    "answer_da": "Jay Leno",
+    "answer_en": "Jay Leno"
+  },
+  {
+    "pair_id": "mkqa_pair_00247",
+    "question_da": "hvad hed kaninen i Peter plys",
+    "question_en": "what was the rabbits name in winnie the pooh",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00248",
+    "question_da": "hvor mange sider har en  pyramide med kvadratisk base",
+    "question_en": "how many vertices does a square based pyramid have",
+    "answer_da": "5.0",
+    "answer_en": "5.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00249",
+    "question_da": "hvornår blev sæson et af stranger things filmet",
+    "question_en": "when was season one of stranger things filmed",
+    "answer_da": "2016",
+    "answer_en": "2016"
+  },
+  {
+    "pair_id": "mkqa_pair_00250",
+    "question_da": "hvornår var sidste gang yankees vandt en world series",
+    "question_en": "when was the last time the yankees won a world series",
+    "answer_da": "2009",
+    "answer_en": "2009"
+  },
+  {
+    "pair_id": "mkqa_pair_00251",
+    "question_da": "vis mig alle tallene i hele verden",
+    "question_en": "show me all the numbers in the world",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00252",
+    "question_da": "hvem var stjernen i the day the earth stood still",
+    "question_en": "who starred in the day the earth stood still",
+    "answer_da": "Michael Rennie",
+    "answer_en": "Michael Rennie"
+  },
+  {
+    "pair_id": "mkqa_pair_00253",
+    "question_da": "hvem sang wake me up before you go go",
+    "question_en": "who sang wake me up before you go go",
+    "answer_da": "Wham!",
+    "answer_en": "Wham!"
+  },
+  {
+    "pair_id": "mkqa_pair_00254",
+    "question_da": "hvad er højden i las vegas nevada",
+    "question_en": "what is the elevation in las vegas nevada",
+    "answer_da": "610.0 meter",
+    "answer_en": "610.0 meters"
+  },
+  {
+    "pair_id": "mkqa_pair_00255",
+    "question_da": "hvornår laver de en ny sæson af riverdale",
+    "question_en": "when are they making a new season of riverdale",
+    "answer_da": "2019-10-10",
+    "answer_en": "2019-10-10"
+  },
+  {
+    "pair_id": "mkqa_pair_00256",
+    "question_da": "Hvornår blev reglerne om kolonisering af afrika fastsat?",
+    "question_en": "when were the rules for colonizing africa established",
+    "answer_da": "1884",
+    "answer_en": "1884"
+  },
+  {
+    "pair_id": "mkqa_pair_00257",
+    "question_da": "i hvilket county ligger cherry hill new jersey",
+    "question_en": "what county is cherry hill new jersey in",
+    "answer_da": "Camden County",
+    "answer_en": "Camden County"
+  },
+  {
+    "pair_id": "mkqa_pair_00258",
+    "question_da": "hvad er red cross's andet navn",
+    "question_en": "what is the other name of red cross",
+    "answer_da": "Røde Kors",
+    "answer_en": "International Red Cross and Red Crescent Movement"
+  },
+  {
+    "pair_id": "mkqa_pair_00259",
+    "question_da": "hvem vandt det national college football championship sidste år",
+    "question_en": "who won the national college football championship last year",
+    "answer_da": "Alabama Crimson Tide-fodboldprogrammet",
+    "answer_en": "Alabama Crimson Tide football"
+  },
+  {
+    "pair_id": "mkqa_pair_00260",
+    "question_da": "hvem skrev fear and loathing in las vegas",
+    "question_en": "who wrote fear and loathing in las vegas",
+    "answer_da": "Hunter S. Thompson",
+    "answer_en": "Hunter S. Thompson"
+  },
+  {
+    "pair_id": "mkqa_pair_00261",
+    "question_da": "hvilken luftvåbensbase er i nærheden af Pensacola Florida",
+    "question_en": "what air force base is near pensacola florida",
+    "answer_da": "Naval Air Station Pensacola",
+    "answer_en": "Naval Air Station Pensacola"
+  },
+  {
+    "pair_id": "mkqa_pair_00262",
+    "question_da": "hvilke rute skal jeg tage for at komme til  garden state parkway north",
+    "question_en": "how do i get to the garden state parkway north",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00263",
+    "question_da": "hvad er navnet på fred flintstones kone",
+    "question_en": "what is the name of fred flintstones wife",
+    "answer_da": "Wilma Flintstone",
+    "answer_en": "Wilma Flintstone"
+  },
+  {
+    "pair_id": "mkqa_pair_00264",
+    "question_da": "hvornår havde den originale godzilla film premiere",
+    "question_en": "when did the original godzilla movie come out",
+    "answer_da": "1954-10-27",
+    "answer_en": "1954-10-27"
+  },
+  {
+    "pair_id": "mkqa_pair_00265",
+    "question_da": "hvem har most steals i nba historien",
+    "question_en": "who has the most steals in nba history",
+    "answer_da": "John Stockton",
+    "answer_en": "John Stockton"
+  },
+  {
+    "pair_id": "mkqa_pair_00266",
+    "question_da": "hvem spillede hustruen i alle elsker raymond",
+    "question_en": "who played the wife in everybody loves raymond",
+    "answer_da": "Patricia Heaton",
+    "answer_en": "Patricia Heaton"
+  },
+  {
+    "pair_id": "mkqa_pair_00267",
+    "question_da": "hvor vil næste World Cup",
+    "question_en": "where is the next world cup going to be",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00268",
+    "question_da": "hvornår udkom historien skønheden og udyret",
+    "question_en": "when did the story beauty and the beast come out",
+    "answer_da": "1740",
+    "answer_en": "1740"
+  },
+  {
+    "pair_id": "mkqa_pair_00269",
+    "question_da": "hvem er skuespillerne i filmen red",
+    "question_en": "who are the actors in the movie red",
+    "answer_da": "Mary-Louise Parker",
+    "answer_en": "Mary-Louise Parker"
+  },
+  {
+    "pair_id": "mkqa_pair_00270",
+    "question_da": "hvor mange er vindmøller i USA",
+    "question_en": "how many wind turbines are there in the united states",
+    "answer_da": "57636.0",
+    "answer_en": "57636.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00271",
+    "question_da": "hvad hedder de nye star wars",
+    "question_en": "what's the name of the new star wars",
+    "answer_da": "Star Wars: The Rise of Skywalker",
+    "answer_en": "Star Wars Episode IX: The Rise of Skywalker"
+  },
+  {
+    "pair_id": "mkqa_pair_00272",
+    "question_da": "hvem skrev sangen arms of an angel",
+    "question_en": "who wrote the song arms of an angel",
+    "answer_da": "Sarah McLachlan",
+    "answer_en": "Sarah McLachlan"
+  },
+  {
+    "pair_id": "mkqa_pair_00273",
+    "question_da": "hvem synger sangen these boots are made for walking",
+    "question_en": "who sings the song these boots are made for walking",
+    "answer_da": "Nancy Sinatra",
+    "answer_en": "Nancy Sinatra"
+  },
+  {
+    "pair_id": "mkqa_pair_00274",
+    "question_da": "hvor kommer udtrykket the real mccoy fra?",
+    "question_en": "where does the term the real mccoy come from",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00275",
+    "question_da": "hvem spiller millie bobby brown i stranger things",
+    "question_en": "who does millie bobby brown play in stranger things",
+    "answer_da": "Eleven",
+    "answer_en": "Eleven"
+  },
+  {
+    "pair_id": "mkqa_pair_00276",
+    "question_da": "hvem spiller iskongen i adventure time",
+    "question_en": "who plays the ice king in adventure time",
+    "answer_da": "Tom Kenny",
+    "answer_en": "Tom Kenny"
+  },
+  {
+    "pair_id": "mkqa_pair_00277",
+    "question_da": "hvornår vandt diamantbacks verdensserien",
+    "question_en": "when did the diamondbacks win the world series",
+    "answer_da": "2001",
+    "answer_en": "2001"
+  },
+  {
+    "pair_id": "mkqa_pair_00278",
+    "question_da": "hvem er træner for the cleveland cavaliers",
+    "question_en": "who is the coach for the cleveland cavaliers",
+    "answer_da": "John Beilein",
+    "answer_en": "John Beilein"
+  },
+  {
+    "pair_id": "mkqa_pair_00279",
+    "question_da": "hvornår kom sangen  tainted love ud",
+    "question_en": "when did the song tainted love come out",
+    "answer_da": "1981",
+    "answer_en": "1981"
+  },
+  {
+    "pair_id": "mkqa_pair_00280",
+    "question_da": "Hvornår er sidste gang Liverpool vandt Premier League?",
+    "question_en": "when did liverpool last win the premier league",
+    "answer_da": "1989",
+    "answer_en": "1989"
+  },
+  {
+    "pair_id": "mkqa_pair_00281",
+    "question_da": "navne på alle skuespillerne i big bang theory",
+    "question_en": "name the cast of the big bang theory",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00282",
+    "question_da": "hvad var navnet på orkanen der ramte puerto rico",
+    "question_en": "what was the name of the hurricane that hit puerto rico",
+    "answer_da": "Orkan Maria",
+    "answer_en": "Hurricane Maria"
+  },
+  {
+    "pair_id": "mkqa_pair_00283",
+    "question_da": "hvad hedder den mindste stat i usa",
+    "question_en": "what is the smallest state in the united states of america",
+    "answer_da": "Rhode Island",
+    "answer_en": "Rhode Island"
+  },
+  {
+    "pair_id": "mkqa_pair_00284",
+    "question_da": "Hvem var den ældste person til at klatre Everest",
+    "question_en": "who was the oldest person to climb everest",
+    "answer_da": "Yūichirō Miura",
+    "answer_en": "Yūichirō Miura"
+  },
+  {
+    "pair_id": "mkqa_pair_00285",
+    "question_da": "hvem spillede Trudy i The facts of life",
+    "question_en": "who played trudy in the facts of life",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00286",
+    "question_da": "hvornår var det sidste gang the atlanta braves vandt the world series",
+    "question_en": "when was the last time the atlanta braves won the world series",
+    "answer_da": "1995",
+    "answer_en": "1995"
+  },
+  {
+    "pair_id": "mkqa_pair_00287",
+    "question_da": "hvornår vandt leicester city premier league",
+    "question_en": "when did leicester city win the premier league",
+    "answer_da": "2016",
+    "answer_en": "2016"
+  },
+  {
+    "pair_id": "mkqa_pair_00288",
+    "question_da": "hvad er aldersgrænse for at drikke i canada",
+    "question_en": "what is the age to drink in canada",
+    "answer_da": "18.0",
+    "answer_en": "18.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00289",
+    "question_da": "hvilke sange skrev elton john til løvernes konge",
+    "question_en": "what songs did elton john write for the lion king",
+    "answer_da": "Hakuna matata (sang)",
+    "answer_en": "Circle of Life"
+  },
+  {
+    "pair_id": "mkqa_pair_00290",
+    "question_da": "hvem er nummer et på forbes liste",
+    "question_en": "who is number one on the forbes list",
+    "answer_da": "Jeff Bezos",
+    "answer_en": "Jeff Bezos"
+  },
+  {
+    "pair_id": "mkqa_pair_00291",
+    "question_da": "hvem kom ned på sidste sæson fra premier League",
+    "question_en": "who got relegated last season from the premier league",
+    "answer_da": "Cardiff City F.C.",
+    "answer_en": "Cardiff City F.C."
+  },
+  {
+    "pair_id": "mkqa_pair_00292",
+    "question_da": "hvornår blev Skotland en del af Storbritannien",
+    "question_en": "when did scotland become part of great britain",
+    "answer_da": "1707",
+    "answer_en": "1707"
+  },
+  {
+    "pair_id": "mkqa_pair_00293",
+    "question_da": "hvem har de fleste mål i champions leagues historie",
+    "question_en": "who has the most goals in champions league history",
+    "answer_da": "Cristiano Ronaldo",
+    "answer_en": "Cristiano Ronaldo"
+  },
+  {
+    "pair_id": "mkqa_pair_00294",
+    "question_da": "hvem sagde og nu resten af historien",
+    "question_en": "who said and now the rest of the story",
+    "answer_da": "Paul Harvey",
+    "answer_en": "Paul Harvey"
+  },
+  {
+    "pair_id": "mkqa_pair_00295",
+    "question_da": "hvem sang ain't no sunshine when she's gone",
+    "question_en": "who sang ain't no sunshine when she's gone",
+    "answer_da": "Bill Withers",
+    "answer_en": "Bill Withers"
+  },
+  {
+    "pair_id": "mkqa_pair_00296",
+    "question_da": "hvem vandt sidste års mlb all-star kamp",
+    "question_en": "who won last year's mlb all-star game",
+    "answer_da": "American League",
+    "answer_en": "American League"
+  },
+  {
+    "pair_id": "mkqa_pair_00297",
+    "question_da": "hvem sang sangen my boyfriend's back",
+    "question_en": "who sang the song my boyfriend's back",
+    "answer_da": "The Angels",
+    "answer_en": "The Angels"
+  },
+  {
+    "pair_id": "mkqa_pair_00298",
+    "question_da": "hvem sang when you say nothing at all",
+    "question_en": "who sang when you say nothing at all",
+    "answer_da": "Ronan Keating",
+    "answer_en": "Ronan Keating"
+  },
+  {
+    "pair_id": "mkqa_pair_00299",
+    "question_da": "hvem er alle tiders mest medalje vindende gymmast",
+    "question_en": "who is the most decorated gymnast of all time",
+    "answer_da": "Simone Biles",
+    "answer_en": "Simone Biles"
+  },
+  {
+    "pair_id": "mkqa_pair_00300",
+    "question_da": "hvor starter og slutter columbia-floden",
+    "question_en": "where does the columbia river start and end",
+    "answer_da": "USA",
+    "answer_en": "Columbia Lake"
+  },
+  {
+    "pair_id": "mkqa_pair_00301",
+    "question_da": "hvad er den største messe i USA",
+    "question_en": "what's the biggest fair in the united states",
+    "answer_da": "Minnesota State Fair",
+    "answer_en": "Minnesota State Fair"
+  },
+  {
+    "pair_id": "mkqa_pair_00302",
+    "question_da": "hvem har en rød næse chip eller chap",
+    "question_en": "who has a red nose chip or dale",
+    "answer_da": "dale",
+    "answer_en": "dale"
+  },
+  {
+    "pair_id": "mkqa_pair_00303",
+    "question_da": "hvem medvirkede i Flugten på abernes planet",
+    "question_en": "who starred in beneath the planet of the apes",
+    "answer_da": "Charlton Heston",
+    "answer_en": "Charlton Heston"
+  },
+  {
+    "pair_id": "mkqa_pair_00304",
+    "question_da": "hvad er de 4 dele af Disney world",
+    "question_en": "what are the four parts of disney world",
+    "answer_da": "Magic Kingdom",
+    "answer_en": "Magic Kingdom"
+  },
+  {
+    "pair_id": "mkqa_pair_00305",
+    "question_da": "hvor mange ounces er et shot af spiritus",
+    "question_en": "how many ounces is a shot of liquor",
+    "answer_da": "1.5 Ounce",
+    "answer_en": "1.5 ounces"
+  },
+  {
+    "pair_id": "mkqa_pair_00306",
+    "question_da": "hvem synger country sangen  how do you like me now",
+    "question_en": "who sings the country song how do you like me now",
+    "answer_da": "Toby Keith",
+    "answer_en": "Toby Keith"
+  },
+  {
+    "pair_id": "mkqa_pair_00307",
+    "question_da": "hvor langt er det fra min placering til maine",
+    "question_en": "how far is it from my location to maine",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00308",
+    "question_da": "hvor bliver orange is the new black filmet",
+    "question_en": "where is orange is the new black filmed",
+    "answer_da": "New York",
+    "answer_en": "New York"
+  },
+  {
+    "pair_id": "mkqa_pair_00309",
+    "question_da": "hvor blev filmen sense and sensibility filmet",
+    "question_en": "where was the movie sense and sensibility filmed",
+    "answer_da": "Devon",
+    "answer_en": "Flete House"
+  },
+  {
+    "pair_id": "mkqa_pair_00310",
+    "question_da": "hvem er med i filmen fifty shades of grey",
+    "question_en": "who is in the movie fifty shades of grey",
+    "answer_da": "Jennifer Ehle",
+    "answer_en": "Jennifer Ehle"
+  },
+  {
+    "pair_id": "mkqa_pair_00311",
+    "question_da": "hvornår vandt argentina deres første verdensmesterskab",
+    "question_en": "when did argentina win their first world cup",
+    "answer_da": "1978",
+    "answer_en": "1978"
+  },
+  {
+    "pair_id": "mkqa_pair_00312",
+    "question_da": "Hvem er den mest successrige fodboldklub i verden?",
+    "question_en": "who is the most successful football club in the world",
+    "answer_da": "Real Madrid",
+    "answer_en": "Real Madrid CF"
+  },
+  {
+    "pair_id": "mkqa_pair_00313",
+    "question_da": "hvilken dag falder labor day på i 2018",
+    "question_en": "what day does labor day fall on in 2018",
+    "answer_da": "2018-09-03",
+    "answer_en": "2018-09-03"
+  },
+  {
+    "pair_id": "mkqa_pair_00314",
+    "question_da": "hvem spiller pam i dengang i 70'erne",
+    "question_en": "who plays pam in that 70's show",
+    "answer_da": "Eve Plumb",
+    "answer_en": "Eve Plumb"
+  },
+  {
+    "pair_id": "mkqa_pair_00315",
+    "question_da": "hvem sang sitting by the dock of the bay",
+    "question_en": "who sang sitting by the dock of the bay",
+    "answer_da": "Otis Redding",
+    "answer_en": "Otis Redding"
+  },
+  {
+    "pair_id": "mkqa_pair_00316",
+    "question_da": "hvornår vandt colorado rockies world series",
+    "question_en": "when did the colorado rockies win the world series",
+    "answer_da": "2007",
+    "answer_en": "2007"
+  },
+  {
+    "pair_id": "mkqa_pair_00317",
+    "question_da": "hvem er den nuværende forsvarsminister i Indien",
+    "question_en": "who is the present defense minister of india",
+    "answer_da": "Rajnath Singh",
+    "answer_en": "Rajnath Singh"
+  },
+  {
+    "pair_id": "mkqa_pair_00318",
+    "question_da": "hvem synger i can't get no satisfaction sang",
+    "question_en": "who sang i can't get no satisfaction",
+    "answer_da": "The Rolling Stones",
+    "answer_en": "The Rolling Stones"
+  },
+  {
+    "pair_id": "mkqa_pair_00319",
+    "question_da": "hvem laver voiceover på celebs go dating",
+    "question_en": "who does the voiceover on celebs go dating",
+    "answer_da": "Rob Beckett",
+    "answer_en": "Rob Beckett"
+  },
+  {
+    "pair_id": "mkqa_pair_00320",
+    "question_da": "hvornår blev hawaii en stat i de forenede stater",
+    "question_en": "when did hawaii become a state of the united states",
+    "answer_da": "1959-08-21",
+    "answer_en": "1959-08-21"
+  },
+  {
+    "pair_id": "mkqa_pair_00321",
+    "question_da": "hvornår udkom fifty shades of grey",
+    "question_en": "when did fifty shades of grey come out",
+    "answer_da": "2015-02-13",
+    "answer_en": "2015-02-13"
+  },
+  {
+    "pair_id": "mkqa_pair_00322",
+    "question_da": "hvornår blev filmen chitty chitty bang bang   lavet",
+    "question_en": "when was the movie chitty chitty bang bang made",
+    "answer_da": "1968-12-12",
+    "answer_en": "1968-12-12"
+  },
+  {
+    "pair_id": "mkqa_pair_00323",
+    "question_da": "hvem skrev sangen call me the breeze",
+    "question_en": "who wrote the song call me the breeze",
+    "answer_da": "J.J. Cale",
+    "answer_en": "JJ Cale"
+  },
+  {
+    "pair_id": "mkqa_pair_00324",
+    "question_da": "hvor finder showet the office sted",
+    "question_en": "where does the show the office take place",
+    "answer_da": "Pennsylvania",
+    "answer_en": "Pennsylvania"
+  },
+  {
+    "pair_id": "mkqa_pair_00325",
+    "question_da": "hvornår blev I en klasse for sig selv filmet",
+    "question_en": "when was a league of their own filmed",
+    "answer_da": "1992-07-01",
+    "answer_en": "1992-07-01"
+  },
+  {
+    "pair_id": "mkqa_pair_00326",
+    "question_da": "hvilket element har højeste smeltepunkt på det periodiske system",
+    "question_en": "what element on the periodic table has the highest melting point",
+    "answer_da": "carbon",
+    "answer_en": "carbon"
+  },
+  {
+    "pair_id": "mkqa_pair_00327",
+    "question_da": "hvem synger we don't need no education",
+    "question_en": "who sings we don't need no education",
+    "answer_da": "Pink Floyd",
+    "answer_en": "Pink Floyd"
+  },
+  {
+    "pair_id": "mkqa_pair_00328",
+    "question_da": "hvem var den sidste person som blev henrettet ved skydning",
+    "question_en": "who was the last person executed by firing squad",
+    "answer_da": "Ronnie Lee Gardner",
+    "answer_en": "Ronnie Lee Gardner"
+  },
+  {
+    "pair_id": "mkqa_pair_00329",
+    "question_da": "Vis mig et billede af Green Lantern",
+    "question_en": "show me a picture of the green lantern",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00330",
+    "question_da": "Hvor mange ændringsforslag er der i USA",
+    "question_en": "how many amendments are there in the us",
+    "answer_da": "27.0",
+    "answer_en": "27.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00331",
+    "question_da": "hvem synger everything i do i do for you",
+    "question_en": "who sings everything i do i do for you",
+    "answer_da": "Bryan Adams",
+    "answer_en": "Bryan Adams"
+  },
+  {
+    "pair_id": "mkqa_pair_00332",
+    "question_da": "hvor mange point har stephen curry i hans karriere",
+    "question_en": "how many points does stephen curry have in his career",
+    "answer_da": "16315.0",
+    "answer_en": "16315.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00333",
+    "question_da": "hvem synger sangen oh what a night",
+    "question_en": "who sings the song oh what a night",
+    "answer_da": "The Four Seasons",
+    "answer_en": "The Four Seasons"
+  },
+  {
+    "pair_id": "mkqa_pair_00334",
+    "question_da": "hvem er den bedste nfl receiver nogensinde",
+    "question_en": "who is the best nfl receiver of all time",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00335",
+    "question_da": "hvilken station er k love på radioen",
+    "question_en": "what station is k love on the radio",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00336",
+    "question_da": "hvor stammer Rødøret terrapin fra",
+    "question_en": "where do red ear slider turtles come from",
+    "answer_da": "Mexicanske Golf",
+    "answer_en": "Gulf of Mexico"
+  },
+  {
+    "pair_id": "mkqa_pair_00337",
+    "question_da": "hvornår blev frit agentur indført i nba",
+    "question_en": "when did free agency start in the nba",
+    "answer_da": "1988",
+    "answer_en": "1988"
+  },
+  {
+    "pair_id": "mkqa_pair_00338",
+    "question_da": "Hvornår starter og slutter den amerikanske industrirevolution",
+    "question_en": "when did the american industrial revolution start and end",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00339",
+    "question_da": "hvem spillede med i  diary of a wimpy kid",
+    "question_en": "who played in diary of a wimpy kid",
+    "answer_da": "Robert Capron",
+    "answer_en": "Robert Capron"
+  },
+  {
+    "pair_id": "mkqa_pair_00340",
+    "question_da": "hvem synger sangen don't stop thinking about tomorrow",
+    "question_en": "who sings the song don't stop thinking about tomorrow",
+    "answer_da": "Fleetwood Mac",
+    "answer_en": "Fleetwood Mac"
+  },
+  {
+    "pair_id": "mkqa_pair_00341",
+    "question_da": "hvad var prisen på benzin   i 1979",
+    "question_en": "what was the price of gas in 1979",
+    "answer_da": "0.86 amerikansk dollar",
+    "answer_en": "0.86 US dollars"
+  },
+  {
+    "pair_id": "mkqa_pair_00342",
+    "question_da": "hvem var den anden person til at gå på månen",
+    "question_en": "who was the second person to walk on the moon",
+    "answer_da": "Buzz Aldrin",
+    "answer_en": "Buzz Aldrin"
+  },
+  {
+    "pair_id": "mkqa_pair_00343",
+    "question_da": "alle andre celler fra en levende organisme undtagen reproduktions cellerne",
+    "question_en": "any cell of a living organism other than the reproductive cells",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00344",
+    "question_da": "hvad er betingelserne for at kunne blive præsident i usa",
+    "question_en": "what are the requirements to be president of the united states of america",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00345",
+    "question_da": "hvem har vundet world series flest gange",
+    "question_en": "who won the world series the most times",
+    "answer_da": "New York Yankees",
+    "answer_en": "New York Yankees"
+  },
+  {
+    "pair_id": "mkqa_pair_00346",
+    "question_da": "hvor meget guld er der i Fort Knox",
+    "question_en": "how much gold is there in fort knox",
+    "answer_da": "147300000.0 Ounce",
+    "answer_en": "147300000.0 ounces"
+  },
+  {
+    "pair_id": "mkqa_pair_00347",
+    "question_da": "hvor er fez i that 70 show fra",
+    "question_en": "where is fez from in that 70 show",
+    "answer_da": "Cocosøerne",
+    "answer_en": "Home Island"
+  },
+  {
+    "pair_id": "mkqa_pair_00348",
+    "question_da": "hvordan kommer jeg til  bloomington illinois herfra",
+    "question_en": "how do i get to bloomington illinois from here",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00349",
+    "question_da": "hvornår skiftede persien navn til iran",
+    "question_en": "when did persia change its name to iran",
+    "answer_da": "1935",
+    "answer_en": "1935"
+  },
+  {
+    "pair_id": "mkqa_pair_00350",
+    "question_da": "hvem synger if it's meant to be",
+    "question_en": "who sings if it's meant to be",
+    "answer_da": "Bebe Rexha",
+    "answer_en": "Bebe Rexha"
+  },
+  {
+    "pair_id": "mkqa_pair_00351",
+    "question_da": "hvem spiller grev olaf i a series of unfortunate events",
+    "question_en": "who plays count olaf in a series of unfortunate events",
+    "answer_da": "Neil Patrick Harris",
+    "answer_en": "Neil Patrick Harris"
+  },
+  {
+    "pair_id": "mkqa_pair_00352",
+    "question_da": "hvor langt er det fra Atlanta Georgia til mobile alabama",
+    "question_en": "how far is it from atlanta georgia to mobile alabama",
+    "answer_da": "328.1 mil",
+    "answer_en": "328.1 miles"
+  },
+  {
+    "pair_id": "mkqa_pair_00353",
+    "question_da": "hvor mange mil er der fra waco texas til dallas texas",
+    "question_en": "how many miles from waco texas to dallas texas",
+    "answer_da": "95.0 mil",
+    "answer_en": "95.0 miles"
+  },
+  {
+    "pair_id": "mkqa_pair_00354",
+    "question_da": "hvem synger to make you feel my love",
+    "question_en": "who sings to make you feel my love",
+    "answer_da": "Adele",
+    "answer_en": "Adele"
+  },
+  {
+    "pair_id": "mkqa_pair_00355",
+    "question_da": "yummy yummy yummy i got love in my tummy",
+    "question_en": "yummy yummy yummy i got love in my tummy",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00356",
+    "question_da": "hvem synger sangen too much time on my hands",
+    "question_en": "who sings the song too much time on my hands",
+    "answer_da": "Styx",
+    "answer_en": "Styx"
+  },
+  {
+    "pair_id": "mkqa_pair_00357",
+    "question_da": "hvor mange nba titler vandt michael jordan",
+    "question_en": "how many nba titles did michael jordan win",
+    "answer_da": "6.0",
+    "answer_en": "6.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00358",
+    "question_da": "hvem sang we all live in a yellow submarine",
+    "question_en": "who sang we all live in a yellow submarine",
+    "answer_da": "The Beatles",
+    "answer_en": "The Beatles"
+  },
+  {
+    "pair_id": "mkqa_pair_00359",
+    "question_da": "hvor langt er der fra corpus christi texas til austin texas",
+    "question_en": "how far is corpus christi texas to austin texas",
+    "answer_da": "216.9 mil",
+    "answer_en": "216.9 miles"
+  },
+  {
+    "pair_id": "mkqa_pair_00360",
+    "question_da": "hvornår udgav lynyrd skynyrd sweet home alabama",
+    "question_en": "when did lynyrd skynyrd released sweet home alabama",
+    "answer_da": "1973",
+    "answer_en": "1973"
+  },
+  {
+    "pair_id": "mkqa_pair_00361",
+    "question_da": "er eli manning stadig quarterback for the giants",
+    "question_en": "is eli manning still the quarterback for the giants",
+    "answer_da": "no",
+    "answer_en": "no"
+  },
+  {
+    "pair_id": "mkqa_pair_00362",
+    "question_da": "Hvor starter  og slutter camino de santiago ?",
+    "question_en": "where does the camino de santiago start and end",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00363",
+    "question_da": "Hvem opfundet sætningen Lad sovende hunde ligge",
+    "question_en": "who coined the phrase let sleeping dogs lie",
+    "answer_da": "Geoffrey Chaucer",
+    "answer_en": "Geoffrey Chaucer"
+  },
+  {
+    "pair_id": "mkqa_pair_00364",
+    "question_da": "hvem skrev i can't make you love me",
+    "question_en": "who wrote i can't make you love me",
+    "answer_da": "Mike Reid",
+    "answer_en": "Mike Reid"
+  },
+  {
+    "pair_id": "mkqa_pair_00365",
+    "question_da": "hvornår var det sidste gang liverpool vandt et trofæ",
+    "question_en": "when was last time liverpool won a trophy",
+    "answer_da": "2019",
+    "answer_en": "2019"
+  },
+  {
+    "pair_id": "mkqa_pair_00366",
+    "question_da": "Hvem stjerner i frisk prins af Bel Air",
+    "question_en": "who stars in fresh prince of bel air",
+    "answer_da": "Tatyana Ali",
+    "answer_en": "Tatyana Ali"
+  },
+  {
+    "pair_id": "mkqa_pair_00367",
+    "question_da": "hvad er den varmest målte temperatur på jordens",
+    "question_en": "what's the hottest recorded temperature on earth",
+    "answer_da": "134.1 Fahrenheit-skalaen",
+    "answer_en": "134.1 °F"
+  },
+  {
+    "pair_id": "mkqa_pair_00368",
+    "question_da": "hvornår blev guillotinen brugt for sidste gang i frankrig",
+    "question_en": "when was the last time the guillotine was used in france",
+    "answer_da": "1981-09",
+    "answer_en": "1981-09"
+  },
+  {
+    "pair_id": "mkqa_pair_00369",
+    "question_da": "hvem spillede Peter Parker i The Amazing Spider-Man",
+    "question_en": "who played peter parker in the amazing spider man",
+    "answer_da": "Andrew Garfield",
+    "answer_en": "Andrew Garfield"
+  },
+  {
+    "pair_id": "mkqa_pair_00370",
+    "question_da": "hvor laves wells blue bunny is",
+    "question_en": "where is wells blue bunny ice cream made",
+    "answer_da": "Plymouth",
+    "answer_en": "Plymouth"
+  },
+  {
+    "pair_id": "mkqa_pair_00371",
+    "question_da": "hvornår udkom keeping up with the kardashians",
+    "question_en": "when did keeping up with the kardashians air",
+    "answer_da": "2007-10-14",
+    "answer_en": "2007-10-14"
+  },
+  {
+    "pair_id": "mkqa_pair_00372",
+    "question_da": "hvor mange nba titler har kobe bryant",
+    "question_en": "how many nba titles does kobe bryant have",
+    "answer_da": "5.0",
+    "answer_en": "5.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00373",
+    "question_da": "hvem sang i never promised you a rose garden",
+    "question_en": "who sang i never promised you a rose garden",
+    "answer_da": "Lynn Anderson",
+    "answer_en": "Lynn Anderson"
+  },
+  {
+    "pair_id": "mkqa_pair_00374",
+    "question_da": "hvem er frihedsgudinden baseret på",
+    "question_en": "who is the statue of liberty based off of",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00375",
+    "question_da": "hvem sang sangen abraham martin and john",
+    "question_en": "who sang the song abraham martin and john",
+    "answer_da": "The Miracles",
+    "answer_en": "The Miracles"
+  },
+  {
+    "pair_id": "mkqa_pair_00376",
+    "question_da": "hvornår blev det første Legend of Zelda spil frigivet",
+    "question_en": "when was the first legend of zelda game released",
+    "answer_da": "1986-02-21",
+    "answer_en": "1986-02-21"
+  },
+  {
+    "pair_id": "mkqa_pair_00377",
+    "question_da": "hvor langt er San Diego fra Tijuana Mexico",
+    "question_en": "how far is san diego from tijuana mexico",
+    "answer_da": "31.9 kilometer",
+    "answer_en": "31.9 kilometers"
+  },
+  {
+    "pair_id": "mkqa_pair_00378",
+    "question_da": "hvad hedder overhovedet i mafiaen",
+    "question_en": "what is the head of the mafia called",
+    "answer_da": "crime boss",
+    "answer_en": "crime boss"
+  },
+  {
+    "pair_id": "mkqa_pair_00379",
+    "question_da": "hvor mange ounces er der i et håndtag af vodka",
+    "question_en": "how many ounces in a handle of vodka",
+    "answer_da": "59.2 Ounce",
+    "answer_en": "59.2 ounces"
+  },
+  {
+    "pair_id": "mkqa_pair_00380",
+    "question_da": "hvornår udkom barbie life in the dreamhouse",
+    "question_en": "when did barbie life in the dreamhouse come out",
+    "answer_da": "2012-05-11",
+    "answer_en": "2012-05-11"
+  },
+  {
+    "pair_id": "mkqa_pair_00381",
+    "question_da": "hvem sang sangen i fought the law and the law won",
+    "question_en": "who sang the song i fought the law and the law won",
+    "answer_da": "The Clash",
+    "answer_en": "The Clash"
+  },
+  {
+    "pair_id": "mkqa_pair_00382",
+    "question_da": "hvor mange pints i en fad øl",
+    "question_en": "how many pints in a keg of beer",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00383",
+    "question_da": "hvornår blev twin towers i new york bygget",
+    "question_en": "when were the twin towers in new york city built",
+    "answer_da": "2006-04-27",
+    "answer_en": "2006-04-27"
+  },
+  {
+    "pair_id": "mkqa_pair_00384",
+    "question_da": "hvem spillede tinmanden i troldmanden fra oz",
+    "question_en": "who played the tin man in the wizard of oz",
+    "answer_da": "Jack Haley",
+    "answer_en": "Jack Haley"
+  },
+  {
+    "pair_id": "mkqa_pair_00385",
+    "question_da": "hvem sang sangen i wear my sunglasses at night",
+    "question_en": "who sang the song i wear my sunglasses at night",
+    "answer_da": "Corey Hart",
+    "answer_en": "Corey Hart"
+  },
+  {
+    "pair_id": "mkqa_pair_00386",
+    "question_da": "hvornår var sidste gang steelers gik til super bowl",
+    "question_en": "when was the last time the steelers went to the super bowl",
+    "answer_da": "2011-02-06",
+    "answer_en": "2011-02-06"
+  },
+  {
+    "pair_id": "mkqa_pair_00387",
+    "question_da": "hvem var med i filmen the king and i",
+    "question_en": "who starred in the movie the king and i",
+    "answer_da": "Rita Moreno",
+    "answer_en": "Rita Moreno"
+  },
+  {
+    "pair_id": "mkqa_pair_00388",
+    "question_da": "hvornår blev uafhængigheds erklæringen først underskrevet",
+    "question_en": "when was the declaration of independence first signed",
+    "answer_da": "1776-08-02",
+    "answer_en": "1776-08-02"
+  },
+  {
+    "pair_id": "mkqa_pair_00389",
+    "question_da": "hvilken by er ferris bueller's day off i",
+    "question_en": "what city is ferris bueller's day off in",
+    "answer_da": "Chicago",
+    "answer_en": "Chicago"
+  },
+  {
+    "pair_id": "mkqa_pair_00390",
+    "question_da": "hvor er verdens mest præcise ur placeret",
+    "question_en": "where is the worlds most accurate clock located",
+    "answer_da": "Nordamerika",
+    "answer_en": "North America"
+  },
+  {
+    "pair_id": "mkqa_pair_00391",
+    "question_da": "hvornår udkom den oprindelige dødens gab film",
+    "question_en": "when did the original jaws movie come out",
+    "answer_da": "1975-06-20",
+    "answer_en": "1975-06-20"
+  },
+  {
+    "pair_id": "mkqa_pair_00392",
+    "question_da": "hvem skrev sangen  you can leave your hat on",
+    "question_en": "who wrote the song you can leave your hat on",
+    "answer_da": "Randy Newman",
+    "answer_en": "Randy Newman"
+  },
+  {
+    "pair_id": "mkqa_pair_00393",
+    "question_da": "hvor mange spillere er der på nfl roster",
+    "question_en": "how many players are on the nfl roster",
+    "answer_da": "53.0",
+    "answer_en": "53.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00394",
+    "question_da": "hvad er befolkningen i williston nord dakota",
+    "question_en": "what is the population of williston north dakota",
+    "answer_da": "25586.0",
+    "answer_en": "25586.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00395",
+    "question_da": "hvornår vises orange is the new black",
+    "question_en": "when is orange is the new black on",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00396",
+    "question_da": "hvad er navnene på ærkeenglene",
+    "question_en": "what are the names of the arch angels",
+    "answer_da": "Gabriel",
+    "answer_en": "Gabriel"
+  },
+  {
+    "pair_id": "mkqa_pair_00397",
+    "question_da": "hvad er alle troldmanden fra oz filmene",
+    "question_en": "what are all the wizard of oz movies",
+    "answer_da": "Troldmanden fra Oz",
+    "answer_en": "The Wizard of Oz"
+  },
+  {
+    "pair_id": "mkqa_pair_00398",
+    "question_da": "hvem var den sidste us præsident, der blev myrdet",
+    "question_en": "who was the last us president to be assassinated",
+    "answer_da": "John F. Kennedy",
+    "answer_en": "John F. Kennedy"
+  },
+  {
+    "pair_id": "mkqa_pair_00399",
+    "question_da": "Hvornår stoppede de med at gøre hvede Penny",
+    "question_en": "when did they stop making the wheat penny",
+    "answer_da": "1958",
+    "answer_en": "1958"
+  },
+  {
+    "pair_id": "mkqa_pair_00400",
+    "question_da": "hvornår blev monica og chandler et par i venner",
+    "question_en": "when do monica and chandler get together in friends",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00401",
+    "question_da": "hvornår blev mgm bygget i las vegas",
+    "question_en": "when was the mgm grand built in las vegas",
+    "answer_da": "1993-12-18",
+    "answer_en": "1993-12-18"
+  },
+  {
+    "pair_id": "mkqa_pair_00402",
+    "question_da": "hvornår vandt the padres world series",
+    "question_en": "when did the padres win the world series",
+    "answer_da": "1984",
+    "answer_en": "1984"
+  },
+  {
+    "pair_id": "mkqa_pair_00403",
+    "question_da": "hvem vandt slutspillet til  super bowl",
+    "question_en": "who won the playoffs for the super bowl",
+    "answer_da": "New England Patriots",
+    "answer_en": "Arthurs"
+  },
+  {
+    "pair_id": "mkqa_pair_00404",
+    "question_da": "hvonår vandt philadelphia phillies verdensmesterskaberne i amerikansk fodbold",
+    "question_en": "when did the philadelphia phillies win the world series",
+    "answer_da": "2008",
+    "answer_en": "2008"
+  },
+  {
+    "pair_id": "mkqa_pair_00405",
+    "question_da": "vandt cleveland browns en super bowl",
+    "question_en": "did the cleveland browns win a super bowl",
+    "answer_da": "yes",
+    "answer_en": "yes"
+  },
+  {
+    "pair_id": "mkqa_pair_00406",
+    "question_da": "hvad er navnene på medlemmerne af bts",
+    "question_en": "what are the names of the members in bts",
+    "answer_da": "Jungkook",
+    "answer_en": "J-Hope"
+  },
+  {
+    "pair_id": "mkqa_pair_00407",
+    "question_da": "hvem var den første egentlige præsident i USA",
+    "question_en": "who was the first actual president of the united states",
+    "answer_da": "George Washington",
+    "answer_en": "George Washington"
+  },
+  {
+    "pair_id": "mkqa_pair_00408",
+    "question_da": "du kan ikke have din budding, hvis du ikke spiser dit kød",
+    "question_en": "you can't have your pudding if you don't eat your meat",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00409",
+    "question_da": "Hvornår sluttede Storbritannien sig til Den Europæiske Union",
+    "question_en": "when did the uk join the european union",
+    "answer_da": "1973",
+    "answer_en": "1973"
+  },
+  {
+    "pair_id": "mkqa_pair_00410",
+    "question_da": "hvilken film stammer sangen a whole new world fra",
+    "question_en": "what movie is the song a whole new world from",
+    "answer_da": "Aladdin",
+    "answer_en": "Aladdin"
+  },
+  {
+    "pair_id": "mkqa_pair_00411",
+    "question_da": "hvem er skuespilleren der laver allstate reklamerne",
+    "question_en": "who is the actor that does the allstate commercials",
+    "answer_da": "Dennis Haysbert",
+    "answer_en": "Dennis Haysbert"
+  },
+  {
+    "pair_id": "mkqa_pair_00412",
+    "question_da": "hvor langt er der fra charlotte north carolina til charleston south carolina",
+    "question_en": "how far from charlotte north carolina to charleston south carolina",
+    "answer_da": "209.5 mil",
+    "answer_en": "209.5 miles"
+  },
+  {
+    "pair_id": "mkqa_pair_00413",
+    "question_da": "hvad er befolkningen i Palm Bay Florida",
+    "question_en": "what is the population of palm bay florida",
+    "answer_da": "114194.0",
+    "answer_en": "114194.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00414",
+    "question_da": "hvor afholdes ol i 2024",
+    "question_en": "where are the olympics being held in 2024",
+    "answer_da": "Frankrig",
+    "answer_en": "France"
+  },
+  {
+    "pair_id": "mkqa_pair_00415",
+    "question_da": "hvornår var det sidste gang nogen gik på månen",
+    "question_en": "what was the last time someone walked on the moon",
+    "answer_da": "1972-12-11",
+    "answer_en": "1972-12-11"
+  },
+  {
+    "pair_id": "mkqa_pair_00416",
+    "question_da": "hvem er David fra britain's got talent",
+    "question_en": "who is david from britain's got talent",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00417",
+    "question_da": "er  washington dc  en af de 50 delstater",
+    "question_en": "is washington dc one of the 50 states",
+    "answer_da": "no",
+    "answer_en": "no"
+  },
+  {
+    "pair_id": "mkqa_pair_00418",
+    "question_da": "hvem synger amy what you wanna do",
+    "question_en": "who sings amy what you wanna do",
+    "answer_da": "Pure Prairie League",
+    "answer_en": "Pure Prairie League"
+  },
+  {
+    "pair_id": "mkqa_pair_00419",
+    "question_da": "hvornår vandt blackhawks stanley cup",
+    "question_en": "when did the blackhawks win the stanley cup",
+    "answer_da": "2015",
+    "answer_en": "2015"
+  },
+  {
+    "pair_id": "mkqa_pair_00420",
+    "question_da": "hvem er den sorte sherif i Sheriffen skyder på det hele",
+    "question_en": "who is the black sheriff in blazing saddles",
+    "answer_da": "Cleavon Little",
+    "answer_en": "Cleavon Little"
+  },
+  {
+    "pair_id": "mkqa_pair_00421",
+    "question_da": "hvem er det højeste menneske i verden",
+    "question_en": "who is the tallest human being in the world",
+    "answer_da": "Robert Wadlow",
+    "answer_en": "Robert Wadlow"
+  },
+  {
+    "pair_id": "mkqa_pair_00422",
+    "question_da": "hvornår spiller the minnestota vikings deres første kamp",
+    "question_en": "when do the minnesota vikings play their first game",
+    "answer_da": "1961-09-10",
+    "answer_en": "1961-09-10"
+  },
+  {
+    "pair_id": "mkqa_pair_00423",
+    "question_da": "hvor mange minutter er der i en bokserunde",
+    "question_en": "how many minutes are in a boxing round",
+    "answer_da": "3.0 minut",
+    "answer_en": "3.0 minutes"
+  },
+  {
+    "pair_id": "mkqa_pair_00424",
+    "question_da": "hvem synger all i want for christmas is you",
+    "question_en": "who sings all i want for christmas is you",
+    "answer_da": "Mariah Carey",
+    "answer_en": "Mariah Carey"
+  },
+  {
+    "pair_id": "mkqa_pair_00425",
+    "question_da": "hvem sang i think it's going to rain today",
+    "question_en": "who sang i think it's going to rain today",
+    "answer_da": "Randy Newman",
+    "answer_en": "Randy Newman"
+  },
+  {
+    "pair_id": "mkqa_pair_00426",
+    "question_da": "hvem er dommerne i America's Got Talent",
+    "question_en": "who are the judges for america got talent",
+    "answer_da": "Simon Cowell",
+    "answer_en": "Simon Cowell"
+  },
+  {
+    "pair_id": "mkqa_pair_00427",
+    "question_da": "hvem vandt årets nba-rookie 2017",
+    "question_en": "who won the 2017 nba rookie of the year",
+    "answer_da": "Malcolm Brogdon",
+    "answer_en": "Malcolm Brogdon"
+  },
+  {
+    "pair_id": "mkqa_pair_00428",
+    "question_da": "hvor mange sider er der i harry potter-bøgerne",
+    "question_en": "how many pages are in harry potter books",
+    "answer_da": "3407.0",
+    "answer_en": "3407.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00429",
+    "question_da": "hvor mange sider er der i the land of stories bog 1",
+    "question_en": "how many pages are in the land of stories book 1",
+    "answer_da": "438.0",
+    "answer_en": "438.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00430",
+    "question_da": "hvem er tidenes bedste nba-spiller",
+    "question_en": "who is the best nba player of all time",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00431",
+    "question_da": "hvor meget er en spansk dollar",
+    "question_en": "how much is a piece of eight worth",
+    "answer_da": "50.0 2000.0 amerikansk dollar",
+    "answer_en": "50.0 2000.0 US dollars"
+  },
+  {
+    "pair_id": "mkqa_pair_00432",
+    "question_da": "hvem står over for dollarregningen",
+    "question_en": "who's face is on the dollar bill",
+    "answer_da": "George Washington",
+    "answer_en": "George Washington"
+  },
+  {
+    "pair_id": "mkqa_pair_00433",
+    "question_da": "hvornår  fejrer vi børnenes dag i indien",
+    "question_en": "when do we celebrate children's day in india",
+    "answer_da": "11-14",
+    "answer_en": "11-14"
+  },
+  {
+    "pair_id": "mkqa_pair_00434",
+    "question_da": "hvem sang splish splash i was taking a bath",
+    "question_en": "who sang splish splash i was taking a bath",
+    "answer_da": "Bobby Darin",
+    "answer_en": "Bobby Darin"
+  },
+  {
+    "pair_id": "mkqa_pair_00435",
+    "question_da": "hvor mange præsidenter i USA har der været",
+    "question_en": "how many presidents of the us have there been",
+    "answer_da": "45.0",
+    "answer_en": "45.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00436",
+    "question_da": "hvor gammel var dronning elizabeth da hun blev dronning",
+    "question_en": "what age was queen elizabeth when she became queen",
+    "answer_da": "27.0 år",
+    "answer_en": "27.0 years"
+  },
+  {
+    "pair_id": "mkqa_pair_00437",
+    "question_da": "der synger Moves Like Jagger",
+    "question_en": "who sings i got the moves like jagger",
+    "answer_da": "Maroon 5",
+    "answer_en": "Maroon 5"
+  },
+  {
+    "pair_id": "mkqa_pair_00438",
+    "question_da": "hvem komponerede sangen land of hope and glory",
+    "question_en": "who wrote the music for land of hope and glory",
+    "answer_da": "Edward Elgar",
+    "answer_en": "Edward Elgar"
+  },
+  {
+    "pair_id": "mkqa_pair_00439",
+    "question_da": "hvem synger sangen when will i be loved",
+    "question_en": "who sings the song when will i be loved",
+    "answer_da": "Linda Ronstadt",
+    "answer_en": "Linda Ronstadt"
+  },
+  {
+    "pair_id": "mkqa_pair_00440",
+    "question_da": "hvem sang the bluest skies are in seattle",
+    "question_en": "who sang the bluest skies are in seattle",
+    "answer_da": "Perry Como",
+    "answer_en": "Perry Como"
+  },
+  {
+    "pair_id": "mkqa_pair_00441",
+    "question_da": "hvem har the colts spillet i super bowlen",
+    "question_en": "who have the colts played in the super bowl",
+    "answer_da": "New York Jets",
+    "answer_en": "New York Jets"
+  },
+  {
+    "pair_id": "mkqa_pair_00442",
+    "question_da": "hvor mange episoder er der i sæson to af Attack On Titan",
+    "question_en": "how many episodes are there in season two of attack on titan",
+    "answer_da": "12.0",
+    "answer_en": "12.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00443",
+    "question_da": "hvem spiller horton i Horton og Støvfolket Hvem",
+    "question_en": "who plays horton in horton hears a who",
+    "answer_da": "Jim Carrey",
+    "answer_en": "Jim Carrey"
+  },
+  {
+    "pair_id": "mkqa_pair_00444",
+    "question_da": "hvornår udsendtes Rap fyr i L.A.",
+    "question_en": "when did fresh prince of bel air come out",
+    "answer_da": "1990-09-10",
+    "answer_en": "1990-09-10"
+  },
+  {
+    "pair_id": "mkqa_pair_00445",
+    "question_da": "hvor langt er der til greenville south carolina",
+    "question_en": "how far is it to greenville south carolina",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00446",
+    "question_da": "hvem skrev bogen for whom the bell tolls",
+    "question_en": "who wrote the book for whom the bell tolls",
+    "answer_da": "Ernest Hemingway",
+    "answer_en": "Ernest Hemingway"
+  },
+  {
+    "pair_id": "mkqa_pair_00447",
+    "question_da": "hvem fik flest tekniske fejl i NBA",
+    "question_en": "who got the most technical fouls in the nba",
+    "answer_da": "Rasheed Wallace",
+    "answer_en": "Rasheed Wallace"
+  },
+  {
+    "pair_id": "mkqa_pair_00448",
+    "question_da": "hvem var de originale medlemmer af canned heat",
+    "question_en": "who were the original members of canned heat",
+    "answer_da": "Bob Hite",
+    "answer_en": "Bob Hite"
+  },
+  {
+    "pair_id": "mkqa_pair_00449",
+    "question_da": "hvem skrev sangen take this job and shove it",
+    "question_en": "who wrote the song take this job and shove it",
+    "answer_da": "David Allan Coe",
+    "answer_en": "David Allan Coe"
+  },
+  {
+    "pair_id": "mkqa_pair_00450",
+    "question_da": "hvem skrev sangen the house of the rising sun",
+    "question_en": "who wrote the song the house of the rising sun",
+    "answer_da": "Georgia Turner",
+    "answer_en": "Georgia Turner"
+  },
+  {
+    "pair_id": "mkqa_pair_00451",
+    "question_da": "Hvornår optræder de første kristne samfund i Storbritannien",
+    "question_en": "when did the first christian communities appear in britain",
+    "answer_da": "1. århundrede",
+    "answer_en": "1st century"
+  },
+  {
+    "pair_id": "mkqa_pair_00452",
+    "question_da": "Hvor spilles Red River Rivalry?",
+    "question_en": "where do they play the red river rivalry",
+    "answer_da": "Dallas",
+    "answer_en": "Dallas"
+  },
+  {
+    "pair_id": "mkqa_pair_00453",
+    "question_da": "hvem der vandt tour de france sidste år",
+    "question_en": "who won the tour de france last year",
+    "answer_da": "Egan Bernal",
+    "answer_en": "Egan Bernal"
+  },
+  {
+    "pair_id": "mkqa_pair_00454",
+    "question_da": "hvornår blev The Book A Wrinkle In Time skrevet",
+    "question_en": "when was the book a wrinkle in time written",
+    "answer_da": "1960",
+    "answer_en": "1960"
+  },
+  {
+    "pair_id": "mkqa_pair_00455",
+    "question_da": "hvem sang oprindeligt The House of the Rising Sun",
+    "question_en": "who originally sang the house of the rising sun",
+    "answer_da": "The Animals",
+    "answer_en": "The Animals"
+  },
+  {
+    "pair_id": "mkqa_pair_00456",
+    "question_da": "hvem sang can you feel the love tonight",
+    "question_en": "who sang can you feel the love tonight",
+    "answer_da": "Nathan Lane",
+    "answer_en": "Nathan Lane"
+  },
+  {
+    "pair_id": "mkqa_pair_00457",
+    "question_da": "hvem var skuespiller som james bond",
+    "question_en": "who were the actors that played james bond",
+    "answer_da": "Pierce Brosnan",
+    "answer_en": "Pierce Brosnan"
+  },
+  {
+    "pair_id": "mkqa_pair_00458",
+    "question_da": "hvem synger finally it's happened to me",
+    "question_en": "who sings finally it's happened to me",
+    "answer_da": "CeCe Peniston",
+    "answer_en": "CeCe Peniston"
+  },
+  {
+    "pair_id": "mkqa_pair_00459",
+    "question_da": "hvad hedder de 5 store søer",
+    "question_en": "what's the names of the five great lakes",
+    "answer_da": "Lake Michigan",
+    "answer_en": "Lake Michigan"
+  },
+  {
+    "pair_id": "mkqa_pair_00460",
+    "question_da": "hvad er new jerseys områdenummer",
+    "question_en": "what are the area codes for new jersey",
+    "answer_da": "609.0",
+    "answer_en": "609.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00461",
+    "question_da": "hvem vandt hotdog spisekonkurrencen sidste år",
+    "question_en": "who won the hot dog eating contest last year",
+    "answer_da": "Joey Chestnut",
+    "answer_en": "Joey Chestnut"
+  },
+  {
+    "pair_id": "mkqa_pair_00462",
+    "question_da": "hvem lægger stemme til tiana i Prinsessen og frøen",
+    "question_en": "who voices tiana in princess and the frog",
+    "answer_da": "Anika Noni Rose",
+    "answer_en": "Anika Noni Rose"
+  },
+  {
+    "pair_id": "mkqa_pair_00463",
+    "question_da": "hvem havde den bedste statistik i nba historie",
+    "question_en": "who had the best record in nba history",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00464",
+    "question_da": "hvor mange planeter er der i vores sol system",
+    "question_en": "how many planet are in our solar system",
+    "answer_da": "8.0",
+    "answer_en": "8.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00465",
+    "question_da": "hvad er midtpunkter for southwest airlines",
+    "question_en": "what are the main hubs for southwest airlines",
+    "answer_da": "Chicago",
+    "answer_en": "Chicago"
+  },
+  {
+    "pair_id": "mkqa_pair_00466",
+    "question_da": "hvad år blev filmen the sound of music udsendt",
+    "question_en": "what year did the movie the sound of music come out",
+    "answer_da": "1965",
+    "answer_en": "1965"
+  },
+  {
+    "pair_id": "mkqa_pair_00467",
+    "question_da": "hvornår blev filmen snow white frigivet",
+    "question_en": "when did the movie snow white come out",
+    "answer_da": "1937",
+    "answer_en": "1937"
+  },
+  {
+    "pair_id": "mkqa_pair_00468",
+    "question_da": "hvad er jordens laveste punkt",
+    "question_en": "what is the lowest point of the earth",
+    "answer_da": "Det Døde Hav",
+    "answer_en": "Dead Sea"
+  },
+  {
+    "pair_id": "mkqa_pair_00469",
+    "question_da": "hvor mange dage er det siden michigan slog ohio state",
+    "question_en": "how many days has it been since michigan beat ohio state",
+    "answer_da": "2892.0 døgn",
+    "answer_en": "2892.0 days"
+  },
+  {
+    "pair_id": "mkqa_pair_00470",
+    "question_da": "hvornår udkom den originale eksorcisten film",
+    "question_en": "when did the original exorcist movie come out",
+    "answer_da": "1973-12-26",
+    "answer_en": "1973-12-26"
+  },
+  {
+    "pair_id": "mkqa_pair_00471",
+    "question_da": "hvem synger sangen I'm coming home",
+    "question_en": "who sings the song i'm coming home",
+    "answer_da": "Diddy – Dirty Money",
+    "answer_en": "Diddy – Dirty Money"
+  },
+  {
+    "pair_id": "mkqa_pair_00472",
+    "question_da": "hvornår kom løvernes konge i biografen",
+    "question_en": "when did lion king come out in theaters",
+    "answer_da": "2019-07-09",
+    "answer_en": "2019-07-09"
+  },
+  {
+    "pair_id": "mkqa_pair_00473",
+    "question_da": "hvem er skuespillerinden som spiller ginny weasley",
+    "question_en": "who is the actress who plays ginny weasley",
+    "answer_da": "Bonnie Wright",
+    "answer_en": "Bonnie Wright"
+  },
+  {
+    "pair_id": "mkqa_pair_00474",
+    "question_da": "hvornår bliver den nye sæson af  bachelor sendt",
+    "question_en": "when does the new season of bachelor in paradise start",
+    "answer_da": null,
+    "answer_en": null
+  },
+  {
+    "pair_id": "mkqa_pair_00475",
+    "question_da": "hvor mange parker er der i new york city",
+    "question_en": "how many parks are there in new york city",
+    "answer_da": "1700.0",
+    "answer_en": "1700.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00476",
+    "question_da": "hvad er medianlønnen i usa",
+    "question_en": "what is the median salary in the us",
+    "answer_da": "56516.0 amerikansk dollar",
+    "answer_en": "56516.0 US dollars"
+  },
+  {
+    "pair_id": "mkqa_pair_00477",
+    "question_da": "hvem spillede moderen i alle elsker raymond",
+    "question_en": "who played the mom on everybody loves raymond",
+    "answer_da": "Doris Roberts",
+    "answer_en": "Doris Roberts"
+  },
+  {
+    "pair_id": "mkqa_pair_00478",
+    "question_da": "hvor stammer efternavnet collins  fra",
+    "question_en": "where does the last name collins originate from",
+    "answer_da": "Irland",
+    "answer_en": "Ireland"
+  },
+  {
+    "pair_id": "mkqa_pair_00479",
+    "question_da": "hvad er børnenes navne i despicable me",
+    "question_en": "what are the children's names in despicable me",
+    "answer_da": "Edith",
+    "answer_en": "edith"
+  },
+  {
+    "pair_id": "mkqa_pair_00480",
+    "question_da": "hvem sang sangen its been awhile",
+    "question_en": "who sang the song it's been awhile",
+    "answer_da": "Staind",
+    "answer_en": "Staind"
+  },
+  {
+    "pair_id": "mkqa_pair_00481",
+    "question_da": "hvem vandt French open tennin i år",
+    "question_en": "who won the french open tennis this year",
+    "answer_da": "Kevin Krawietz",
+    "answer_en": "Kevin Krawietz"
+  },
+  {
+    "pair_id": "mkqa_pair_00482",
+    "question_da": "hvornår kom fredag ​​det 13. spil ud",
+    "question_en": "when did friday the 13th game come out",
+    "answer_da": "2017-05-26",
+    "answer_en": "2017-05-26"
+  },
+  {
+    "pair_id": "mkqa_pair_00483",
+    "question_da": "hvem var højesterets første retspræsident",
+    "question_en": "who was the first chief justice of the supreme court",
+    "answer_da": "John Jay",
+    "answer_en": "John Jay"
+  },
+  {
+    "pair_id": "mkqa_pair_00484",
+    "question_da": "hvem sang den oprindelige sang hooked on a feeling",
+    "question_en": "who sang the original song hooked on a feeling",
+    "answer_da": "B. J. Thomas",
+    "answer_en": "B.J. Thomas"
+  },
+  {
+    "pair_id": "mkqa_pair_00485",
+    "question_da": "hvad var den mest populære sang i 1981",
+    "question_en": "what was the most popular song in 1981",
+    "answer_da": "Bette Davis Eyes",
+    "answer_en": "Bette Davis Eyes"
+  },
+  {
+    "pair_id": "mkqa_pair_00486",
+    "question_da": "hvem er skuespilleren der spiller mathias i longmire",
+    "question_en": "who is the actor that plays mathias on longmire",
+    "answer_da": "Zahn McClarnon",
+    "answer_en": "Zahn McClarnon"
+  },
+  {
+    "pair_id": "mkqa_pair_00487",
+    "question_da": "hvor er the 7 mile bridge i the keys",
+    "question_en": "where is the 7 mile bridge in the keys",
+    "answer_da": "USA",
+    "answer_en": "United States of America"
+  },
+  {
+    "pair_id": "mkqa_pair_00488",
+    "question_da": "hvem sang den originale version af red red wine",
+    "question_en": "who sang the original version of red red wine",
+    "answer_da": "Neil Diamond",
+    "answer_en": "Neil Diamond"
+  },
+  {
+    "pair_id": "mkqa_pair_00489",
+    "question_da": "hvornår skal du fødes for at høre til  en årtusindskifte generation",
+    "question_en": "when do you have to be born to be considered a millennial",
+    "answer_da": "1981-1996",
+    "answer_en": "1981-1996"
+  },
+  {
+    "pair_id": "mkqa_pair_00490",
+    "question_da": "hvem har flest  instagram følgere i verden",
+    "question_en": "who has the most instagram followers in the world",
+    "answer_da": "Cristiano Ronaldo",
+    "answer_en": "Cristiano Ronaldo"
+  },
+  {
+    "pair_id": "mkqa_pair_00491",
+    "question_da": "hvornår udkom rebel without a cause",
+    "question_en": "when did rebel without a cause come out",
+    "answer_da": "1955",
+    "answer_en": "1955"
+  },
+  {
+    "pair_id": "mkqa_pair_00492",
+    "question_da": "hvornår vandt manchester united sidst i Champions League",
+    "question_en": "when was the last time manchester united won the champions league",
+    "answer_da": "2008",
+    "answer_en": "2008"
+  },
+  {
+    "pair_id": "mkqa_pair_00493",
+    "question_da": "hvem spillede Henry i Gøgereden",
+    "question_en": "who played billy in one flew over the cuckoo's nest",
+    "answer_da": "Brad Dourif",
+    "answer_en": "Brad Dourif"
+  },
+  {
+    "pair_id": "mkqa_pair_00494",
+    "question_da": "hvem sang  we're not gonna take it",
+    "question_en": "who sang we're not gonna take it",
+    "answer_da": "Twisted Sister",
+    "answer_en": "Twisted Sister"
+  },
+  {
+    "pair_id": "mkqa_pair_00495",
+    "question_da": "hvad er det næststørste land i Sydamerika",
+    "question_en": "what is the second largest country in south america",
+    "answer_da": "Argentina",
+    "answer_en": "Argentina"
+  },
+  {
+    "pair_id": "mkqa_pair_00496",
+    "question_da": "hvor mange kapitler er der i the westing game",
+    "question_en": "how many chapters are in the westing game",
+    "answer_da": "30.0",
+    "answer_en": "30.0"
+  },
+  {
+    "pair_id": "mkqa_pair_00497",
+    "question_da": "hvornår skete miraklet på hudsonfloden",
+    "question_en": "when did the miracle on the hudson happen",
+    "answer_da": "2009-01-15",
+    "answer_en": "2009-01-15"
+  },
+  {
+    "pair_id": "mkqa_pair_00498",
+    "question_da": "hvem har de fleste sejre i NFL",
+    "question_en": "who has the most wins in the nfl",
+    "answer_da": "Chicago Bears",
+    "answer_en": "Chicago Bears"
+  },
+  {
+    "pair_id": "mkqa_pair_00499",
+    "question_da": "hvem er den ældste golfspiller til at vinde en pga turnering",
+    "question_en": "who is the oldest golfer to win a pga tournament",
+    "answer_da": "Sam Snead",
+    "answer_en": "Sam Snead"
+  }
+]
