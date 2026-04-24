@@ -21,7 +21,7 @@
     "source_mode": "comparison_model",
     "delta_basis": "source_mode_diff",
     "delta_aggregation": "per_example",
-    "output_root": "eval_results/mix/focused/55b_pair/causal_intervention"
+    "output_root": "/work/AnnemetteBrokPirchert#2419-1/flex_danish_analysis/causal_intervention"
   },
   "comparisons": [
     {
