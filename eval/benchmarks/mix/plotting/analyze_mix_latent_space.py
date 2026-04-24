@@ -327,6 +327,91 @@ def plot_pca(
     plt.close(fig)
 
 
+def plot_pca_grid(
+    bundles_by_dataset: dict[str, dict[str, dict]],
+    model_names: list[str],
+    datasets: list[str],
+    representation_sources: list[str],
+    representation: str,
+    output_path: Path,
+) -> None:
+    fig, axes = plt.subplots(
+        len(datasets),
+        len(representation_sources),
+        figsize=(7 * len(representation_sources), 5 * len(datasets)),
+        squeeze=False,
+        constrained_layout=True,
+    )
+    colors = {"en": "#1b6ca8", "da": "#d95f02", "unknown": "#555555"}
+    markers = {model_names[0]: "o", model_names[1]: "^"}
+
+    for row_idx, dataset_name in enumerate(datasets):
+        bundles_by_model = bundles_by_dataset[dataset_name]
+        first_bundle = bundles_by_model[model_names[0]]
+        layer_keys = parse_layer_keys(first_bundle["npz"])
+        for col_idx, representation_source in enumerate(representation_sources):
+            ax = axes[row_idx][col_idx]
+            available_layers = sorted(layer_keys[representation_source][representation])
+            layer_idx = available_layers[-1]
+
+            points = []
+            metadata_rows = []
+            for model_name in model_names:
+                bundle = bundles_by_model[model_name]
+                npz = bundle["npz"]
+                key = f"{representation_source}_layer_{layer_idx}_{representation}"
+                vectors = np.asarray(npz[key], dtype=np.float32)
+                points.append(vectors)
+                for row in bundle["metadata"]:
+                    metadata_rows.append(
+                        {
+                            "model_name": model_name,
+                            "language": row.get("language", "unknown"),
+                        }
+                    )
+
+            matrix = np.concatenate(points, axis=0)
+            projection = pca_2d(matrix)
+            for point, meta in zip(projection, metadata_rows):
+                ax.scatter(
+                    float(point[0]),
+                    float(point[1]),
+                    color=colors.get(meta["language"], colors["unknown"]),
+                    marker=markers.get(meta["model_name"], "o"),
+                    alpha=0.75,
+                    s=22,
+                )
+            ax.set_title(f"{dataset_name} | {representation_source} | layer {layer_idx}")
+            ax.set_xlabel("PC1")
+            ax.set_ylabel("PC2")
+
+    legend_labels = []
+    all_languages = sorted(
+        {
+            row.get("language", "unknown")
+            for dataset_name in datasets
+            for model_name in model_names
+            for row in bundles_by_dataset[dataset_name][model_name]["metadata"]
+        }
+    )
+    for model_name in model_names:
+        for language in all_languages:
+            legend_labels.append((model_name, language))
+
+    for model_name, language in legend_labels:
+        axes[0][0].scatter(
+            [],
+            [],
+            color=colors.get(language, colors["unknown"]),
+            marker=markers.get(model_name, "o"),
+            label=f"{model_name} | {language}",
+        )
+    axes[0][0].legend(frameon=False, fontsize=8, loc="best")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_path, dpi=220)
+    plt.close(fig)
+
+
 def write_readme(
     path: Path,
     rows: list[dict],
@@ -347,6 +432,7 @@ def write_readme(
         "Artifacts:",
         "- `latent_space_similarity_summary.csv`",
         "- `latent_space_similarity_plot.png`",
+        f"- `latent_space_pca_grid_{pca_representation}.png`",
         f"- `latent_space_pca_{pca_dataset}_{representation_source}_layer_{pca_layer}_{pca_representation}.png`",
         "",
         "Interpretation guide:",
@@ -385,11 +471,13 @@ def main() -> int:
 
     all_rows: list[dict] = []
     bundles_for_pca = None
+    bundles_by_dataset: dict[str, dict[str, dict]] = {}
     for dataset_name in datasets:
         bundles_by_model = {
             model_name: load_dataset_bundle(results_root=results_root, model_name=model_name, dataset_name=dataset_name)
             for model_name in model_names
         }
+        bundles_by_dataset[dataset_name] = bundles_by_model
         all_rows.extend(summarize_similarity_rows(bundles_by_model, model_names=model_names, dataset_name=dataset_name))
         if dataset_name == args.pca_dataset:
             bundles_for_pca = bundles_by_model
@@ -398,6 +486,16 @@ def main() -> int:
     csv_path = output_root / "latent_space_similarity_summary.csv"
     write_csv(all_rows, csv_path)
     plot_similarity_rows(all_rows, output_root / "latent_space_similarity_plot.png", model_names=model_names)
+    grid_sources = [source for source in ("pre_router", "hidden_state") if any(row["representation_source"] == source for row in all_rows)]
+    if grid_sources and datasets:
+        plot_pca_grid(
+            bundles_by_dataset=bundles_by_dataset,
+            model_names=model_names,
+            datasets=datasets,
+            representation_sources=grid_sources,
+            representation=args.pca_representation,
+            output_path=output_root / f"latent_space_pca_grid_{args.pca_representation}.png",
+        )
 
     if bundles_for_pca is not None:
         pca_layer = args.pca_layer
