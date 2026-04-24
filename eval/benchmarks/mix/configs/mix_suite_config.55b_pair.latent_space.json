@@ -16,7 +16,7 @@
     "max_length": 512,
     "representation_sources": "hidden_state,pre_router",
     "max_examples_per_dataset": 75,
-    "output_root": "/work/AnnemetteBrokPirchert#2419-1/flex_danish_analysis/latent_space"
+    "output_root": "eval_results/mix/latent_space/a4"
   },
   "models": [
     {

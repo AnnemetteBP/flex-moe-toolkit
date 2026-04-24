@@ -23,7 +23,7 @@
     "max_length": 512,
     "default_max_new_tokens": 32,
     "max_examples_per_dataset": 150,
-    "output_root": "/work/AnnemetteBrokPirchert#2419-1/flex_danish_analysis/routing_light"
+    "output_root": "eval_results/mix/routing_light/a4"
   },
   "analyses": {
     "routing": {
