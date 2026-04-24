@@ -117,6 +117,30 @@ def select_hidden_state_layers(hidden_states, selected_layers: list[int]) -> dic
     return result
 
 
+def parse_decoder_layers(raw_value: str, num_hidden_layers: int) -> list[int]:
+    normalized = raw_value.strip().lower()
+    if normalized == "early_mid_late_last":
+        if num_hidden_layers <= 1:
+            return [0]
+        return sorted(
+            {
+                0,
+                int(round((num_hidden_layers - 1) * 0.33)),
+                int(round((num_hidden_layers - 1) * 0.66)),
+                num_hidden_layers - 1,
+            }
+        )
+    if normalized == "early_mid_last":
+        if num_hidden_layers <= 1:
+            return [0]
+        return sorted({0, int(round((num_hidden_layers - 1) * 0.5)), num_hidden_layers - 1})
+    if normalized == "early_late_last":
+        if num_hidden_layers <= 1:
+            return [0]
+        return sorted({0, int(round((num_hidden_layers - 1) * 0.75)), num_hidden_layers - 1})
+    return parse_hidden_state_layers(raw_value)
+
+
 def parse_representation_sources(raw_value: str) -> list[str]:
     sources = [part.strip() for part in raw_value.split(",") if part.strip()]
     allowed = {"hidden_state", "pre_router"}
@@ -165,24 +189,29 @@ def capture_dataset_latents(
     model,
     tokenizer,
     examples: list[dict],
-    selected_layers: list[int],
+    hidden_state_layers: list[int],
+    pre_router_layers: list[int],
     representation_sources: list[str],
     max_length: int,
     device: torch.device,
 ) -> tuple[dict[str, np.ndarray], list[dict]]:
-    vectors: dict[str, dict[int, dict[str, list[np.ndarray]]]] = {
-        source: {
+    vectors: dict[str, dict[int, dict[str, list[np.ndarray]]]] = {}
+    if "hidden_state" in representation_sources:
+        vectors["hidden_state"] = {
             layer: {"mean": [], "last": []}
-            for layer in selected_layers
+            for layer in hidden_state_layers
         }
-        for source in representation_sources
-    }
+    if "pre_router" in representation_sources:
+        vectors["pre_router"] = {
+            layer: {"mean": [], "last": []}
+            for layer in pre_router_layers
+        }
     metadata: list[dict] = []
     capture_pre_router = "pre_router" in representation_sources
 
     for example in examples:
         inputs = encode_prompt(tokenizer, example["prompt"], max_length=max_length, device=device)
-        pre_router_capture = PreRouterCapture(selected_layers) if capture_pre_router else None
+        pre_router_capture = PreRouterCapture(pre_router_layers) if capture_pre_router else None
         if pre_router_capture is not None:
             pre_router_capture.attach(model)
         try:
@@ -208,7 +237,7 @@ def capture_dataset_latents(
             }
         )
         if "hidden_state" in representation_sources:
-            selected_hidden_states = select_hidden_state_layers(outputs.hidden_states, selected_layers)
+            selected_hidden_states = select_hidden_state_layers(outputs.hidden_states, hidden_state_layers)
             for layer_idx, tensor in selected_hidden_states.items():
                 token_states = tensor[0].detach().cpu().float()
                 vectors["hidden_state"][layer_idx]["mean"].append(token_states.mean(dim=0).numpy())
@@ -243,13 +272,16 @@ def main() -> int:
         device=device,
         dtype_name=args.dtype,
     )
-    selected_layers = parse_hidden_state_layers(
+    hidden_state_layers = parse_hidden_state_layers(
         args.selected_layers,
         num_hidden_layers=int(model.config.num_hidden_layers),
     )
+    pre_router_layers = parse_decoder_layers(args.selected_layers, int(model.config.num_hidden_layers))
     representation_sources = parse_representation_sources(args.representation_sources)
-    if not selected_layers:
+    if "hidden_state" in representation_sources and not hidden_state_layers:
         raise ValueError("Provide at least one selected layer.")
+    if "pre_router" in representation_sources and not pre_router_layers:
+        raise ValueError("Provide at least one pre-router layer.")
 
     manifest_entries = load_manifest_entries(args.manifest_path, selected_datasets)
     if not manifest_entries:
@@ -262,7 +294,10 @@ def main() -> int:
         "model_name": model_name,
         "model_path": model_path,
         "manifest_path": str(Path(args.manifest_path).resolve()),
-        "selected_layers": selected_layers,
+        "selected_layers": {
+            "hidden_state": hidden_state_layers,
+            "pre_router": pre_router_layers,
+        },
         "representation_sources": representation_sources,
         "max_examples_per_dataset": args.max_examples_per_dataset,
         "datasets": {},
@@ -282,7 +317,8 @@ def main() -> int:
             model=model,
             tokenizer=tokenizer,
             examples=examples,
-            selected_layers=selected_layers,
+            hidden_state_layers=hidden_state_layers,
+            pre_router_layers=pre_router_layers,
             representation_sources=representation_sources,
             max_length=args.max_length,
             device=device,
@@ -300,7 +336,10 @@ def main() -> int:
         manifest = {
             "dataset_name": dataset_name,
             "num_examples": len(metadata),
-            "selected_layers": selected_layers,
+            "selected_layers": {
+                "hidden_state": hidden_state_layers,
+                "pre_router": pre_router_layers,
+            },
             "representation_sources": representation_sources,
             "npz_path": str(npz_path),
             "metadata_path": str(metadata_path),
