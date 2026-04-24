@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Routing Light Record",
+  "description": "Minimal example-level routing artifact for semantic and comparative routing analysis.",
+  "type": "object",
+  "required": [
+    "record_type",
+    "example_id",
+    "model_name",
+    "run_label",
+    "usage",
+    "mean_top1_prob",
+    "mean_top2_prob",
+    "mean_top1_top2_margin",
+    "mean_token_entropy",
+    "mean_selected_expert_prob_mass"
+  ],
+  "properties": {
+    "record_type": {
+      "const": "routing_batch"
+    },
+    "example_id": {
+      "type": "string"
+    },
+    "dataset_name": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "model_name": {
+      "type": "string"
+    },
+    "model_path": {
+      "type": "string"
+    },
+    "run_label": {
+      "type": "string"
+    },
+    "usage": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "activation_counts": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "coactivation_counts": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "coactivation_matrix": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "mean_top1_prob": {
+      "type": "number"
+    },
+    "mean_top2_prob": {
+      "type": "number"
+    },
+    "mean_top1_top2_margin": {
+      "type": "number"
+    },
+    "mean_token_entropy": {
+      "type": "number"
+    },
+    "entropy_mean": {
+      "type": "number"
+    },
+    "mean_selected_expert_prob_mass": {
+      "type": "number"
+    },
+    "offdiag_ratio": {
+      "type": "number"
+    }
+  },
+  "additionalProperties": true
+}

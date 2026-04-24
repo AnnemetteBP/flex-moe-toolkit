@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Intervention Result Record",
+  "description": "Artifact for comparing baseline and intervention-based routing or expert-selection outcomes.",
+  "type": "object",
+  "required": [
+    "example_id",
+    "dataset_name",
+    "model_name",
+    "intervention_name",
+    "baseline_score",
+    "intervention_score"
+  ],
+  "properties": {
+    "example_id": {
+      "type": "string"
+    },
+    "dataset_name": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "model_name": {
+      "type": "string"
+    },
+    "run_label": {
+      "type": "string"
+    },
+    "intervention_name": {
+      "type": "string"
+    },
+    "intervention_spec": {
+      "type": "object"
+    },
+    "baseline_prediction": {
+      "type": "string"
+    },
+    "intervention_prediction": {
+      "type": "string"
+    },
+    "baseline_score": {
+      "type": "number"
+    },
+    "intervention_score": {
+      "type": "number"
+    },
+    "score_delta": {
+      "type": "number"
+    },
+    "baseline_routing": {
+      "type": "object"
+    },
+    "intervention_routing": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

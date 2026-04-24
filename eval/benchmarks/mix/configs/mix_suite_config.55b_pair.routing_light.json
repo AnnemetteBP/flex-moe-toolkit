@@ -4,19 +4,26 @@
     "model_catalog": "model_paths/models.json",
     "model_root": "/work/training/FlexMoRE/models",
     "model_registry": "model_paths/all_models.txt",
+    "datasets": [
+      "mkqa_en_da",
+      "gsm8k_subset",
+      "mbpp_subset",
+      "pubmedqa_subset"
+    ],
     "routing_run_mode": "native_only",
     "public_expert_idx": 0,
     "combined_active_experts": "2,4,7",
-    "capture_router_tensors": true,
-    "capture_hidden_states": true,
-    "hidden_state_layers": "early_mid_late_last"
+    "capture_router_tensors": false,
+    "capture_hidden_states": false,
+    "capture_output_token_ids": true
   },
   "runtime": {
     "device": "auto",
     "dtype": "auto",
     "max_length": 512,
     "default_max_new_tokens": 32,
-    "output_root": "eval_results/mix/full/flexolmo/a4"
+    "max_examples_per_dataset": 150,
+    "output_root": "eval_results/mix/focused/55b_pair/routing_light"
   },
   "analyses": {
     "routing": {

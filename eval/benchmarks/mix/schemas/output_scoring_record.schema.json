@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Output Scoring Record",
+  "description": "Compact artifact linking routing behavior to prediction quality.",
+  "type": "object",
+  "required": [
+    "example_id",
+    "dataset_name",
+    "model_name",
+    "prediction_text",
+    "reference_answer",
+    "scoring_mode"
+  ],
+  "properties": {
+    "example_id": {
+      "type": "string"
+    },
+    "dataset_name": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "model_name": {
+      "type": "string"
+    },
+    "run_label": {
+      "type": "string"
+    },
+    "scoring_mode": {
+      "type": "string"
+    },
+    "prediction_text": {
+      "type": "string"
+    },
+    "reference_answer": {
+      "type": "string"
+    },
+    "normalized_prediction": {
+      "type": "string"
+    },
+    "normalized_reference": {
+      "type": "string"
+    },
+    "is_correct": {
+      "type": "boolean"
+    },
+    "score": {
+      "type": "number"
+    },
+    "judge_label": {
+      "type": "string"
+    },
+    "routing": {
+      "type": "object",
+      "properties": {
+        "usage": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "mean_top1_prob": {
+          "type": "number"
+        },
+        "mean_top2_prob": {
+          "type": "number"
+        },
+        "mean_top1_top2_margin": {
+          "type": "number"
+        },
+        "mean_token_entropy": {
+          "type": "number"
+        },
+        "mean_selected_expert_prob_mass": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

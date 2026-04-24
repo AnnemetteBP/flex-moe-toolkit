@@ -1,27 +1,22 @@
 {
   "shared": {
     "dataset_manifest": "eval/benchmarks/mix/data/mix_manifest.json",
-    "model_catalog": "model_paths/models.json",
     "model_root": "/work/training/FlexMoRE/models",
     "model_registry": "model_paths/all_models.txt",
-    "routing_run_mode": "native_only",
-    "public_expert_idx": 0,
-    "combined_active_experts": "2,4,7",
-    "capture_router_tensors": true,
-    "capture_hidden_states": true,
-    "hidden_state_layers": "early_mid_late_last"
+    "datasets": [
+      "mkqa_en_da",
+      "gsm8k_subset",
+      "pubmedqa_subset"
+    ],
+    "selected_layers": "early_mid_late_last"
   },
   "runtime": {
     "device": "auto",
     "dtype": "auto",
     "max_length": 512,
-    "default_max_new_tokens": 32,
-    "output_root": "eval_results/mix/full/flexolmo/a4"
-  },
-  "analyses": {
-    "routing": {
-      "enabled": true
-    }
+    "representation_sources": "hidden_state,pre_router",
+    "max_examples_per_dataset": 75,
+    "output_root": "eval_results/mix/focused/55b_pair/latent_space"
   },
   "models": [
     {

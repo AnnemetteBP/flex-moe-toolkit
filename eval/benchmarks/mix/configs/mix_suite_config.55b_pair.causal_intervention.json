@@ -1,0 +1,33 @@
+{
+  "shared": {
+    "dataset_manifest": "eval/benchmarks/mix/data/mix_manifest.json",
+    "model_root": "/work/training/FlexMoRE/models",
+    "model_registry": "model_paths/all_models.txt",
+    "public_expert_idx": 0,
+    "datasets": [
+      "mkqa_en_da",
+      "gsm8k_subset",
+      "pubmedqa_subset"
+    ],
+    "selected_layers": "early_mid_late_last"
+  },
+  "runtime": {
+    "device": "auto",
+    "dtype": "auto",
+    "max_length": 512,
+    "max_examples_per_dataset": 75,
+    "position_policy": "last_prompt_token",
+    "intervention_kind": "remove_delta",
+    "source_mode": "comparison_model",
+    "delta_basis": "source_mode_diff",
+    "delta_aggregation": "per_example",
+    "output_root": "eval_results/mix/focused/55b_pair/causal_intervention"
+  },
+  "comparisons": [
+    {
+      "enabled": true,
+      "target_model_name": "FlexOlmo-8x7B-1T-a4-55B-v2-rt",
+      "comparison_model_name": "FlexOlmo-8x7B-1T-a4-55B-v2"
+    }
+  ]
+}

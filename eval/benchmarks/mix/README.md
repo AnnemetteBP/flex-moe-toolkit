@@ -20,6 +20,13 @@ It loads one FlexOlmo checkpoint once, then iterates over every dataset listed i
 For multi-model runs, use `runners/run_mix_suite.py` with a JSON config similar to:
 - `configs/mix_suite_config.example.json`
 
+Layer presets supported by the focused runners and hidden-state capture:
+- `early_mid_late_last`
+- `early_mid_last`
+- `early_late_last`
+
+These are useful when we want smaller, transfer-friendly artifacts without hardcoding model-specific layer indices in every config.
+
 ## Current Shared JSONL Schema
 
 Each line should look like:
@@ -79,3 +86,13 @@ eval_results/mix/full/<collection>/<model_name>/<dataset_name>/<run_label>/
 ```
 
 Each dataset directory also receives a `run_manifest.json`, and each model directory receives a `mix_suite_manifest.json`.
+
+## Analysis Framework
+
+The mix suite is now paired with a reusable analysis framework:
+
+- `ANALYSIS_FRAMEWORK.md`: what each artifact tier is for
+- `schemas/`: minimal artifact schemas for routing, output, latent-space, and intervention tracks
+
+Use these to decide what to save before launching a run. The main rule is:
+- do not capture one giant artifact unless the question actually needs it

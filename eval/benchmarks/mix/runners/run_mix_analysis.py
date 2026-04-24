@@ -65,7 +65,10 @@ def parse_args():
     parser.add_argument("--capture-hidden-states", action="store_true")
     parser.add_argument(
         "--hidden-state-layers",
-        help="Comma-separated hidden-state layer indices to save. Supports negative indices like -1.",
+        help=(
+            "Comma-separated hidden-state layer indices to save. Supports negative indices like -1 "
+            "or presets like `early_mid_late_last`."
+        ),
     )
     parser.add_argument("--skip-output-token-capture", action="store_true")
     parser.add_argument("--default-max-new-tokens", type=int, default=16)
@@ -87,9 +90,40 @@ def with_leading_model_fields(record: dict, model_name: str, model_path: str) ->
     }
 
 
-def parse_hidden_state_layers(raw_value: str | None) -> list[int] | None:
+def _dedupe_preserve_order(values: list[int]) -> list[int]:
+    seen: set[int] = set()
+    ordered: list[int] = []
+    for value in values:
+        if value not in seen:
+            seen.add(value)
+            ordered.append(value)
+    return ordered
+
+
+def _fractional_positions(count: int, fractions: tuple[float, ...]) -> list[int]:
+    if count <= 1:
+        return [0]
+    return _dedupe_preserve_order(
+        [min(max(int(round(fraction * (count - 1))), 0), count - 1) for fraction in fractions]
+    )
+
+
+def parse_hidden_state_layers(raw_value: str | None, *, num_hidden_layers: int | None = None) -> list[int] | None:
     if not raw_value:
         return None
+    normalized = raw_value.strip().lower()
+    if normalized == "early_mid_late_last":
+        if num_hidden_layers is None:
+            raise ValueError("`num_hidden_layers` is required to resolve layer preset `early_mid_late_last`.")
+        return _fractional_positions(num_hidden_layers + 1, (0.0, 0.33, 0.66, 1.0))
+    if normalized == "early_mid_last":
+        if num_hidden_layers is None:
+            raise ValueError("`num_hidden_layers` is required to resolve layer preset `early_mid_last`.")
+        return _fractional_positions(num_hidden_layers + 1, (0.0, 0.5, 1.0))
+    if normalized == "early_late_last":
+        if num_hidden_layers is None:
+            raise ValueError("`num_hidden_layers` is required to resolve layer preset `early_late_last`.")
+        return _fractional_positions(num_hidden_layers + 1, (0.0, 0.75, 1.0))
     return [int(part.strip()) for part in raw_value.split(",") if part.strip()]
 
 
@@ -223,7 +257,6 @@ def main():
     device = resolve_device(args.device)
     model_path = resolve_model_path(args)
     model_name = resolved_model_name(args, model_path)
-    hidden_state_layers = parse_hidden_state_layers(args.hidden_state_layers)
     selected_datasets = None
     if args.datasets:
         selected_datasets = {part.strip() for part in args.datasets.split(",") if part.strip()}
@@ -233,6 +266,10 @@ def main():
         tokenizer_path=args.tokenizer_path,
         device=device,
         dtype_name=args.dtype,
+    )
+    hidden_state_layers = parse_hidden_state_layers(
+        args.hidden_state_layers,
+        num_hidden_layers=int(model.config.num_hidden_layers),
     )
 
     expert_order = None

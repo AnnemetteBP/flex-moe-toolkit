@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Latent Space Metadata Record",
+  "description": "Metadata record aligned with compact latent-space arrays saved to NPZ.",
+  "type": "object",
+  "required": [
+    "example_id",
+    "dataset_name",
+    "model_name",
+    "selected_layers",
+    "representation_file"
+  ],
+  "properties": {
+    "example_id": {
+      "type": "string"
+    },
+    "dataset_name": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "model_name": {
+      "type": "string"
+    },
+    "model_path": {
+      "type": "string"
+    },
+    "run_label": {
+      "type": "string"
+    },
+    "prompt_length": {
+      "type": "integer"
+    },
+    "selected_layers": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "representation_file": {
+      "type": "string"
+    },
+    "representation_keys": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}
