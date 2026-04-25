@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Router Direction Record",
+  "description": "Compact artifact for router-direction / expert-alignment analysis in FlexOlmo-style MoE models.",
+  "type": "object",
+  "required": [
+    "example_id",
+    "dataset_name",
+    "model_name",
+    "layer",
+    "top1_aligned_expert",
+    "top1_alignment",
+    "top2_alignment",
+    "alignment_margin"
+  ],
+  "properties": {
+    "example_id": {
+      "type": "string"
+    },
+    "dataset_name": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "model_name": {
+      "type": "string"
+    },
+    "layer": {
+      "type": "integer"
+    },
+    "top1_aligned_expert": {
+      "type": "integer"
+    },
+    "top2_aligned_expert": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "top1_alignment": {
+      "type": "number"
+    },
+    "top2_alignment": {
+      "type": "number"
+    },
+    "alignment_margin": {
+      "type": "number"
+    },
+    "alignment_entropy": {
+      "type": "number"
+    },
+    "actual_topk_experts": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "actual_top1_expert": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "agreement_top1": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

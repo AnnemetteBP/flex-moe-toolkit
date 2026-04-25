@@ -56,6 +56,18 @@ def cosine_similarity(vec_a: np.ndarray, vec_b: np.ndarray) -> float:
     return float(np.dot(vec_a, vec_b) / denom)
 
 
+def mean_squared_radius(vectors: np.ndarray) -> float:
+    if vectors.shape[0] == 0:
+        return 0.0
+    centroid = vectors.mean(axis=0, keepdims=True)
+    distances = np.sum((vectors - centroid) ** 2, axis=1)
+    return float(distances.mean())
+
+
+def centroid_distance(vec_a: np.ndarray, vec_b: np.ndarray) -> float:
+    return float(np.linalg.norm(vec_a.mean(axis=0) - vec_b.mean(axis=0)))
+
+
 def parse_layer_keys(npz_data) -> dict[str, dict[str, list[int]]]:
     layers_by_source: dict[str, dict[str, list[int]]] = {}
     for key in npz_data.files:
@@ -131,6 +143,61 @@ def summarize_similarity_rows(
                         "model_b": model_names[1],
                     }
                 )
+                rows.append(
+                    {
+                        "dataset_name": dataset_name,
+                        "representation_source": source_name,
+                        "representation": repr_name,
+                        "layer": layer_idx,
+                        "group": model_names[0],
+                        "metric": "within_group_variance",
+                        "value": mean_squared_radius(base_vectors),
+                        "model_a": model_names[0],
+                        "model_b": model_names[0],
+                    }
+                )
+                rows.append(
+                    {
+                        "dataset_name": dataset_name,
+                        "representation_source": source_name,
+                        "representation": repr_name,
+                        "layer": layer_idx,
+                        "group": model_names[1],
+                        "metric": "within_group_variance",
+                        "value": mean_squared_radius(comparison_vectors),
+                        "model_a": model_names[1],
+                        "model_b": model_names[1],
+                    }
+                )
+                base_var = mean_squared_radius(base_vectors)
+                comparison_var = mean_squared_radius(comparison_vectors)
+                centroid_dist = centroid_distance(base_vectors, comparison_vectors)
+                rows.append(
+                    {
+                        "dataset_name": dataset_name,
+                        "representation_source": source_name,
+                        "representation": repr_name,
+                        "layer": layer_idx,
+                        "group": "all",
+                        "metric": "cross_model_centroid_distance",
+                        "value": centroid_dist,
+                        "model_a": model_names[0],
+                        "model_b": model_names[1],
+                    }
+                )
+                rows.append(
+                    {
+                        "dataset_name": dataset_name,
+                        "representation_source": source_name,
+                        "representation": repr_name,
+                        "layer": layer_idx,
+                        "group": "all",
+                        "metric": "cross_model_separation_ratio",
+                        "value": centroid_dist / np.sqrt(max(0.5 * (base_var + comparison_var), 1e-9)),
+                        "model_a": model_names[0],
+                        "model_b": model_names[1],
+                    }
+                )
 
                 for language in sorted(set(base_groups) & set(comparison_groups)):
                     base_lang = base_vectors[base_groups[language]]
@@ -144,6 +211,35 @@ def summarize_similarity_rows(
                             "group": language,
                             "metric": "cross_model_cosine",
                             "value": cosine_similarity(base_lang.mean(axis=0), comparison_lang.mean(axis=0)),
+                            "model_a": model_names[0],
+                            "model_b": model_names[1],
+                        }
+                    )
+                    lang_base_var = mean_squared_radius(base_lang)
+                    lang_comp_var = mean_squared_radius(comparison_lang)
+                    lang_centroid_dist = centroid_distance(base_lang, comparison_lang)
+                    rows.append(
+                        {
+                            "dataset_name": dataset_name,
+                            "representation_source": source_name,
+                            "representation": repr_name,
+                            "layer": layer_idx,
+                            "group": language,
+                            "metric": "cross_model_centroid_distance",
+                            "value": lang_centroid_dist,
+                            "model_a": model_names[0],
+                            "model_b": model_names[1],
+                        }
+                    )
+                    rows.append(
+                        {
+                            "dataset_name": dataset_name,
+                            "representation_source": source_name,
+                            "representation": repr_name,
+                            "layer": layer_idx,
+                            "group": language,
+                            "metric": "cross_model_separation_ratio",
+                            "value": lang_centroid_dist / np.sqrt(max(0.5 * (lang_base_var + lang_comp_var), 1e-9)),
                             "model_a": model_names[0],
                             "model_b": model_names[1],
                         }
@@ -250,6 +346,75 @@ def plot_similarity_rows(rows: list[dict], output_path: Path, model_names: list[
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.suptitle(f"Latent Similarity: {model_names[0]} vs {model_names[1]}", fontsize=14)
+    fig.savefig(output_path, dpi=220)
+    plt.close(fig)
+
+
+def plot_geometry_metrics(rows: list[dict], output_path: Path, model_names: list[str]) -> None:
+    datasets = sorted({row["dataset_name"] for row in rows})
+    sources = sorted({row["representation_source"] for row in rows})
+    metrics = [
+        ("cross_model_centroid_distance", "Centroid Distance"),
+        ("cross_model_separation_ratio", "Separation Ratio"),
+        ("within_group_variance", "Within-Group Variance"),
+    ]
+    fig, axes = plt.subplots(
+        len(datasets),
+        len(metrics) * len(sources),
+        figsize=(5.5 * len(metrics) * len(sources), 4 * len(datasets)),
+        squeeze=False,
+        constrained_layout=True,
+    )
+    colors = {model_names[0]: "#5B6C8F", model_names[1]: "#C96B3B", "shared": "#2A9D8F"}
+
+    for row_idx, dataset_name in enumerate(datasets):
+        for source_idx, source_name in enumerate(sources):
+            for metric_idx, (metric_key, title) in enumerate(metrics):
+                col_idx = source_idx * len(metrics) + metric_idx
+                ax = axes[row_idx][col_idx]
+                subset = [
+                    row for row in rows
+                    if row["dataset_name"] == dataset_name
+                    and row["representation_source"] == source_name
+                    and row["representation"] == "last"
+                    and row["metric"] == metric_key
+                    and row["group"] == "all"
+                ]
+                if metric_key == "within_group_variance":
+                    for model_name in model_names:
+                        model_subset = [
+                            row for row in rows
+                            if row["dataset_name"] == dataset_name
+                            and row["representation_source"] == source_name
+                            and row["representation"] == "last"
+                            and row["metric"] == metric_key
+                            and row["group"] == model_name
+                        ]
+                        model_subset = sorted(model_subset, key=lambda item: int(item["layer"]))
+                        if model_subset:
+                            ax.plot(
+                                [int(row["layer"]) for row in model_subset],
+                                [float(row["value"]) for row in model_subset],
+                                marker="o",
+                                label=model_name,
+                                color=colors[model_name],
+                            )
+                else:
+                    subset = sorted(subset, key=lambda item: int(item["layer"]))
+                    if subset:
+                        ax.plot(
+                            [int(row["layer"]) for row in subset],
+                            [float(row["value"]) for row in subset],
+                            marker="o",
+                            color=colors["shared"],
+                        )
+                ax.set_title(f"{dataset_name} | {source_name} | {title}")
+                ax.set_xlabel("Layer")
+                ax.grid(alpha=0.25)
+                if row_idx == 0 and col_idx == 2 and metric_key == "within_group_variance":
+                    ax.legend(frameon=False, fontsize=8, loc="best")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -432,6 +597,7 @@ def write_readme(
         "Artifacts:",
         "- `latent_space_similarity_summary.csv`",
         "- `latent_space_similarity_plot.png`",
+        "- `latent_space_geometry_metrics.png`",
         f"- `latent_space_pca_grid_{pca_representation}.png`",
         f"- `latent_space_pca_{pca_dataset}_{representation_source}_layer_{pca_layer}_{pca_representation}.png`",
         "",
@@ -439,6 +605,8 @@ def write_readme(
         "- `cross_model_cosine` close to 1 means the two models occupy very similar centroid directions.",
         "- lower cosine on a dataset or language suggests stronger representational divergence there.",
         "- `within_model_language_cosine` helps show whether English and Danish remain entangled or separate.",
+        "- `cross_model_centroid_distance` and `cross_model_separation_ratio` help quantify how distinct the two model manifolds are.",
+        "- `within_group_variance` helps test whether one model looks more compact or more spread than the other.",
     ]
     path.write_text("\n".join(lines), encoding="utf-8")
 
@@ -486,6 +654,7 @@ def main() -> int:
     csv_path = output_root / "latent_space_similarity_summary.csv"
     write_csv(all_rows, csv_path)
     plot_similarity_rows(all_rows, output_root / "latent_space_similarity_plot.png", model_names=model_names)
+    plot_geometry_metrics(all_rows, output_root / "latent_space_geometry_metrics.png", model_names=model_names)
     grid_sources = [source for source in ("pre_router", "hidden_state") if any(row["representation_source"] == source for row in all_rows)]
     if grid_sources and datasets:
         plot_pca_grid(

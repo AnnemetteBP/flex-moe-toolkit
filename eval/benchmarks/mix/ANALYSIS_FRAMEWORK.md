@@ -10,12 +10,13 @@ questions it can answer, and explicit limits on what it cannot answer.
 
 Save the minimum artifact that can answer the question.
 
-In practice, the current work naturally splits into four tiers:
+In practice, the current work naturally splits into five tiers:
 
 1. `routing`
 2. `output`
 3. `latent_space`
 4. `intervention`
+5. `router_direction`
 
 These tiers build on each other, but they should not be collapsed into one oversized JSONL dump.
 
@@ -172,6 +173,36 @@ What this tier can answer:
 Current status in this repo:
 - not yet implemented as a stable mix benchmark artifact
 
+## Tier 5: Router Direction
+
+Purpose:
+- study how the router parameterizes experts
+- compare expert router directions directly
+- project pre-router activations onto expert directions
+- test whether actual routing matches geometric alignment
+
+Minimal artifacts:
+- router weight matrix per selected layer
+- compact per-example or per-group alignment summary
+- optional agreement fields comparing aligned top-1 vs actual routed top-1
+
+What this tier can answer:
+- is the public expert geometrically close to many inputs?
+- are some expert router directions highly redundant?
+- do Danish inputs align with the Danish expert direction?
+- does RT change input-to-expert alignment patterns?
+
+What this tier cannot answer by itself:
+- whether a direction matters causally for the loss
+- whether changing routing would improve outputs
+
+Current status in this repo:
+- planned but not yet implemented as a runner
+- see:
+  - `ROUTER_DIRECTION_PLAN.md`
+  - `schemas/router_direction_record.schema.json`
+  - `configs/mix_suite_config.55b_pair.router_direction.json`
+
 ## Recommended Workflow
 
 For future focused runs, use this order:
@@ -179,7 +210,8 @@ For future focused runs, use this order:
 1. `routing`
 2. `output`
 3. `latent_space`
-4. `intervention`
+4. `router_direction`
+5. `intervention`
 
 Only move to the next tier when the current tier leaves an important ambiguity.
 
@@ -219,6 +251,7 @@ Current files and where they belong:
 - `routing_analysis.jsonl` -> Tier 1
 - `routing_records.jsonl` -> mostly Tier 1.5 / Tier 2 support, but oversized in current form
 - `latent_representations.npz` -> Tier 3
+- `router_direction_records.jsonl` -> Tier 5
 - future scoring artifact -> Tier 2
 - future intervention artifact -> Tier 4
 
@@ -233,6 +266,7 @@ If the question is:
 - "What is the router doing?" -> use Tier 1
 - "Did routing help the output?" -> use Tier 2
 - "Are experts or states internally separable?" -> use Tier 3
+- "How does the router represent experts?" -> use Tier 5
 - "Would a different routing choice have been better?" -> use Tier 4
 
 That separation is the main thing that should keep future analysis runs both meaningful and
