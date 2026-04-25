@@ -34,6 +34,7 @@ DEFAULT_MODELS = [
     "FlexOlmo-8x7B-1T-a4-55B-v2",
     "FlexOlmo-8x7B-1T-a4-55B-v2-rt",
 ]
+DEFAULT_PUBLIC_EXPERT_IDX = 0
 
 
 def parse_args() -> argparse.Namespace:
@@ -48,6 +49,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-name", action="append", default=[])
     parser.add_argument("--dataset", action="append", default=[])
     parser.add_argument("--run-label", default="native_full")
+    parser.add_argument("--public-expert-idx", type=int, default=DEFAULT_PUBLIC_EXPERT_IDX)
     return parser.parse_args()
 
 
@@ -86,6 +88,172 @@ def load_record_count(results_root: Path, model_name: str, dataset_name: str, ru
     if not records_path.exists():
         return 0
     return len(load_jsonl_records(records_path))
+
+
+def summarize_matrix(matrix: np.ndarray, public_expert_idx: int) -> dict[str, float | int | str]:
+    if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1]:
+        raise ValueError(f"Expected square co-activation matrix, received shape {tuple(matrix.shape)}.")
+
+    num_experts = int(matrix.shape[0])
+    diag_values = np.diag(matrix).astype(float)
+    offdiag_mask = ~np.eye(num_experts, dtype=bool)
+    offdiag_values = matrix[offdiag_mask].astype(float)
+
+    offdiag_mean = float(np.mean(offdiag_values)) if offdiag_values.size else 0.0
+    offdiag_max = float(np.max(offdiag_values)) if offdiag_values.size else 0.0
+    diag_mean = float(np.mean(diag_values)) if diag_values.size else 0.0
+
+    public_row = np.delete(matrix[public_expert_idx].astype(float), public_expert_idx)
+    public_col = np.delete(matrix[:, public_expert_idx].astype(float), public_expert_idx)
+    public_mean = float(np.mean(np.concatenate([public_row, public_col]))) if public_row.size else 0.0
+
+    upper_values: list[float] = []
+    upper_pairs: list[tuple[int, int]] = []
+    for row_idx in range(num_experts):
+        for col_idx in range(row_idx + 1, num_experts):
+            upper_pairs.append((row_idx, col_idx))
+            upper_values.append(float(matrix[row_idx, col_idx]))
+
+    if upper_values:
+        best_idx = int(np.argmax(upper_values))
+        dominant_pair = upper_pairs[best_idx]
+        dominant_pair_value = upper_values[best_idx]
+        dominant_pair_label = f"{dominant_pair[0]}-{dominant_pair[1]}"
+    else:
+        dominant_pair_label = ""
+        dominant_pair_value = 0.0
+
+    return {
+        "num_experts": num_experts,
+        "diag_mean": diag_mean,
+        "offdiag_mean": offdiag_mean,
+        "offdiag_max": offdiag_max,
+        "public_offdiag_mean": public_mean,
+        "dominant_pair": dominant_pair_label,
+        "dominant_pair_value": dominant_pair_value,
+    }
+
+
+def build_summary_tables(
+    results_root: Path,
+    model_names: list[str],
+    dataset_names: list[str],
+    run_label: str,
+    public_expert_idx: int,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    aggregate_rows: list[dict] = []
+    layer_rows: list[dict] = []
+
+    for model_name in model_names:
+        for dataset_name in dataset_names:
+            aggregate = load_aggregate(results_root, model_name, dataset_name, run_label)
+            if not aggregate:
+                continue
+
+            aggregate_matrix = np.asarray(aggregate["coactivation_matrix"], dtype=float)
+            aggregate_rows.append(
+                {
+                    "dataset_name": dataset_name,
+                    "model_name": model_name,
+                    "run_label": run_label,
+                    "record_count": load_record_count(results_root, model_name, dataset_name, run_label),
+                    **summarize_matrix(aggregate_matrix, public_expert_idx=public_expert_idx),
+                }
+            )
+
+            for layer_idx, matrix in enumerate(aggregate.get("layer_coactivation_matrices", [])):
+                if matrix is None:
+                    continue
+                layer_rows.append(
+                    {
+                        "dataset_name": dataset_name,
+                        "model_name": model_name,
+                        "run_label": run_label,
+                        "layer": layer_idx,
+                        **summarize_matrix(np.asarray(matrix, dtype=float), public_expert_idx=public_expert_idx),
+                    }
+                )
+
+    aggregate_frame = pd.DataFrame(aggregate_rows)
+    layer_frame = pd.DataFrame(layer_rows)
+
+    comparison_rows: list[dict] = []
+    if not aggregate_frame.empty and len(model_names) == 2:
+        left_model, right_model = model_names[0], model_names[1]
+        for dataset_name in sorted(aggregate_frame["dataset_name"].drop_duplicates()):
+            left = aggregate_frame[
+                (aggregate_frame["dataset_name"] == dataset_name) & (aggregate_frame["model_name"] == left_model)
+            ]
+            right = aggregate_frame[
+                (aggregate_frame["dataset_name"] == dataset_name) & (aggregate_frame["model_name"] == right_model)
+            ]
+            if left.empty or right.empty:
+                continue
+            left_row = left.iloc[0]
+            right_row = right.iloc[0]
+            comparison_rows.append(
+                {
+                    "dataset_name": dataset_name,
+                    "left_model": left_model,
+                    "right_model": right_model,
+                    "offdiag_mean_delta": float(right_row["offdiag_mean"] - left_row["offdiag_mean"]),
+                    "public_offdiag_mean_delta": float(
+                        right_row["public_offdiag_mean"] - left_row["public_offdiag_mean"]
+                    ),
+                    "offdiag_max_delta": float(right_row["offdiag_max"] - left_row["offdiag_max"]),
+                    "dominant_pair_left": str(left_row["dominant_pair"]),
+                    "dominant_pair_right": str(right_row["dominant_pair"]),
+                    "dominant_pair_value_delta": float(
+                        right_row["dominant_pair_value"] - left_row["dominant_pair_value"]
+                    ),
+                }
+            )
+
+    comparison_frame = pd.DataFrame(comparison_rows)
+    return aggregate_frame, layer_frame, comparison_frame
+
+
+def plot_summary_metrics(
+    aggregate_frame: pd.DataFrame,
+    output_root: Path,
+) -> Path | None:
+    if aggregate_frame.empty:
+        return None
+
+    metric_specs = [
+        ("offdiag_mean", "Mean Off-Diagonal"),
+        ("public_offdiag_mean", "Public Off-Diagonal"),
+        ("offdiag_max", "Max Off-Diagonal"),
+        ("dominant_pair_value", "Dominant Pair Strength"),
+    ]
+    model_names = list(aggregate_frame["model_name"].drop_duplicates())
+    dataset_names = list(aggregate_frame["dataset_name"].drop_duplicates())
+
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10), constrained_layout=True)
+    axes = axes.flatten()
+    colors = ["#5B6C8F", "#C96B3B", "#5A9367", "#8C5A9E"]
+    width = 0.38 if len(model_names) == 2 else max(0.18, 0.9 / max(len(model_names), 1))
+    x = np.arange(len(dataset_names))
+
+    for ax, (metric_key, title) in zip(axes, metric_specs):
+        for idx, model_name in enumerate(model_names):
+            subset = aggregate_frame[aggregate_frame["model_name"] == model_name]
+            values = []
+            for dataset_name in dataset_names:
+                row = subset[subset["dataset_name"] == dataset_name]
+                values.append(float(row.iloc[0][metric_key]) if not row.empty else np.nan)
+            offset = (idx - (len(model_names) - 1) / 2.0) * width
+            ax.bar(x + offset, values, width=width, label=model_name, color=colors[idx % len(colors)], alpha=0.92)
+        ax.set_title(title)
+        ax.set_xticks(x)
+        ax.set_xticklabels(dataset_names, rotation=25, ha="right")
+        ax.grid(axis="y", alpha=0.25)
+
+    axes[0].legend(loc="upper right")
+    output_path = output_root / "coactivation_summary_metrics.png"
+    fig.savefig(output_path, dpi=200, bbox_inches="tight")
+    plt.close(fig)
+    return output_path
 
 
 def generate_per_run_plots(
@@ -258,6 +426,10 @@ def write_readme(
     results_frame: pd.DataFrame,
     grid_path: Path | None,
     layerwise_grid_paths: list[Path],
+    aggregate_summary_path: Path | None,
+    layer_summary_path: Path | None,
+    comparison_summary_path: Path | None,
+    summary_plot_path: Path | None,
 ) -> None:
     lines = [
         "# Mix Co-Activation Outputs",
@@ -271,9 +443,14 @@ def write_readme(
         lines.append(f"- `aggregate_coactivation_heatmaps.png`: one aggregate co-activation heatmap per dataset/model.")
     if layerwise_grid_paths:
         lines.append("- `*_layerwise_coactivation_grid.png`: layer-wise co-activation heatmap grids per dataset.")
+    if summary_plot_path is not None:
+        lines.append("- `coactivation_summary_metrics.png`: compact bar plots for co-activation summary metrics.")
     lines.extend(
         [
             "- `index.csv`: index of generated per-run plots and counts.",
+            "- `coactivation_aggregate_summary.csv`: one row per dataset/model with compact co-activation metrics.",
+            "- `coactivation_layer_summary.csv`: one row per dataset/model/layer with the same metrics.",
+            "- `coactivation_model_comparison.csv`: direct model deltas per dataset.",
             "",
             "Per-run directories also contain:",
             "- `routing_usage_bar.png`",
@@ -320,6 +497,20 @@ def main() -> int:
     index_frame = pd.DataFrame(index_rows)
     index_frame.to_csv(output_root / "index.csv", index=False)
 
+    aggregate_summary, layer_summary, comparison_summary = build_summary_tables(
+        results_root=results_root,
+        model_names=model_names,
+        dataset_names=dataset_names,
+        run_label=args.run_label,
+        public_expert_idx=args.public_expert_idx,
+    )
+    aggregate_summary_path = output_root / "coactivation_aggregate_summary.csv"
+    layer_summary_path = output_root / "coactivation_layer_summary.csv"
+    comparison_summary_path = output_root / "coactivation_model_comparison.csv"
+    aggregate_summary.to_csv(aggregate_summary_path, index=False)
+    layer_summary.to_csv(layer_summary_path, index=False)
+    comparison_summary.to_csv(comparison_summary_path, index=False)
+
     aggregate_grid_path = plot_aggregate_coactivation_grid(
         results_root=results_root,
         output_root=output_root,
@@ -334,11 +525,16 @@ def main() -> int:
         dataset_names=dataset_names,
         run_label=args.run_label,
     )
+    summary_plot_path = plot_summary_metrics(aggregate_summary, output_root=output_root)
     write_readme(
         output_root=output_root,
         results_frame=index_frame,
         grid_path=aggregate_grid_path,
         layerwise_grid_paths=layerwise_grid_paths,
+        aggregate_summary_path=aggregate_summary_path,
+        layer_summary_path=layer_summary_path,
+        comparison_summary_path=comparison_summary_path,
+        summary_plot_path=summary_plot_path,
     )
 
     print(f"Wrote mix co-activation analysis to {output_root}")
