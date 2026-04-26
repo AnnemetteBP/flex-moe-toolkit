@@ -121,19 +121,7 @@ def top1_top2_confusion(records: list[dict], language: str | None = None) -> np.
     if not filtered:
         return None
 
-    max_expert_idx = -1
-    for record in filtered:
-        for layer_summary in record.get("prompt_router_token_summaries_by_layer") or []:
-            top1 = flatten_ids(layer_summary.get("top1_expert_ids", []))
-            top2 = flatten_ids(layer_summary.get("top2_expert_ids", []))
-            if top1:
-                max_expert_idx = max(max_expert_idx, max(top1))
-            if top2:
-                max_expert_idx = max(max_expert_idx, max(top2))
-    if max_expert_idx < 0:
-        return None
-
-    num_experts = max_expert_idx + 1
+    num_experts = max(DEFAULT_EXPERT_LABELS.keys()) + 1
     matrix = np.zeros((num_experts, num_experts), dtype=float)
     for record in filtered:
         for layer_summary in record.get("prompt_router_token_summaries_by_layer") or []:
@@ -242,6 +230,7 @@ def plot_confusion_matrices(
         sharex=True,
         sharey=True,
         squeeze=False,
+        constrained_layout=True,
     )
 
     vmax = 0.0
@@ -290,10 +279,9 @@ def plot_confusion_matrices(
             ax.set_yticks(np.arange(matrix.shape[0]) + 0.5)
             ax.set_yticklabels(tick_labels, rotation=0, fontsize=10)
 
-    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.986, fontweight="bold", fontsize=16)
-    fig.supxlabel("Top-2 Expert", y=0.04, fontweight="semibold", fontsize=12)
-    fig.supylabel("Top-1 Expert", x=0.04, fontweight="semibold", fontsize=12)
-    fig.tight_layout(rect=(0.055, 0.055, 1, 0.965))
+    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.998, fontweight="bold", fontsize=16)
+    fig.supxlabel("Top-2 Expert", y=0.025, fontweight="semibold", fontsize=12)
+    fig.supylabel("Top-1 Expert", x=0.02, fontweight="semibold", fontsize=12)
     output_root.mkdir(parents=True, exist_ok=True)
     output_path = output_root / "mix_top1_top2_confusion.png"
     fig.savefig(output_path, dpi=220, bbox_inches="tight")

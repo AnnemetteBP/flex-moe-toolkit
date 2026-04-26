@@ -341,8 +341,8 @@ def plot_aggregate_coactivation_grid(
         len(dataset_names),
         len(model_names),
         figsize=(5.2 * len(model_names), 4.1 * len(dataset_names)),
-        constrained_layout=True,
         squeeze=False,
+        constrained_layout=True,
     )
 
     vmax = 0.0
@@ -396,7 +396,6 @@ def plot_aggregate_coactivation_grid(
     fig.suptitle("Aggregate Expert Co-Activation", y=0.986, fontweight="bold", fontsize=16)
     fig.supxlabel("Expert", y=0.04, fontweight="semibold", fontsize=12)
     fig.supylabel("Expert", x=0.04, fontweight="semibold", fontsize=12)
-    fig.tight_layout(rect=(0.055, 0.055, 1, 0.965))
     fig.savefig(output_path, dpi=200, bbox_inches="tight")
     plt.close(fig)
     return output_path
@@ -428,8 +427,8 @@ def plot_layerwise_coactivation_overview(
             num_layers,
             len(model_names),
             figsize=(5.2 * len(model_names), 3.5 * num_layers),
-            constrained_layout=True,
             squeeze=False,
+            constrained_layout=True,
         )
 
         vmax = 0.0
@@ -486,7 +485,6 @@ def plot_layerwise_coactivation_overview(
         )
         fig.supxlabel("Expert", y=0.04, fontweight="semibold", fontsize=12)
         fig.supylabel("Expert", x=0.04, fontweight="semibold", fontsize=12)
-        fig.tight_layout(rect=(0.055, 0.055, 1, 0.972))
         fig.savefig(output_path, dpi=200, bbox_inches="tight")
         plt.close(fig)
         output_paths.append(output_path)
