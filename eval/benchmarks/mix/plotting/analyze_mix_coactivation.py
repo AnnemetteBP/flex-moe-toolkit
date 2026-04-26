@@ -279,7 +279,7 @@ def plot_summary_metrics(
 
     axes[0].legend(loc="upper right")
     output_path = output_root / "coactivation_summary_metrics.png"
-    fig.savefig(output_path, dpi=200, bbox_inches="tight")
+    fig.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
     return output_path
 
@@ -407,9 +407,9 @@ def plot_aggregate_coactivation_grid(
             )
 
     output_path = output_root / "aggregate_coactivation_heatmaps.png"
-    fig.subplots_adjust(left=0.12, right=0.95, bottom=0.09, top=0.93, wspace=0.10, hspace=0.26)
-    fig.suptitle("Aggregate Expert Co-Activation", y=0.975, fontweight="bold", fontsize=15)
-    fig.savefig(output_path, dpi=200)
+    fig.subplots_adjust(left=0.12, right=0.95, bottom=0.06, top=0.96, wspace=0.12, hspace=0.12)
+    fig.suptitle("Aggregate Expert Co-Activation", y=0.985, fontweight="bold", fontsize=15)
+    fig.savefig(output_path, dpi=300)
     plt.close(fig)
     return output_path
 
@@ -503,14 +503,14 @@ def plot_layerwise_coactivation_overview(
                 )
 
         output_path = output_root / f"{dataset_name}_layerwise_coactivation_grid.png"
-        fig.subplots_adjust(left=0.12, right=0.95, bottom=0.07, top=0.93, wspace=0.10, hspace=0.24)
+        fig.subplots_adjust(left=0.12, right=0.95, bottom=0.06, top=0.96, wspace=0.12, hspace=0.12)
         fig.suptitle(
             f"Layer-wise Expert Co-Activation | {dataset_display_name(dataset_name)}",
-            y=0.975,
+            y=0.985,
             fontweight="bold",
             fontsize=14,
         )
-        fig.savefig(output_path, dpi=200)
+        fig.savefig(output_path, dpi=300)
         plt.close(fig)
         output_paths.append(output_path)
 

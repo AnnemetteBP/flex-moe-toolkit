@@ -291,11 +291,13 @@ def plot_confusion_matrices(
             ax.tick_params(axis="y", pad=2)
             ax.tick_params(axis="x", pad=1)
 
-    fig.subplots_adjust(left=0.12, right=0.95, bottom=0.12, top=0.90, wspace=0.12, hspace=0.32)
-    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.955, fontweight="bold", fontsize=15)
+    fig.subplots_adjust(left=0.12, right=0.95, bottom=0.06, top=0.96, wspace=0.12, hspace=0.12)
+    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.985, fontweight="bold", fontsize=15)
+
+
     output_root.mkdir(parents=True, exist_ok=True)
     output_path = output_root / "mix_top1_top2_confusion.png"
-    fig.savefig(output_path, dpi=220)
+    fig.savefig(output_path, dpi=300)
     plt.close(fig)
     return output_path
 
