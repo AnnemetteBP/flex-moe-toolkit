@@ -10,6 +10,7 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_COACTIVATION_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_coactivation"
 DEFAULT_LATENT_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_latent_space"
+DEFAULT_TOP1_TOP2_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_top1_top2_confusion"
 DEFAULT_OUTPUT_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_summary_tables"
 
 
@@ -19,6 +20,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--coactivation-root", type=Path, default=DEFAULT_COACTIVATION_ROOT)
     parser.add_argument("--latent-root", type=Path, default=DEFAULT_LATENT_ROOT)
+    parser.add_argument("--top1-top2-root", type=Path, default=DEFAULT_TOP1_TOP2_ROOT)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
     parser.add_argument(
         "--model-names",
@@ -246,6 +248,35 @@ def build_mkqa_language_table(latent_root: Path) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def build_top1_top2_table(top1_top2_root: Path, model_names: list[str]) -> pd.DataFrame:
+    path = top1_top2_root / "mix_top1_top2_confusion_summary.csv"
+    frame = load_csv(path)
+    left_model, right_model = model_names
+
+    rows: list[dict] = []
+    keys = ["dataset_label", "language", "top1_expert"]
+    for _, group in frame.groupby(keys, dropna=False):
+        left = group[group["model_name"] == left_model]
+        right = group[group["model_name"] == right_model]
+        if left.empty or right.empty:
+            continue
+        left_row = left.iloc[0]
+        right_row = right.iloc[0]
+        rows.append(
+            {
+                "Dataset": left_row["dataset_label"],
+                "Lang.": left_row["language"],
+                "Top-1 Expert": left_row["top1_expert"],
+                "Dominant Top-2 (v2)": left_row["dominant_top2_expert"],
+                "Dominant Top-2 (rt)": right_row["dominant_top2_expert"],
+                "P(top2|top1) (v2)": float(left_row["dominant_top2_probability"]),
+                "P(top2|top1) (rt)": float(right_row["dominant_top2_probability"]),
+                "$\\Delta$": float(right_row["dominant_top2_probability"] - left_row["dominant_top2_probability"]),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
 def write_readme(output_root: Path) -> None:
     text = """# 55B Summary Tables
 
@@ -255,6 +286,7 @@ Files:
 - `coactivation_dataset_comparison.csv/.tex`
 - `latent_geometry_last_layer.csv/.tex`
 - `mkqa_language_geometry.csv/.tex`
+- `top1_top2_competition.csv/.tex`
 
 Intended use:
 - quick paper/slides tables
@@ -272,6 +304,7 @@ def main() -> int:
     coactivation_table = build_coactivation_table(args.coactivation_root, model_names)
     latent_table = build_latent_geometry_table(args.latent_root, model_names)
     mkqa_table = build_mkqa_language_table(args.latent_root)
+    top1_top2_table = build_top1_top2_table(args.top1_top2_root, model_names)
 
     write_table(
         coactivation_table,
@@ -293,6 +326,13 @@ def main() -> int:
         "mkqa_language_geometry",
         "MKQA English/Danish geometry comparison for the 55B FlexOlmo pair.",
         "tab:mix_mkqa_language_geometry",
+    )
+    write_table(
+        top1_top2_table,
+        output_root,
+        "top1_top2_competition",
+        "Top-1 vs. top-2 expert competition summary for the 55B FlexOlmo pair.",
+        "tab:mix_top1_top2_competition",
     )
     write_readme(output_root)
 
