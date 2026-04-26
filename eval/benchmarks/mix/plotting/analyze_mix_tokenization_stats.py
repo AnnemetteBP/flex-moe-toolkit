@@ -207,7 +207,7 @@ def plot_language_summary(summary_rows: list[dict[str, Any]], output_path: Path)
         ("mean_high_fragment_word_share", "Share of 3+ piece words"),
     ]
     fig, axes = plt.subplots(1, len(metrics), figsize=(5.3 * len(metrics), 4.8), squeeze=False)
-    colors = {"en": "#1b6ca8", "da": "#d95f02"}
+    colors = {"en": "#701f57", "da": "#e13342"}
 
     for ax, (metric_key, title) in zip(axes[0], metrics):
         x = np.arange(len(datasets))
@@ -227,17 +227,17 @@ def plot_language_summary(summary_rows: list[dict[str, Any]], output_path: Path)
             ax.bar(x + (offset_idx - 0.5) * width, values, width=width, color=colors[language], label=language.upper())
         ax.set_title(title, fontsize=11.5, pad=4, fontweight="semibold")
         ax.set_xticks(x)
-        ax.set_xticklabels(datasets, rotation=20, ha="right")
+        ax.set_xticklabels(datasets, rotation=0, ha="right", fontweight="semibold")
         ax.tick_params(labelsize=10)
         ax.grid(axis="y", alpha=0.25)
     axes[0][0].set_ylabel("Mean value", fontsize=11.5, fontweight="semibold")
-    legend = axes[0][0].legend(frameon=False, fontsize=10, loc="best")
+    legend = axes[0][0].legend(frameon=False, fontsize=14, loc="best")
     for text in legend.get_texts():
         text.set_fontweight("semibold")
-    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.22, top=0.84, wspace=0.25)
+    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.06, top=0.84, wspace=0.25)
     fig.suptitle("English vs Danish Tokenization Fragmentation", fontsize=14, y=0.95, fontweight="bold")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output_path, dpi=220)
+    fig.savefig(output_path, dpi=300)
     plt.close(fig)
 
 
