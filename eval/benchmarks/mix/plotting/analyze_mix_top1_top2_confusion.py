@@ -267,8 +267,8 @@ def plot_confusion_matrices(
             ax.set_title(
                 f"{model_display_name(model_name)} | {dataset_label(dataset_name)} | {display_language}",
                 fontweight="bold",
-                fontsize=12.5,
-                pad=8,
+                fontsize=12.0,
+                pad=3,
             )
             ax.set_xlabel("")
             ax.set_ylabel("")
@@ -278,10 +278,10 @@ def plot_confusion_matrices(
             ax.set_yticks(np.arange(matrix.shape[0]) + 0.5)
             ax.set_yticklabels(tick_labels, rotation=0, fontsize=10)
 
-    fig.subplots_adjust(left=0.12, right=0.97, bottom=0.14, top=0.90, wspace=0.12, hspace=0.22)
-    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.965, fontweight="bold", fontsize=16)
-    fig.supxlabel("Top-2 Expert", y=0.06, fontweight="semibold", fontsize=12)
-    fig.supylabel("Top-1 Expert", x=0.02, fontweight="semibold", fontsize=12)
+    fig.subplots_adjust(left=0.10, right=0.97, bottom=0.11, top=0.93, wspace=0.10, hspace=0.32)
+    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.945, fontweight="bold", fontsize=16)
+    fig.supxlabel("Top-2 Expert", y=0.045, fontweight="semibold", fontsize=12)
+    fig.supylabel("Top-1 Expert", x=0.045, fontweight="semibold", fontsize=12)
     output_root.mkdir(parents=True, exist_ok=True)
     output_path = output_root / "mix_top1_top2_confusion.png"
     fig.savefig(output_path, dpi=220, bbox_inches="tight")

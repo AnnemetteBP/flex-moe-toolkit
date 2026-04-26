@@ -310,7 +310,6 @@ def plot_similarity_rows(rows: list[dict], output_path: Path, model_names: list[
         len(representations) * len(sources),
         figsize=(6 * len(representations) * len(sources), 4 * len(datasets)),
         squeeze=False,
-        constrained_layout=True,
     )
 
     for row_idx, dataset_name in enumerate(datasets):
@@ -337,7 +336,7 @@ def plot_similarity_rows(rows: list[dict], output_path: Path, model_names: list[
                         marker="o",
                         label=group,
                     )
-                ax.set_title(f"{dataset_name} | {source_name} | {repr_name}")
+                ax.set_title(f"{dataset_name} | {source_name} | {repr_name}", fontsize=11.5, pad=3, fontweight="semibold")
                 ax.set_xlabel("Layer")
                 ax.set_ylabel("Cosine")
                 ax.set_ylim(-0.05, 1.05)
@@ -345,7 +344,8 @@ def plot_similarity_rows(rows: list[dict], output_path: Path, model_names: list[
                     ax.legend(frameon=False, fontsize=8)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.suptitle(f"Latent Similarity: {model_names[0]} vs {model_names[1]}", fontsize=14)
+    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.09, top=0.93, wspace=0.18, hspace=0.34)
+    fig.suptitle(f"Latent Similarity: {model_names[0]} vs {model_names[1]}", fontsize=14, y=0.945, fontweight="bold")
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -363,7 +363,6 @@ def plot_geometry_metrics(rows: list[dict], output_path: Path, model_names: list
         len(metrics) * len(sources),
         figsize=(5.5 * len(metrics) * len(sources), 4 * len(datasets)),
         squeeze=False,
-        constrained_layout=True,
     )
     colors = {model_names[0]: "#5B6C8F", model_names[1]: "#C96B3B", "shared": "#2A9D8F"}
 
@@ -408,13 +407,14 @@ def plot_geometry_metrics(rows: list[dict], output_path: Path, model_names: list
                             marker="o",
                             color=colors["shared"],
                         )
-                ax.set_title(f"{dataset_name} | {source_name} | {title}")
+                ax.set_title(f"{dataset_name} | {source_name} | {title}", fontsize=11.0, pad=3, fontweight="semibold")
                 ax.set_xlabel("Layer")
                 ax.grid(alpha=0.25)
                 if row_idx == 0 and col_idx == 2 and metric_key == "within_group_variance":
                     ax.legend(frameon=False, fontsize=8, loc="best")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.subplots_adjust(left=0.07, right=0.98, bottom=0.08, top=0.94, wspace=0.18, hspace=0.34)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -455,7 +455,7 @@ def plot_pca(
     matrix = np.concatenate(points, axis=0)
     projection = pca_2d(matrix)
 
-    fig, ax = plt.subplots(figsize=(7, 6), constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(7, 6))
     colors = {"en": "#1b6ca8", "da": "#d95f02", "unknown": "#555555"}
     markers = {model_names[0]: "o", model_names[1]: "^"}
 
@@ -483,11 +483,17 @@ def plot_pca(
             label=f"{model_name} | {language}",
         )
 
-    ax.set_title(f"PCA: {dataset_name} | {representation_source} | layer {layer_idx} | {representation}")
+    ax.set_title(
+        f"PCA: {dataset_name} | {representation_source} | layer {layer_idx} | {representation}",
+        fontsize=12,
+        pad=4,
+        fontweight="bold",
+    )
     ax.set_xlabel("PC1")
     ax.set_ylabel("PC2")
     ax.legend(frameon=False, fontsize=8, loc="best")
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.subplots_adjust(left=0.10, right=0.98, bottom=0.10, top=0.92)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -505,7 +511,6 @@ def plot_pca_grid(
         len(representation_sources),
         figsize=(7 * len(representation_sources), 5 * len(datasets)),
         squeeze=False,
-        constrained_layout=True,
     )
     colors = {"en": "#1b6ca8", "da": "#d95f02", "unknown": "#555555"}
     markers = {model_names[0]: "o", model_names[1]: "^"}
@@ -546,7 +551,7 @@ def plot_pca_grid(
                     alpha=0.75,
                     s=22,
                 )
-            ax.set_title(f"{dataset_name} | {representation_source} | layer {layer_idx}")
+            ax.set_title(f"{dataset_name} | {representation_source} | layer {layer_idx}", fontsize=11.5, pad=3, fontweight="semibold")
             ax.set_xlabel("PC1")
             ax.set_ylabel("PC2")
 
@@ -573,6 +578,7 @@ def plot_pca_grid(
         )
     axes[0][0].legend(frameon=False, fontsize=8, loc="best")
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.08, top=0.95, wspace=0.18, hspace=0.34)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
