@@ -269,13 +269,12 @@ def plot_confusion_matrices(
             if show_cbar and fig.axes:
                 colorbar_ax = fig.axes[-1]
                 colorbar_ax.set_ylabel("P(top2 | top1)", fontweight="semibold")
-            if row_idx == 0:
-                ax.set_title(
-                    model_display_name(model_name),
-                    fontweight="bold",
-                    fontsize=11.5,
-                    pad=2,
-                )
+            ax.set_title(
+                f"{dataset_label(dataset_name)} | {display_language} | {model_display_name(model_name)}",
+                fontweight="semibold",
+                fontsize=10.25,
+                pad=2,
+            )
             ax.set_xlabel("")
             ax.set_ylabel("")
             tick_labels = [expert_label(idx, expert_labels) for idx in range(matrix.shape[0])]
@@ -290,15 +289,10 @@ def plot_confusion_matrices(
             else:
                 ax.set_yticklabels([])
 
-    fig.subplots_adjust(left=0.14, right=0.94, bottom=0.12, top=0.90, wspace=0.06, hspace=0.16)
-    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.965, fontweight="bold", fontsize=15)
-    fig.text(0.5, 0.04, "Top-2 Expert", ha="center", va="center", fontweight="semibold", fontsize=12)
-    fig.text(0.03, 0.5, "Top-1 Expert", ha="center", va="center", rotation=90, fontweight="semibold", fontsize=12)
-    for row_idx, (dataset_name, display_language, _raw_language) in enumerate(row_specs):
-        bbox = axes[row_idx][0].get_position()
-        y_center = 0.5 * (bbox.y0 + bbox.y1)
-        row_label = f"{dataset_label(dataset_name)} | {display_language}"
-        fig.text(0.075, y_center, row_label, ha="center", va="center", fontweight="semibold", fontsize=10.5)
+    fig.subplots_adjust(left=0.11, right=0.95, bottom=0.12, top=0.92, wspace=0.06, hspace=0.24)
+    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.955, fontweight="bold", fontsize=15)
+    fig.supxlabel("Top-2 Expert", y=0.05, fontweight="semibold", fontsize=12)
+    fig.supylabel("Top-1 Expert", x=0.03, fontweight="semibold", fontsize=12)
     output_root.mkdir(parents=True, exist_ok=True)
     output_path = output_root / "mix_top1_top2_confusion.png"
     fig.savefig(output_path, dpi=220)

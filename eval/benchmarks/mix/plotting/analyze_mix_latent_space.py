@@ -377,11 +377,11 @@ def plot_similarity_rows(rows: list[dict], output_path: Path, model_names: list[
                         text.set_fontweight("semibold")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.11, right=0.98, bottom=0.10, top=0.90, wspace=0.18, hspace=0.22)
+    fig.subplots_adjust(left=0.13, right=0.98, bottom=0.10, top=0.88, wspace=0.18, hspace=0.26)
     fig.suptitle(
         f"Latent Similarity: {model_display_name(model_names[0])} vs {model_display_name(model_names[1])}",
         fontsize=14,
-        y=0.965,
+        y=0.94,
         fontweight="bold",
     )
     for row_idx, dataset_name in enumerate(datasets):
@@ -468,7 +468,8 @@ def plot_geometry_metrics(rows: list[dict], output_path: Path, model_names: list
                         text.set_fontweight("semibold")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.11, right=0.98, bottom=0.09, top=0.93, wspace=0.18, hspace=0.24)
+    fig.subplots_adjust(left=0.13, right=0.98, bottom=0.09, top=0.90, wspace=0.18, hspace=0.26)
+    fig.suptitle("Latent Geometry Metrics", fontsize=14, y=0.94, fontweight="bold")
     for row_idx, dataset_name in enumerate(datasets):
         bbox = axes[row_idx][0].get_position()
         y_center = 0.5 * (bbox.y0 + bbox.y1)
@@ -542,9 +543,9 @@ def plot_pca(
         )
 
     ax.set_title(
-        f"PCA: {dataset_display_name(dataset_name)} | {source_display_name(representation_source)} | layer {layer_idx} | {representation}",
-        fontsize=12,
-        pad=4,
+        f"{dataset_display_name(dataset_name)} | {source_display_name(representation_source)} | layer {layer_idx}",
+        fontsize=11.5,
+        pad=3,
         fontweight="bold",
     )
     ax.set_xlabel("PC1", fontweight="semibold")
@@ -553,7 +554,7 @@ def plot_pca(
     for text in legend.get_texts():
         text.set_fontweight("semibold")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.12, right=0.97, bottom=0.11, top=0.90)
+    fig.subplots_adjust(left=0.12, right=0.97, bottom=0.11, top=0.88)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -649,7 +650,8 @@ def plot_pca_grid(
     for text in legend.get_texts():
         text.set_fontweight("semibold")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.12, right=0.98, bottom=0.09, top=0.94, wspace=0.16, hspace=0.24)
+    fig.subplots_adjust(left=0.14, right=0.98, bottom=0.09, top=0.90, wspace=0.16, hspace=0.26)
+    fig.suptitle("PCA of Latent Representations", fontsize=14, y=0.94, fontweight="bold")
     for row_idx, dataset_name in enumerate(datasets):
         bbox = axes[row_idx][0].get_position()
         y_center = 0.5 * (bbox.y0 + bbox.y1)
