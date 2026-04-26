@@ -11,6 +11,7 @@ os.environ.setdefault("MPLCONFIGDIR", "/tmp/flex-moe-toolkit-mpl")
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.lines import Line2D
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
@@ -518,20 +519,6 @@ def plot_pca(
             s=26,
         )
 
-    legend_labels = []
-    for model_name in model_names:
-        for language in sorted({row["language"] for row in metadata_rows}):
-            legend_labels.append((model_name, language))
-
-    for model_name, language in legend_labels:
-        ax.scatter(
-            [],
-            [],
-            color=colors.get(language, colors["unknown"]),
-            marker=markers.get(model_name, "o"),
-            label=f"{model_display_name(model_name)} | {language.upper()}",
-        )
-
     ax.set_title(
         f"{dataset_display_name(dataset_name)} | {source_display_name(representation_source)} | layer {layer_idx}",
         fontsize=11.5,
@@ -540,11 +527,33 @@ def plot_pca(
     )
     ax.set_xlabel("PC1", fontweight="semibold")
     ax.set_ylabel("PC2", fontweight="semibold")
-    legend = ax.legend(frameon=False, fontsize=8.5, loc="best")
+    legend_handles = []
+    for model_name in model_names:
+        for language in sorted({row["language"] for row in metadata_rows}):
+            legend_handles.append(
+                Line2D(
+                    [],
+                    [],
+                    linestyle="none",
+                    marker=markers.get(model_name, "o"),
+                    markerfacecolor=colors.get(language, colors["unknown"]),
+                    markeredgecolor=colors.get(language, colors["unknown"]),
+                    markersize=7,
+                    label=f"{model_display_name(model_name)} | {language.upper()}",
+                )
+            )
+    legend = fig.legend(
+        handles=legend_handles,
+        frameon=False,
+        fontsize=9.5,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 0.94),
+        ncol=min(4, max(1, len(legend_handles))),
+    )
     for text in legend.get_texts():
         text.set_fontweight("semibold")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.12, right=0.97, bottom=0.11, top=0.88)
+    fig.subplots_adjust(left=0.11, right=0.98, bottom=0.11, top=0.82)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -614,7 +623,6 @@ def plot_pca_grid(
             else:
                 ax.set_ylabel("")
 
-    legend_labels = []
     all_languages = sorted(
         {
             row.get("language", "unknown")
@@ -623,24 +631,34 @@ def plot_pca_grid(
             for row in bundles_by_dataset[dataset_name][model_name]["metadata"]
         }
     )
+    legend_handles = []
     for model_name in model_names:
         for language in all_languages:
-            legend_labels.append((model_name, language))
-
-    for model_name, language in legend_labels:
-        axes[0][0].scatter(
-            [],
-            [],
-            color=colors.get(language, colors["unknown"]),
-            marker=markers.get(model_name, "o"),
-            label=f"{model_display_name(model_name)} | {language.upper()}",
-        )
-    legend = axes[0][0].legend(frameon=False, fontsize=8.5, loc="best")
+            legend_handles.append(
+                Line2D(
+                    [],
+                    [],
+                    linestyle="none",
+                    marker=markers.get(model_name, "o"),
+                    markerfacecolor=colors.get(language, colors["unknown"]),
+                    markeredgecolor=colors.get(language, colors["unknown"]),
+                    markersize=7,
+                    label=f"{model_display_name(model_name)} | {language.upper()}",
+                )
+            )
+    legend = fig.legend(
+        handles=legend_handles,
+        frameon=False,
+        fontsize=10,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 0.945),
+        ncol=min(4, max(1, len(legend_handles))),
+    )
     for text in legend.get_texts():
         text.set_fontweight("semibold")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.14, right=0.98, bottom=0.09, top=0.91, wspace=0.16, hspace=0.30)
-    fig.suptitle("PCA of Latent Representations", fontsize=14, y=0.96, fontweight="bold")
+    fig.subplots_adjust(left=0.09, right=0.99, bottom=0.08, top=0.84, wspace=0.14, hspace=0.24)
+    fig.suptitle("PCA of Latent Representations", fontsize=14, y=0.985, fontweight="bold")
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
