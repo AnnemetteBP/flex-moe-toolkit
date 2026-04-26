@@ -12,6 +12,7 @@ DEFAULT_COACTIVATION_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons
 DEFAULT_LATENT_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_latent_space"
 DEFAULT_TOP1_TOP2_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_top1_top2_confusion"
 DEFAULT_ROUTING_CONFIDENCE_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_routing_confidence"
+DEFAULT_ROUTING_LIGHT_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "routing_light" / "a4"
 DEFAULT_OUTPUT_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_summary_tables"
 
 
@@ -23,6 +24,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--latent-root", type=Path, default=DEFAULT_LATENT_ROOT)
     parser.add_argument("--top1-top2-root", type=Path, default=DEFAULT_TOP1_TOP2_ROOT)
     parser.add_argument("--routing-confidence-root", type=Path, default=DEFAULT_ROUTING_CONFIDENCE_ROOT)
+    parser.add_argument("--routing-light-root", type=Path, default=DEFAULT_ROUTING_LIGHT_ROOT)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
     parser.add_argument(
         "--model-names",
@@ -365,6 +367,167 @@ def build_routing_confidence_bucket_table(
     return pd.DataFrame(rows)
 
 
+def load_jsonl(path: Path) -> list[dict]:
+    if not path.exists():
+        raise FileNotFoundError(path)
+    with path.open("r", encoding="utf-8") as handle:
+        return [__import__("json").loads(line) for line in handle if line.strip()]
+
+
+def dataset_display_name(dataset_name: str) -> str:
+    return {
+        "mkqa_en_da": "MGQA (EN/DA)",
+        "gsm8k_subset": "GSM8K",
+        "mbpp_subset": "MBPP",
+        "pubmedqa_subset": "PubMedQA",
+        "ag_news_subset": "AG News",
+        "common_gen_subset": "CommonGen",
+    }.get(dataset_name, dataset_name)
+
+
+def expert_name_map() -> dict[int, str]:
+    return {
+        0: "Public",
+        1: "Code",
+        2: "Creative Writing",
+        3: "Math",
+        4: "News",
+        5: "Academic",
+        6: "Reddit",
+        7: "Danish",
+    }
+
+
+def build_mix_overview_table(
+    routing_confidence_root: Path,
+    coactivation_root: Path,
+    routing_light_root: Path,
+    model_names: list[str],
+) -> pd.DataFrame:
+    confidence_path = routing_confidence_root / "routing_confidence_outcome_records.csv"
+    confidence = load_csv(confidence_path)
+    confidence = confidence[confidence["phase"] == "prompt"].copy()
+    if confidence.empty:
+        return pd.DataFrame()
+    confidence = confidence.sort_values(["model_name", "dataset_name", "example_id", "layer"])
+    per_example = confidence.drop_duplicates(
+        subset=["model_name", "dataset_name", "example_id"], keep="last"
+    )
+    score_summary = (
+        per_example.groupby(["model_name", "dataset_name"], dropna=False)
+        .agg(
+            accuracy=("is_correct_float", "mean"),
+            mean_score=("score", "mean"),
+            mean_token_f1=("token_f1", "mean"),
+            num_examples=("example_id", "nunique"),
+        )
+        .reset_index()
+    )
+
+    coactivation_path = coactivation_root / "coactivation_aggregate_summary.csv"
+    coactivation = load_csv(coactivation_path)
+
+    expert_names = expert_name_map()
+    routing_rows: list[dict] = []
+    for model_name in model_names:
+        model_root = routing_light_root / model_name
+        if not model_root.exists():
+            continue
+        for dataset_dir in sorted(path for path in model_root.iterdir() if path.is_dir()):
+            analysis_path = dataset_dir / "native_full" / "routing_analysis.jsonl"
+            if not analysis_path.exists():
+                continue
+            records = load_jsonl(analysis_path)
+            aggregate = next((row for row in records if row.get("record_type") == "routing_aggregate"), None)
+            if aggregate is None:
+                continue
+            usage = aggregate.get("usage")
+            if usage is None:
+                continue
+            usage_list = [float(value) for value in usage]
+            public_share = usage_list[0] if usage_list else None
+            dominant_idx = max(range(len(usage_list)), key=lambda idx: usage_list[idx]) if usage_list else None
+            routing_rows.append(
+                {
+                    "model_name": model_name,
+                    "dataset_name": dataset_dir.name,
+                    "public_top1_share": public_share,
+                    "dominant_expert": expert_names.get(dominant_idx, str(dominant_idx)) if dominant_idx is not None else None,
+                    "dominant_expert_share": usage_list[dominant_idx] if dominant_idx is not None else None,
+                    "mean_top1_prob": float(aggregate.get("mean_top1_prob")) if aggregate.get("mean_top1_prob") is not None else None,
+                    "mean_top1_top2_margin": (
+                        float(aggregate.get("mean_top1_top2_margin"))
+                        if aggregate.get("mean_top1_top2_margin") is not None
+                        else None
+                    ),
+                    "mean_token_entropy": (
+                        float(aggregate.get("mean_token_entropy"))
+                        if aggregate.get("mean_token_entropy") is not None
+                        else None
+                    ),
+                }
+            )
+    routing_summary = pd.DataFrame(routing_rows)
+
+    merged = score_summary.merge(coactivation, on=["model_name", "dataset_name"], how="left")
+    if not routing_summary.empty:
+        merged = merged.merge(routing_summary, on=["model_name", "dataset_name"], how="left")
+
+    output = merged[
+        [
+            "model_name",
+            "dataset_name",
+            "num_examples",
+            "accuracy",
+            "mean_score",
+            "mean_token_f1",
+            "public_top1_share",
+            "public_offdiag_mean",
+            "dominant_expert",
+            "dominant_expert_share",
+            "dominant_pair",
+            "dominant_pair_value",
+            "mean_top1_prob",
+            "mean_top1_top2_margin",
+            "mean_token_entropy",
+        ]
+    ].copy()
+    output["Model"] = output["model_name"].str.replace("FlexOlmo-8x7B-1T-", "", regex=False)
+    output["Dataset"] = output["dataset_name"].map(dataset_display_name)
+    output["Accuracy"] = output["accuracy"]
+    output["Mean Score"] = output["mean_score"]
+    output["Mean F1"] = output["mean_token_f1"]
+    output["Public Top-1 Share"] = output["public_top1_share"]
+    output["Public Co-act."] = output["public_offdiag_mean"]
+    output["Dominant Expert"] = output["dominant_expert"]
+    output["Dominant Expert Share"] = output["dominant_expert_share"]
+    output["Dominant Pair"] = output["dominant_pair"]
+    output["Dominant Pair Strength"] = output["dominant_pair_value"]
+    output["Mean Top-1 Prob"] = output["mean_top1_prob"]
+    output["Mean Margin"] = output["mean_top1_top2_margin"]
+    output["Mean Entropy"] = output["mean_token_entropy"]
+    output["N"] = output["num_examples"]
+    return output[
+        [
+            "Model",
+            "Dataset",
+            "N",
+            "Accuracy",
+            "Mean Score",
+            "Mean F1",
+            "Public Top-1 Share",
+            "Public Co-act.",
+            "Dominant Expert",
+            "Dominant Expert Share",
+            "Dominant Pair",
+            "Dominant Pair Strength",
+            "Mean Top-1 Prob",
+            "Mean Margin",
+            "Mean Entropy",
+        ]
+    ]
+
+
 def write_readme(output_root: Path) -> None:
     text = """# 55B Summary Tables
 
@@ -377,6 +540,7 @@ Files:
 - `top1_top2_competition.csv/.tex`
 - `routing_confidence_correlation.csv/.tex`
 - `routing_confidence_buckets.csv/.tex`
+- `mix_overview.csv/.tex`
 
 Intended use:
 - quick paper/slides tables
@@ -397,6 +561,12 @@ def main() -> int:
     top1_top2_table = build_top1_top2_table(args.top1_top2_root, model_names)
     routing_conf_corr_table = build_routing_confidence_correlation_table(args.routing_confidence_root, model_names)
     routing_conf_bucket_table = build_routing_confidence_bucket_table(args.routing_confidence_root, model_names)
+    overview_table = build_mix_overview_table(
+        args.routing_confidence_root,
+        args.coactivation_root,
+        args.routing_light_root,
+        model_names,
+    )
 
     write_table(
         coactivation_table,
@@ -439,6 +609,13 @@ def main() -> int:
         "routing_confidence_buckets",
         "Routing-confidence bucket summary for the 55B FlexOlmo pair.",
         "tab:mix_routing_confidence_buckets",
+    )
+    write_table(
+        overview_table,
+        output_root,
+        "mix_overview",
+        "Compact overview of model scores and expert/public routing behavior across the selected mix datasets.",
+        "tab:mix_overview",
     )
     write_readme(output_root)
 
