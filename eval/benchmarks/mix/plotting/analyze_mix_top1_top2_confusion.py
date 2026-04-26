@@ -116,11 +116,23 @@ def top1_top2_confusion(records: list[dict], language: str | None = None) -> np.
     filtered = [record for record in records if language is None or record.get("language") == language]
     if not filtered:
         return None
-    first = filtered[0]
-    num_experts = len(first["prompt_router_probs_by_layer"][0][0])
+
+    max_expert_idx = -1
+    for record in filtered:
+        for layer_summary in record.get("prompt_router_token_summaries_by_layer") or []:
+            top1 = flatten_ids(layer_summary.get("top1_expert_ids", []))
+            top2 = flatten_ids(layer_summary.get("top2_expert_ids", []))
+            if top1:
+                max_expert_idx = max(max_expert_idx, max(top1))
+            if top2:
+                max_expert_idx = max(max_expert_idx, max(top2))
+    if max_expert_idx < 0:
+        return None
+
+    num_experts = max_expert_idx + 1
     matrix = np.zeros((num_experts, num_experts), dtype=float)
     for record in filtered:
-        for layer_summary in record["prompt_router_token_summaries_by_layer"]:
+        for layer_summary in record.get("prompt_router_token_summaries_by_layer") or []:
             top1 = flatten_ids(layer_summary["top1_expert_ids"])
             top2 = flatten_ids(layer_summary["top2_expert_ids"])
             for left, right in zip(top1, top2):
