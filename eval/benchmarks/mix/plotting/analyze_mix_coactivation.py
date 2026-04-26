@@ -60,6 +60,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dataset", action="append", default=[])
     parser.add_argument("--run-label", default="native_full")
     parser.add_argument("--public-expert-idx", type=int, default=DEFAULT_PUBLIC_EXPERT_IDX)
+    parser.add_argument("--annotate", action="store_true", help="Annotate heatmap cells with numeric values.")
     return parser.parse_args()
 
 
@@ -327,6 +328,7 @@ def plot_aggregate_coactivation_grid(
     model_names: list[str],
     dataset_names: list[str],
     run_label: str,
+    annotate: bool = False,
 ) -> Path | None:
     available = [
         (dataset_name, model_name, load_aggregate(results_root, model_name, dataset_name, run_label))
@@ -360,20 +362,23 @@ def plot_aggregate_coactivation_grid(
                 ax.set_title(
                     f"{model_display_name(model_name)} | {dataset_display_name(dataset_name)} | missing",
                     fontweight="bold",
-                    fontsize=12.5,
-                    pad=8,
+                    fontsize=11.5,
+                    pad=2,
                 )
                 continue
             matrix = np.asarray(aggregate["coactivation_matrix"], dtype=float)
             show_cbar = row_idx == 0 and col_idx == len(model_names) - 1
             sns.heatmap(
                 matrix,
-                cmap="rocket_r",
+                cmap="viridis",
                 vmin=0.0,
                 vmax=vmax,
                 ax=ax,
                 cbar=show_cbar,
                 cbar_kws={"label": "Normalized Co-activation"},
+                annot=annotate,
+                fmt=".2f",
+                annot_kws={"fontsize": 8},
             )
             if show_cbar and fig.axes:
                 fig.axes[-1].set_ylabel("Normalized Co-activation", fontweight="semibold")
@@ -387,16 +392,16 @@ def plot_aggregate_coactivation_grid(
             ax.set_title(
                 f"{model_display_name(model_name)} | {dataset_display_name(dataset_name)}",
                 fontweight="bold",
-                fontsize=12.0,
-                pad=3,
+                fontsize=11.5,
+                pad=2,
             )
 
     output_path = output_root / "aggregate_coactivation_heatmaps.png"
-    fig.subplots_adjust(left=0.10, right=0.97, bottom=0.11, top=0.93, wspace=0.10, hspace=0.32)
-    fig.suptitle("Aggregate Expert Co-Activation", y=0.945, fontweight="bold", fontsize=16)
-    fig.supxlabel("Expert", y=0.045, fontweight="semibold", fontsize=12)
-    fig.supylabel("Expert", x=0.045, fontweight="semibold", fontsize=12)
-    fig.savefig(output_path, dpi=200, bbox_inches="tight")
+    fig.subplots_adjust(left=0.11, right=0.97, bottom=0.12, top=0.90, wspace=0.10, hspace=0.28)
+    fig.suptitle("Aggregate Expert Co-Activation", y=0.93, fontweight="bold", fontsize=15)
+    fig.supxlabel("Expert", y=0.06, fontweight="semibold", fontsize=12)
+    fig.supylabel("Expert", x=0.05, fontweight="semibold", fontsize=12)
+    fig.savefig(output_path, dpi=200)
     plt.close(fig)
     return output_path
 
@@ -407,6 +412,7 @@ def plot_layerwise_coactivation_overview(
     model_names: list[str],
     dataset_names: list[str],
     run_label: str,
+    annotate: bool = False,
 ) -> list[Path]:
     output_paths: list[Path] = []
 
@@ -452,12 +458,15 @@ def plot_layerwise_coactivation_overview(
                 show_cbar = layer_idx == 0 and col_idx == len(model_names) - 1
                 sns.heatmap(
                     np.asarray(matrix, dtype=float),
-                    cmap="rocket_r",
+                    cmap="viridis",
                     vmin=0.0,
                     vmax=vmax,
                     ax=ax,
                     cbar=show_cbar,
                     cbar_kws={"label": "Normalized Co-activation"},
+                    annot=annotate,
+                    fmt=".2f",
+                    annot_kws={"fontsize": 7},
                 )
                 if show_cbar and fig.axes:
                     fig.axes[-1].set_ylabel("Normalized Co-activation", fontweight="semibold")
@@ -471,21 +480,21 @@ def plot_layerwise_coactivation_overview(
                 ax.set_title(
                     f"Layer {layer_idx} | {model_display_name(model_name)}",
                     fontweight="semibold",
-                    fontsize=11.0,
-                    pad=3,
+                    fontsize=10.25,
+                    pad=2,
                 )
 
         output_path = output_root / f"{dataset_name}_layerwise_coactivation_grid.png"
         fig.suptitle(
             f"Layer-wise Expert Co-Activation | {dataset_display_name(dataset_name)}",
-            y=0.952,
+            y=0.948,
             fontweight="bold",
-            fontsize=15,
+            fontsize=14,
         )
-        fig.subplots_adjust(left=0.10, right=0.97, bottom=0.06, top=0.93, wspace=0.10, hspace=0.36)
-        fig.supxlabel("Expert", y=0.02, fontweight="semibold", fontsize=12)
-        fig.supylabel("Expert", x=0.045, fontweight="semibold", fontsize=12)
-        fig.savefig(output_path, dpi=200, bbox_inches="tight")
+        fig.subplots_adjust(left=0.11, right=0.97, bottom=0.07, top=0.92, wspace=0.10, hspace=0.34)
+        fig.supxlabel("Expert", y=0.03, fontweight="semibold", fontsize=12)
+        fig.supylabel("Expert", x=0.05, fontweight="semibold", fontsize=12)
+        fig.savefig(output_path, dpi=200)
         plt.close(fig)
         output_paths.append(output_path)
 
@@ -588,6 +597,7 @@ def main() -> int:
         model_names=model_names,
         dataset_names=dataset_names,
         run_label=args.run_label,
+        annotate=args.annotate,
     )
     layerwise_grid_paths = plot_layerwise_coactivation_overview(
         results_root=results_root,
@@ -595,6 +605,7 @@ def main() -> int:
         model_names=model_names,
         dataset_names=dataset_names,
         run_label=args.run_label,
+        annotate=args.annotate,
     )
     summary_plot_path = plot_summary_metrics(aggregate_summary, output_root=output_root)
     write_readme(

@@ -51,6 +51,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dataset", action="append", default=[])
     parser.add_argument("--run-label", default="native_full")
     parser.add_argument("--expert-label", action="append", default=[])
+    parser.add_argument("--annotate", action="store_true", help="Annotate heatmap cells with numeric values.")
     return parser.parse_args()
 
 
@@ -207,6 +208,7 @@ def plot_confusion_matrices(
     dataset_names: list[str],
     run_label: str,
     expert_labels: dict[int, str],
+    annotate: bool = False,
 ) -> Path | None:
     row_specs: list[tuple[str, str, str | None]] = []
     for dataset_name in dataset_names:
@@ -260,6 +262,9 @@ def plot_confusion_matrices(
                 ax=ax,
                 cbar=show_cbar,
                 cbar_kws={"label": "P(top2 | top1)"},
+                annot=annotate,
+                fmt=".2f",
+                annot_kws={"fontsize": 8},
             )
             if show_cbar and fig.axes:
                 colorbar_ax = fig.axes[-1]
@@ -267,8 +272,8 @@ def plot_confusion_matrices(
             ax.set_title(
                 f"{model_display_name(model_name)} | {dataset_label(dataset_name)} | {display_language}",
                 fontweight="bold",
-                fontsize=12.0,
-                pad=3,
+                fontsize=11.5,
+                pad=2,
             )
             ax.set_xlabel("")
             ax.set_ylabel("")
@@ -278,13 +283,13 @@ def plot_confusion_matrices(
             ax.set_yticks(np.arange(matrix.shape[0]) + 0.5)
             ax.set_yticklabels(tick_labels, rotation=0, fontsize=10)
 
-    fig.subplots_adjust(left=0.10, right=0.97, bottom=0.11, top=0.93, wspace=0.10, hspace=0.32)
-    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.945, fontweight="bold", fontsize=16)
-    fig.supxlabel("Top-2 Expert", y=0.045, fontweight="semibold", fontsize=12)
-    fig.supylabel("Top-1 Expert", x=0.045, fontweight="semibold", fontsize=12)
+    fig.subplots_adjust(left=0.11, right=0.97, bottom=0.12, top=0.90, wspace=0.10, hspace=0.28)
+    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.93, fontweight="bold", fontsize=15)
+    fig.supxlabel("Top-2 Expert", y=0.06, fontweight="semibold", fontsize=12)
+    fig.supylabel("Top-1 Expert", x=0.05, fontweight="semibold", fontsize=12)
     output_root.mkdir(parents=True, exist_ok=True)
     output_path = output_root / "mix_top1_top2_confusion.png"
-    fig.savefig(output_path, dpi=220, bbox_inches="tight")
+    fig.savefig(output_path, dpi=220)
     plt.close(fig)
     return output_path
 
@@ -339,6 +344,7 @@ def main() -> int:
         dataset_names=dataset_names,
         run_label=args.run_label,
         expert_labels=expert_labels,
+        annotate=args.annotate,
     )
     if output_path is None:
         raise ValueError("No top1/top2 confusion matrices could be generated from the available records.")
