@@ -384,23 +384,34 @@ def plot_aggregate_coactivation_grid(
                 fig.axes[-1].set_ylabel("Normalized Co-activation", fontweight="semibold")
             labels = expert_tick_labels(matrix.shape[0])
             ax.set_xticks(np.arange(matrix.shape[0]) + 0.5)
-            ax.set_xticklabels(labels, rotation=35, ha="right", fontsize=10)
             ax.set_yticks(np.arange(matrix.shape[0]) + 0.5)
-            ax.set_yticklabels(labels, rotation=0, fontsize=10)
+            if row_idx == len(dataset_names) - 1:
+                ax.set_xticklabels(labels, rotation=35, ha="right", fontsize=9.5, fontweight="semibold")
+            else:
+                ax.set_xticklabels([])
+            if col_idx == 0:
+                ax.set_yticklabels(labels, rotation=0, fontsize=9.5, fontweight="semibold")
+            else:
+                ax.set_yticklabels([])
             ax.set_xlabel("")
             ax.set_ylabel("")
-            ax.set_title(
-                f"{model_display_name(model_name)} | {dataset_display_name(dataset_name)}",
-                fontweight="bold",
-                fontsize=11.5,
-                pad=2,
-            )
+            if row_idx == 0:
+                ax.set_title(
+                    model_display_name(model_name),
+                    fontweight="bold",
+                    fontsize=11.5,
+                    pad=2,
+                )
 
     output_path = output_root / "aggregate_coactivation_heatmaps.png"
-    fig.subplots_adjust(left=0.11, right=0.97, bottom=0.12, top=0.90, wspace=0.10, hspace=0.28)
-    fig.suptitle("Aggregate Expert Co-Activation", y=0.93, fontweight="bold", fontsize=15)
-    fig.supxlabel("Expert", y=0.06, fontweight="semibold", fontsize=12)
-    fig.supylabel("Expert", x=0.05, fontweight="semibold", fontsize=12)
+    fig.subplots_adjust(left=0.14, right=0.94, bottom=0.12, top=0.90, wspace=0.06, hspace=0.16)
+    fig.suptitle("Aggregate Expert Co-Activation", y=0.965, fontweight="bold", fontsize=15)
+    fig.text(0.5, 0.04, "Expert", ha="center", va="center", fontweight="semibold", fontsize=12)
+    fig.text(0.03, 0.5, "Expert", ha="center", va="center", rotation=90, fontweight="semibold", fontsize=12)
+    for row_idx, dataset_name in enumerate(dataset_names):
+        bbox = axes[row_idx][0].get_position()
+        y_center = 0.5 * (bbox.y0 + bbox.y1)
+        fig.text(0.075, y_center, dataset_display_name(dataset_name), ha="center", va="center", fontweight="semibold", fontsize=11)
     fig.savefig(output_path, dpi=200)
     plt.close(fig)
     return output_path
@@ -472,28 +483,39 @@ def plot_layerwise_coactivation_overview(
                     fig.axes[-1].set_ylabel("Normalized Co-activation", fontweight="semibold")
                 labels = expert_tick_labels(np.asarray(matrix).shape[0])
                 ax.set_xticks(np.arange(len(labels)) + 0.5)
-                ax.set_xticklabels(labels, rotation=35, ha="right", fontsize=9.5)
                 ax.set_yticks(np.arange(len(labels)) + 0.5)
-                ax.set_yticklabels(labels, rotation=0, fontsize=9.5)
+                if layer_idx == num_layers - 1:
+                    ax.set_xticklabels(labels, rotation=35, ha="right", fontsize=8.5, fontweight="semibold")
+                else:
+                    ax.set_xticklabels([])
+                if col_idx == 0:
+                    ax.set_yticklabels(labels, rotation=0, fontsize=8.5, fontweight="semibold")
+                else:
+                    ax.set_yticklabels([])
                 ax.set_xlabel("")
                 ax.set_ylabel("")
-                ax.set_title(
-                    f"Layer {layer_idx} | {model_display_name(model_name)}",
-                    fontweight="semibold",
-                    fontsize=10.25,
-                    pad=2,
-                )
+                if layer_idx == 0:
+                    ax.set_title(
+                        model_display_name(model_name),
+                        fontweight="bold",
+                        fontsize=11.0,
+                        pad=2,
+                    )
 
         output_path = output_root / f"{dataset_name}_layerwise_coactivation_grid.png"
+        fig.subplots_adjust(left=0.15, right=0.94, bottom=0.08, top=0.93, wspace=0.06, hspace=0.18)
         fig.suptitle(
             f"Layer-wise Expert Co-Activation | {dataset_display_name(dataset_name)}",
-            y=0.948,
+            y=0.975,
             fontweight="bold",
             fontsize=14,
         )
-        fig.subplots_adjust(left=0.11, right=0.97, bottom=0.07, top=0.92, wspace=0.10, hspace=0.34)
-        fig.supxlabel("Expert", y=0.03, fontweight="semibold", fontsize=12)
-        fig.supylabel("Expert", x=0.05, fontweight="semibold", fontsize=12)
+        fig.text(0.5, 0.03, "Expert", ha="center", va="center", fontweight="semibold", fontsize=12)
+        fig.text(0.03, 0.5, "Expert", ha="center", va="center", rotation=90, fontweight="semibold", fontsize=12)
+        for layer_idx in range(num_layers):
+            bbox = axes[layer_idx][0].get_position()
+            y_center = 0.5 * (bbox.y0 + bbox.y1)
+            fig.text(0.085, y_center, f"Layer {layer_idx}", ha="center", va="center", fontweight="semibold", fontsize=10.5)
         fig.savefig(output_path, dpi=200)
         plt.close(fig)
         output_paths.append(output_path)

@@ -358,14 +358,18 @@ def plot_similarity_rows(rows: list[dict], output_path: Path, model_names: list[
                         marker="o",
                         label=group,
                     )
-                ax.set_title(
-                    f"{dataset_display_name(dataset_name)} | {source_display_name(source_name)} | {repr_name}",
-                    fontsize=11.0,
-                    pad=2,
-                    fontweight="semibold",
-                )
-                ax.set_xlabel("Layer")
-                ax.set_ylabel("Cosine")
+                if row_idx == 0:
+                    ax.set_title(
+                        f"{source_display_name(source_name)} | {repr_name}",
+                        fontsize=10.5,
+                        pad=2,
+                        fontweight="semibold",
+                    )
+                ax.set_xlabel("Layer", fontweight="semibold")
+                if col_idx == 0:
+                    ax.set_ylabel("Cosine", fontweight="semibold")
+                else:
+                    ax.set_ylabel("")
                 ax.set_ylim(-0.05, 1.05)
                 if groups:
                     legend = ax.legend(frameon=False, fontsize=8, loc="best")
@@ -373,13 +377,17 @@ def plot_similarity_rows(rows: list[dict], output_path: Path, model_names: list[
                         text.set_fontweight("semibold")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.10, top=0.92, wspace=0.18, hspace=0.34)
+    fig.subplots_adjust(left=0.11, right=0.98, bottom=0.10, top=0.90, wspace=0.18, hspace=0.22)
     fig.suptitle(
         f"Latent Similarity: {model_display_name(model_names[0])} vs {model_display_name(model_names[1])}",
         fontsize=14,
-        y=0.935,
+        y=0.965,
         fontweight="bold",
     )
+    for row_idx, dataset_name in enumerate(datasets):
+        bbox = axes[row_idx][0].get_position()
+        y_center = 0.5 * (bbox.y0 + bbox.y1)
+        fig.text(0.055, y_center, dataset_display_name(dataset_name), ha="center", va="center", fontweight="semibold", fontsize=10.5)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -441,13 +449,18 @@ def plot_geometry_metrics(rows: list[dict], output_path: Path, model_names: list
                             marker="o",
                             color=colors["shared"],
                         )
-                ax.set_title(
-                    f"{dataset_display_name(dataset_name)} | {source_display_name(source_name)} | {title}",
-                    fontsize=10.5,
-                    pad=2,
-                    fontweight="semibold",
-                )
-                ax.set_xlabel("Layer")
+                if row_idx == 0:
+                    ax.set_title(
+                        f"{source_display_name(source_name)} | {title}",
+                        fontsize=10.0,
+                        pad=2,
+                        fontweight="semibold",
+                    )
+                ax.set_xlabel("Layer", fontweight="semibold")
+                if col_idx == 0:
+                    ax.set_ylabel(title, fontweight="semibold")
+                else:
+                    ax.set_ylabel("")
                 ax.grid(alpha=0.25)
                 if row_idx == 0 and col_idx == 2 and metric_key == "within_group_variance":
                     legend = ax.legend(frameon=False, fontsize=8, loc="best")
@@ -455,7 +468,11 @@ def plot_geometry_metrics(rows: list[dict], output_path: Path, model_names: list
                         text.set_fontweight("semibold")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.07, right=0.98, bottom=0.09, top=0.94, wspace=0.18, hspace=0.34)
+    fig.subplots_adjust(left=0.11, right=0.98, bottom=0.09, top=0.93, wspace=0.18, hspace=0.24)
+    for row_idx, dataset_name in enumerate(datasets):
+        bbox = axes[row_idx][0].get_position()
+        y_center = 0.5 * (bbox.y0 + bbox.y1)
+        fig.text(0.055, y_center, dataset_display_name(dataset_name), ha="center", va="center", fontweight="semibold", fontsize=10.5)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -530,13 +547,13 @@ def plot_pca(
         pad=4,
         fontweight="bold",
     )
-    ax.set_xlabel("PC1")
-    ax.set_ylabel("PC2")
-    legend = ax.legend(frameon=False, fontsize=9, loc="upper left", bbox_to_anchor=(1.01, 1.0), borderaxespad=0.0)
+    ax.set_xlabel("PC1", fontweight="semibold")
+    ax.set_ylabel("PC2", fontweight="semibold")
+    legend = ax.legend(frameon=False, fontsize=8.5, loc="best")
     for text in legend.get_texts():
         text.set_fontweight("semibold")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.10, right=0.76, bottom=0.10, top=0.90)
+    fig.subplots_adjust(left=0.12, right=0.97, bottom=0.11, top=0.90)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -594,14 +611,18 @@ def plot_pca_grid(
                     alpha=0.75,
                     s=22,
                 )
-            ax.set_title(
-                f"{dataset_display_name(dataset_name)} | {source_display_name(representation_source)} | layer {layer_idx}",
-                fontsize=11.0,
-                pad=2,
-                fontweight="semibold",
-            )
-            ax.set_xlabel("PC1")
-            ax.set_ylabel("PC2")
+            if row_idx == 0:
+                ax.set_title(
+                    f"{source_display_name(representation_source)} | layer {layer_idx}",
+                    fontsize=10.5,
+                    pad=2,
+                    fontweight="semibold",
+                )
+            ax.set_xlabel("PC1", fontweight="semibold")
+            if col_idx == 0:
+                ax.set_ylabel("PC2", fontweight="semibold")
+            else:
+                ax.set_ylabel("")
 
     legend_labels = []
     all_languages = sorted(
@@ -624,11 +645,15 @@ def plot_pca_grid(
             marker=markers.get(model_name, "o"),
             label=f"{model_display_name(model_name)} | {language.upper()}",
         )
-    legend = axes[0][0].legend(frameon=False, fontsize=9, loc="upper left", bbox_to_anchor=(1.02, 1.0), borderaxespad=0.0)
+    legend = axes[0][0].legend(frameon=False, fontsize=8.5, loc="best")
     for text in legend.get_texts():
         text.set_fontweight("semibold")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.08, right=0.82, bottom=0.08, top=0.95, wspace=0.18, hspace=0.34)
+    fig.subplots_adjust(left=0.12, right=0.98, bottom=0.09, top=0.94, wspace=0.16, hspace=0.24)
+    for row_idx, dataset_name in enumerate(datasets):
+        bbox = axes[row_idx][0].get_position()
+        y_center = 0.5 * (bbox.y0 + bbox.y1)
+        fig.text(0.065, y_center, dataset_display_name(dataset_name), ha="center", va="center", fontweight="semibold", fontsize=10.5)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 

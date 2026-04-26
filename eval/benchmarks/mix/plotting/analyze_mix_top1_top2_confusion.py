@@ -269,24 +269,36 @@ def plot_confusion_matrices(
             if show_cbar and fig.axes:
                 colorbar_ax = fig.axes[-1]
                 colorbar_ax.set_ylabel("P(top2 | top1)", fontweight="semibold")
-            ax.set_title(
-                f"{model_display_name(model_name)} | {dataset_label(dataset_name)} | {display_language}",
-                fontweight="bold",
-                fontsize=11.5,
-                pad=2,
-            )
+            if row_idx == 0:
+                ax.set_title(
+                    model_display_name(model_name),
+                    fontweight="bold",
+                    fontsize=11.5,
+                    pad=2,
+                )
             ax.set_xlabel("")
             ax.set_ylabel("")
             tick_labels = [expert_label(idx, expert_labels) for idx in range(matrix.shape[0])]
             ax.set_xticks(np.arange(matrix.shape[0]) + 0.5)
-            ax.set_xticklabels(tick_labels, rotation=35, ha="right", fontsize=10)
+            if row_idx == len(row_specs) - 1:
+                ax.set_xticklabels(tick_labels, rotation=35, ha="right", fontsize=9.5, fontweight="semibold")
+            else:
+                ax.set_xticklabels([])
             ax.set_yticks(np.arange(matrix.shape[0]) + 0.5)
-            ax.set_yticklabels(tick_labels, rotation=0, fontsize=10)
+            if col_idx == 0:
+                ax.set_yticklabels(tick_labels, rotation=0, fontsize=9.5, fontweight="semibold")
+            else:
+                ax.set_yticklabels([])
 
-    fig.subplots_adjust(left=0.11, right=0.97, bottom=0.12, top=0.90, wspace=0.10, hspace=0.28)
-    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.93, fontweight="bold", fontsize=15)
-    fig.supxlabel("Top-2 Expert", y=0.06, fontweight="semibold", fontsize=12)
-    fig.supylabel("Top-1 Expert", x=0.05, fontweight="semibold", fontsize=12)
+    fig.subplots_adjust(left=0.14, right=0.94, bottom=0.12, top=0.90, wspace=0.06, hspace=0.16)
+    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.965, fontweight="bold", fontsize=15)
+    fig.text(0.5, 0.04, "Top-2 Expert", ha="center", va="center", fontweight="semibold", fontsize=12)
+    fig.text(0.03, 0.5, "Top-1 Expert", ha="center", va="center", rotation=90, fontweight="semibold", fontsize=12)
+    for row_idx, (dataset_name, display_language, _raw_language) in enumerate(row_specs):
+        bbox = axes[row_idx][0].get_position()
+        y_center = 0.5 * (bbox.y0 + bbox.y1)
+        row_label = f"{dataset_label(dataset_name)} | {display_language}"
+        fig.text(0.075, y_center, row_label, ha="center", va="center", fontweight="semibold", fontsize=10.5)
     output_root.mkdir(parents=True, exist_ok=True)
     output_path = output_root / "mix_top1_top2_confusion.png"
     fig.savefig(output_path, dpi=220)
