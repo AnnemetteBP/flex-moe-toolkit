@@ -30,14 +30,14 @@ DEFAULT_MODELS = [
     "FlexOlmo-8x7B-1T-a4-55B-v2-rt",
 ]
 DEFAULT_EXPERT_LABELS = {
-    0: "public",
-    1: "code",
-    2: "creative",
-    3: "math",
-    4: "news",
-    5: "pes2o",
-    6: "reddit",
-    7: "danish",
+    0: "Public",
+    1: "Code",
+    2: "Creative\nWriting",
+    3: "Math",
+    4: "News",
+    5: "Academic",
+    6: "Reddit",
+    7: "Danish",
 }
 
 
@@ -66,6 +66,10 @@ def parse_expert_labels(raw_labels: list[str]) -> dict[int, str]:
 
 def expert_label(expert_idx: int, labels: dict[int, str]) -> str:
     return labels.get(expert_idx, f"expert_{expert_idx}")
+
+
+def model_display_name(model_name: str) -> str:
+    return model_name.replace("FlexOlmo-8x7B-1T-", "")
 
 
 def load_jsonl(path: Path) -> list[dict]:
@@ -234,7 +238,7 @@ def plot_confusion_matrices(
     fig, axes = plt.subplots(
         len(row_specs),
         len(model_names),
-        figsize=(5.0 * len(model_names), 4.4 * len(row_specs)),
+        figsize=(5.2 * len(model_names), 4.15 * len(row_specs)),
         sharex=True,
         sharey=True,
         squeeze=False,
@@ -259,26 +263,37 @@ def plot_confusion_matrices(
             if matrix is None:
                 ax.axis("off")
                 continue
+            show_cbar = row_idx == 0 and col_idx == len(model_names) - 1
             sns.heatmap(
                 matrix,
                 cmap="rocket_r",
                 vmin=0.0,
                 vmax=vmax,
                 ax=ax,
-                cbar=(row_idx == 0 and col_idx == len(model_names) - 1),
+                cbar=show_cbar,
                 cbar_kws={"label": "P(top2 | top1)"},
             )
-            ax.set_title(f"{model_name.replace('FlexOlmo-8x7B-1T-', '')} | {dataset_label(dataset_name)} | {display_language}")
-            ax.set_xlabel("Top-2 Expert")
-            ax.set_ylabel("Top-1 Expert")
+            if show_cbar and fig.axes:
+                colorbar_ax = fig.axes[-1]
+                colorbar_ax.set_ylabel("P(top2 | top1)", fontweight="semibold")
+            ax.set_title(
+                f"{model_display_name(model_name)} | {dataset_label(dataset_name)} | {display_language}",
+                fontweight="bold",
+                fontsize=12.5,
+                pad=8,
+            )
+            ax.set_xlabel("")
+            ax.set_ylabel("")
             tick_labels = [expert_label(idx, expert_labels) for idx in range(matrix.shape[0])]
             ax.set_xticks(np.arange(matrix.shape[0]) + 0.5)
-            ax.set_xticklabels(tick_labels, rotation=35, ha="right")
+            ax.set_xticklabels(tick_labels, rotation=35, ha="right", fontsize=10)
             ax.set_yticks(np.arange(matrix.shape[0]) + 0.5)
-            ax.set_yticklabels(tick_labels, rotation=0)
+            ax.set_yticklabels(tick_labels, rotation=0, fontsize=10)
 
-    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.995)
-    fig.tight_layout(rect=(0, 0, 1, 0.98))
+    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.986, fontweight="bold", fontsize=16)
+    fig.supxlabel("Top-2 Expert", y=0.04, fontweight="semibold", fontsize=12)
+    fig.supylabel("Top-1 Expert", x=0.04, fontweight="semibold", fontsize=12)
+    fig.tight_layout(rect=(0.055, 0.055, 1, 0.965))
     output_root.mkdir(parents=True, exist_ok=True)
     output_path = output_root / "mix_top1_top2_confusion.png"
     fig.savefig(output_path, dpi=220, bbox_inches="tight")
