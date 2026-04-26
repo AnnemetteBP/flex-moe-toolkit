@@ -228,9 +228,7 @@ def plot_confusion_matrices(
     fig, axes = plt.subplots(
         len(row_specs),
         len(model_names),
-        figsize=(5.2 * len(model_names), 4.15 * len(row_specs)),
-        sharex=True,
-        sharey=True,
+        figsize=(5.0 * len(model_names), 3.8 * len(row_specs)),
         squeeze=False,
     )
 
@@ -275,24 +273,26 @@ def plot_confusion_matrices(
                 fontsize=10.25,
                 pad=2,
             )
-            ax.set_xlabel("")
-            ax.set_ylabel("")
             tick_labels = [expert_label(idx, expert_labels) for idx in range(matrix.shape[0])]
             ax.set_xticks(np.arange(matrix.shape[0]) + 0.5)
             if row_idx == len(row_specs) - 1:
                 ax.set_xticklabels(tick_labels, rotation=35, ha="right", fontsize=9.5, fontweight="semibold")
+                ax.set_xlabel("Top-2 Expert", fontweight="semibold", fontsize=11, labelpad=6)
             else:
                 ax.set_xticklabels([])
+                ax.set_xlabel("")
             ax.set_yticks(np.arange(matrix.shape[0]) + 0.5)
             if col_idx == 0:
                 ax.set_yticklabels(tick_labels, rotation=0, fontsize=9.5, fontweight="semibold")
+                ax.set_ylabel("Top-1 Expert", fontweight="semibold", fontsize=11, labelpad=8)
             else:
                 ax.set_yticklabels([])
+                ax.set_ylabel("")
+            ax.tick_params(axis="y", pad=2)
+            ax.tick_params(axis="x", pad=1)
 
-    fig.subplots_adjust(left=0.11, right=0.95, bottom=0.12, top=0.92, wspace=0.06, hspace=0.24)
-    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.955, fontweight="bold", fontsize=15)
-    fig.supxlabel("Top-2 Expert", y=0.05, fontweight="semibold", fontsize=12)
-    fig.supylabel("Top-1 Expert", x=0.03, fontweight="semibold", fontsize=12)
+    fig.subplots_adjust(left=0.12, right=0.95, bottom=0.09, top=0.93, wspace=0.10, hspace=0.26)
+    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.975, fontweight="bold", fontsize=15)
     output_root.mkdir(parents=True, exist_ok=True)
     output_path = output_root / "mix_top1_top2_confusion.png"
     fig.savefig(output_path, dpi=220)

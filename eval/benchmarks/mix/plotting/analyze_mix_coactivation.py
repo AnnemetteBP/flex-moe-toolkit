@@ -342,7 +342,7 @@ def plot_aggregate_coactivation_grid(
     fig, axes = plt.subplots(
         len(dataset_names),
         len(model_names),
-        figsize=(5.2 * len(model_names), 4.1 * len(dataset_names)),
+        figsize=(5.0 * len(model_names), 3.8 * len(dataset_names)),
         squeeze=False,
     )
 
@@ -387,14 +387,18 @@ def plot_aggregate_coactivation_grid(
             ax.set_yticks(np.arange(matrix.shape[0]) + 0.5)
             if row_idx == len(dataset_names) - 1:
                 ax.set_xticklabels(labels, rotation=35, ha="right", fontsize=9.5, fontweight="semibold")
+                ax.set_xlabel("Expert", fontweight="semibold", fontsize=11, labelpad=6)
             else:
                 ax.set_xticklabels([])
+                ax.set_xlabel("")
             if col_idx == 0:
                 ax.set_yticklabels(labels, rotation=0, fontsize=9.5, fontweight="semibold")
+                ax.set_ylabel("Expert", fontweight="semibold", fontsize=11, labelpad=8)
             else:
                 ax.set_yticklabels([])
-            ax.set_xlabel("")
-            ax.set_ylabel("")
+                ax.set_ylabel("")
+            ax.tick_params(axis="y", pad=2)
+            ax.tick_params(axis="x", pad=1)
             ax.set_title(
                 f"{dataset_display_name(dataset_name)} | {model_display_name(model_name)}",
                 fontweight="semibold",
@@ -403,10 +407,8 @@ def plot_aggregate_coactivation_grid(
             )
 
     output_path = output_root / "aggregate_coactivation_heatmaps.png"
-    fig.subplots_adjust(left=0.11, right=0.95, bottom=0.12, top=0.92, wspace=0.06, hspace=0.24)
-    fig.suptitle("Aggregate Expert Co-Activation", y=0.955, fontweight="bold", fontsize=15)
-    fig.supxlabel("Expert", y=0.05, fontweight="semibold", fontsize=12)
-    fig.supylabel("Expert", x=0.03, fontweight="semibold", fontsize=12)
+    fig.subplots_adjust(left=0.12, right=0.95, bottom=0.09, top=0.93, wspace=0.10, hspace=0.26)
+    fig.suptitle("Aggregate Expert Co-Activation", y=0.975, fontweight="bold", fontsize=15)
     fig.savefig(output_path, dpi=200)
     plt.close(fig)
     return output_path
@@ -438,7 +440,7 @@ def plot_layerwise_coactivation_overview(
         fig, axes = plt.subplots(
             num_layers,
             len(model_names),
-            figsize=(5.2 * len(model_names), 3.5 * num_layers),
+            figsize=(5.0 * len(model_names), 3.15 * num_layers),
             squeeze=False,
         )
 
@@ -481,14 +483,18 @@ def plot_layerwise_coactivation_overview(
                 ax.set_yticks(np.arange(len(labels)) + 0.5)
                 if layer_idx == num_layers - 1:
                     ax.set_xticklabels(labels, rotation=35, ha="right", fontsize=8.5, fontweight="semibold")
+                    ax.set_xlabel("Expert", fontweight="semibold", fontsize=11, labelpad=6)
                 else:
                     ax.set_xticklabels([])
+                    ax.set_xlabel("")
                 if col_idx == 0:
                     ax.set_yticklabels(labels, rotation=0, fontsize=8.5, fontweight="semibold")
+                    ax.set_ylabel("Expert", fontweight="semibold", fontsize=11, labelpad=8)
                 else:
                     ax.set_yticklabels([])
-                ax.set_xlabel("")
-                ax.set_ylabel("")
+                    ax.set_ylabel("")
+                ax.tick_params(axis="y", pad=2)
+                ax.tick_params(axis="x", pad=1)
                 ax.set_title(
                     f"Layer {layer_idx} | {model_display_name(model_name)}",
                     fontweight="semibold",
@@ -497,15 +503,13 @@ def plot_layerwise_coactivation_overview(
                 )
 
         output_path = output_root / f"{dataset_name}_layerwise_coactivation_grid.png"
-        fig.subplots_adjust(left=0.12, right=0.95, bottom=0.08, top=0.93, wspace=0.06, hspace=0.24)
+        fig.subplots_adjust(left=0.12, right=0.95, bottom=0.07, top=0.93, wspace=0.10, hspace=0.24)
         fig.suptitle(
             f"Layer-wise Expert Co-Activation | {dataset_display_name(dataset_name)}",
-            y=0.965,
+            y=0.975,
             fontweight="bold",
             fontsize=14,
         )
-        fig.supxlabel("Expert", y=0.03, fontweight="semibold", fontsize=12)
-        fig.supylabel("Expert", x=0.03, fontweight="semibold", fontsize=12)
         fig.savefig(output_path, dpi=200)
         plt.close(fig)
         output_paths.append(output_path)
