@@ -21,8 +21,8 @@ DEFAULT_RESULTS_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "routing_light" /
 DEFAULT_OUTPUT_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_routing_confidence"
 
 MODEL_COLORS = {
-    "FlexOlmo-8x7B-1T-a4-55B-v2": "#5B6C8F",
-    "FlexOlmo-8x7B-1T-a4-55B-v2-rt": "#C96B3B",
+    "FlexOlmo-8x7B-1T-a4-55B-v2": "#701f57",
+    "FlexOlmo-8x7B-1T-a4-55B-v2-rt": "#e13343",
 }
 
 

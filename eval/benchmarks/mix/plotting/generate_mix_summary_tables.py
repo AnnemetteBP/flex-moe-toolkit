@@ -11,6 +11,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_COACTIVATION_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_coactivation"
 DEFAULT_LATENT_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_latent_space"
 DEFAULT_TOP1_TOP2_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_top1_top2_confusion"
+DEFAULT_ROUTING_CONFIDENCE_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_routing_confidence"
 DEFAULT_OUTPUT_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_summary_tables"
 
 
@@ -21,6 +22,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--coactivation-root", type=Path, default=DEFAULT_COACTIVATION_ROOT)
     parser.add_argument("--latent-root", type=Path, default=DEFAULT_LATENT_ROOT)
     parser.add_argument("--top1-top2-root", type=Path, default=DEFAULT_TOP1_TOP2_ROOT)
+    parser.add_argument("--routing-confidence-root", type=Path, default=DEFAULT_ROUTING_CONFIDENCE_ROOT)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
     parser.add_argument(
         "--model-names",
@@ -277,6 +279,92 @@ def build_top1_top2_table(top1_top2_root: Path, model_names: list[str]) -> pd.Da
     return pd.DataFrame(rows)
 
 
+def build_routing_confidence_correlation_table(
+    routing_confidence_root: Path, model_names: list[str]
+) -> pd.DataFrame:
+    path = routing_confidence_root / "routing_confidence_correlations.csv"
+    frame = load_csv(path)
+    left_model, right_model = model_names
+
+    keep = frame[
+        frame["phase"].eq("prompt")
+        & frame["confidence_metric"].isin(["mean_top1_top2_margin", "mean_token_entropy"])
+        & frame["outcome_metric"].isin(["is_correct_float", "score"])
+    ].copy()
+    if keep.empty:
+        return pd.DataFrame()
+
+    rows: list[dict] = []
+    for (dataset_name, confidence_metric, outcome_metric), group in keep.groupby(
+        ["dataset_name", "confidence_metric", "outcome_metric"], dropna=False
+    ):
+        left = group[group["model_name"] == left_model]
+        right = group[group["model_name"] == right_model]
+        if left.empty or right.empty:
+            continue
+        left_row = left.sort_values("layer").iloc[-1]
+        right_row = right.sort_values("layer").iloc[-1]
+        rows.append(
+            {
+                "Dataset": dataset_name,
+                "Confidence": str(confidence_metric),
+                "Outcome": "Accuracy" if outcome_metric == "is_correct_float" else "Score",
+                "Layer (v2)": int(left_row["layer"]),
+                "Layer (rt)": int(right_row["layer"]),
+                "Spearman (v2)": float(left_row["spearman_r"]) if pd.notna(left_row["spearman_r"]) else None,
+                "Spearman (rt)": float(right_row["spearman_r"]) if pd.notna(right_row["spearman_r"]) else None,
+                "$\\Delta$": (
+                    float(right_row["spearman_r"] - left_row["spearman_r"])
+                    if pd.notna(left_row["spearman_r"]) and pd.notna(right_row["spearman_r"])
+                    else None
+                ),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def build_routing_confidence_bucket_table(
+    routing_confidence_root: Path, model_names: list[str]
+) -> pd.DataFrame:
+    path = routing_confidence_root / "routing_confidence_bucket_summary.csv"
+    frame = load_csv(path)
+    left_model, right_model = model_names
+
+    keep = frame[
+        frame["phase"].eq("prompt")
+        & frame["confidence_metric"].eq("mean_top1_top2_margin")
+    ].copy()
+    if keep.empty:
+        return pd.DataFrame()
+
+    rows: list[dict] = []
+    for dataset_name, group in keep.groupby("dataset_name", dropna=False):
+        left = group[group["model_name"] == left_model].sort_values("bucket_id")
+        right = group[group["model_name"] == right_model].sort_values("bucket_id")
+        if left.empty or right.empty:
+            continue
+        left_low = left.iloc[0]
+        left_high = left.iloc[-1]
+        right_low = right.iloc[0]
+        right_high = right.iloc[-1]
+        rows.append(
+            {
+                "Dataset": dataset_name,
+                "Low Bucket Acc. (v2)": float(left_low["mean_accuracy"]),
+                "High Bucket Acc. (v2)": float(left_high["mean_accuracy"]),
+                "$\\Delta$ Acc. (v2)": float(left_high["mean_accuracy"] - left_low["mean_accuracy"]),
+                "Low Bucket Acc. (rt)": float(right_low["mean_accuracy"]),
+                "High Bucket Acc. (rt)": float(right_high["mean_accuracy"]),
+                "$\\Delta$ Acc. (rt)": float(right_high["mean_accuracy"] - right_low["mean_accuracy"]),
+                "Low Bucket Score (v2)": float(left_low["mean_score"]),
+                "High Bucket Score (v2)": float(left_high["mean_score"]),
+                "Low Bucket Score (rt)": float(right_low["mean_score"]),
+                "High Bucket Score (rt)": float(right_high["mean_score"]),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
 def write_readme(output_root: Path) -> None:
     text = """# 55B Summary Tables
 
@@ -287,6 +375,8 @@ Files:
 - `latent_geometry_last_layer.csv/.tex`
 - `mkqa_language_geometry.csv/.tex`
 - `top1_top2_competition.csv/.tex`
+- `routing_confidence_correlation.csv/.tex`
+- `routing_confidence_buckets.csv/.tex`
 
 Intended use:
 - quick paper/slides tables
@@ -305,6 +395,8 @@ def main() -> int:
     latent_table = build_latent_geometry_table(args.latent_root, model_names)
     mkqa_table = build_mkqa_language_table(args.latent_root)
     top1_top2_table = build_top1_top2_table(args.top1_top2_root, model_names)
+    routing_conf_corr_table = build_routing_confidence_correlation_table(args.routing_confidence_root, model_names)
+    routing_conf_bucket_table = build_routing_confidence_bucket_table(args.routing_confidence_root, model_names)
 
     write_table(
         coactivation_table,
@@ -333,6 +425,20 @@ def main() -> int:
         "top1_top2_competition",
         "Top-1 vs. top-2 expert competition summary for the 55B FlexOlmo pair.",
         "tab:mix_top1_top2_competition",
+    )
+    write_table(
+        routing_conf_corr_table,
+        output_root,
+        "routing_confidence_correlation",
+        "Routing-confidence correlation summary for the 55B FlexOlmo pair.",
+        "tab:mix_routing_confidence_correlation",
+    )
+    write_table(
+        routing_conf_bucket_table,
+        output_root,
+        "routing_confidence_buckets",
+        "Routing-confidence bucket summary for the 55B FlexOlmo pair.",
+        "tab:mix_routing_confidence_buckets",
     )
     write_readme(output_root)
 
