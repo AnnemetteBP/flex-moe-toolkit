@@ -384,10 +384,6 @@ def plot_similarity_rows(rows: list[dict], output_path: Path, model_names: list[
         y=0.94,
         fontweight="bold",
     )
-    for row_idx, dataset_name in enumerate(datasets):
-        bbox = axes[row_idx][0].get_position()
-        y_center = 0.5 * (bbox.y0 + bbox.y1)
-        fig.text(0.055, y_center, dataset_display_name(dataset_name), ha="center", va="center", fontweight="semibold", fontsize=10.5)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -470,10 +466,6 @@ def plot_geometry_metrics(rows: list[dict], output_path: Path, model_names: list
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.subplots_adjust(left=0.13, right=0.98, bottom=0.09, top=0.90, wspace=0.18, hspace=0.26)
     fig.suptitle("Latent Geometry Metrics", fontsize=14, y=0.94, fontweight="bold")
-    for row_idx, dataset_name in enumerate(datasets):
-        bbox = axes[row_idx][0].get_position()
-        y_center = 0.5 * (bbox.y0 + bbox.y1)
-        fig.text(0.055, y_center, dataset_display_name(dataset_name), ha="center", va="center", fontweight="semibold", fontsize=10.5)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -652,10 +644,6 @@ def plot_pca_grid(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.subplots_adjust(left=0.14, right=0.98, bottom=0.09, top=0.90, wspace=0.16, hspace=0.26)
     fig.suptitle("PCA of Latent Representations", fontsize=14, y=0.94, fontweight="bold")
-    for row_idx, dataset_name in enumerate(datasets):
-        bbox = axes[row_idx][0].get_position()
-        y_center = 0.5 * (bbox.y0 + bbox.y1)
-        fig.text(0.065, y_center, dataset_display_name(dataset_name), ha="center", va="center", fontweight="semibold", fontsize=10.5)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
