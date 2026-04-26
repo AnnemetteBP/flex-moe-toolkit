@@ -230,7 +230,6 @@ def plot_confusion_matrices(
         sharex=True,
         sharey=True,
         squeeze=False,
-        constrained_layout=True,
     )
 
     vmax = 0.0
@@ -279,8 +278,9 @@ def plot_confusion_matrices(
             ax.set_yticks(np.arange(matrix.shape[0]) + 0.5)
             ax.set_yticklabels(tick_labels, rotation=0, fontsize=10)
 
-    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.998, fontweight="bold", fontsize=16)
-    fig.supxlabel("Top-2 Expert", y=0.025, fontweight="semibold", fontsize=12)
+    fig.subplots_adjust(left=0.12, right=0.97, bottom=0.14, top=0.90, wspace=0.12, hspace=0.22)
+    fig.suptitle("Mix Expert-Pair Competition: Top-1 vs Top-2", y=0.965, fontweight="bold", fontsize=16)
+    fig.supxlabel("Top-2 Expert", y=0.06, fontweight="semibold", fontsize=12)
     fig.supylabel("Top-1 Expert", x=0.02, fontweight="semibold", fontsize=12)
     output_root.mkdir(parents=True, exist_ok=True)
     output_path = output_root / "mix_top1_top2_confusion.png"
