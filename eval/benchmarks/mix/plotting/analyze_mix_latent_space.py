@@ -361,15 +361,16 @@ def plot_similarity_rows(rows: list[dict], output_path: Path, model_names: list[
                     )
                 ax.set_title(
                     f"{dataset_display_name(dataset_name)} | {source_display_name(source_name)} | {repr_name}",
-                    fontsize=10.0,
-                    pad=3,
+                    fontsize=10.5,
+                    pad=4,
                     fontweight="semibold",
                 )
-                ax.set_xlabel("Layer", fontweight="semibold")
+                ax.set_xlabel("Layer", fontsize=11.5, fontweight="semibold")
                 if col_idx == 0:
-                    ax.set_ylabel("Cosine", fontweight="semibold")
+                    ax.set_ylabel("Cosine", fontsize=11.5, fontweight="semibold")
                 else:
                     ax.set_ylabel("")
+                ax.tick_params(labelsize=10.5)
                 ax.set_ylim(-0.05, 1.05)
                 if groups:
                     legend = ax.legend(frameon=False, fontsize=8, loc="best")
@@ -377,7 +378,7 @@ def plot_similarity_rows(rows: list[dict], output_path: Path, model_names: list[
                         text.set_fontweight("semibold")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.13, right=0.98, bottom=0.10, top=0.90, wspace=0.18, hspace=0.30)
+    fig.subplots_adjust(left=0.09, right=0.98, bottom=0.10, top=0.91, wspace=0.18, hspace=0.30)
     fig.suptitle(
         f"Latent Similarity: {model_display_name(model_names[0])} vs {model_display_name(model_names[1])}",
         fontsize=14,
@@ -447,15 +448,16 @@ def plot_geometry_metrics(rows: list[dict], output_path: Path, model_names: list
                         )
                 ax.set_title(
                     f"{dataset_display_name(dataset_name)} | {source_display_name(source_name)} | {title}",
-                    fontsize=9.5,
-                    pad=3,
+                    fontsize=10.0,
+                    pad=4,
                     fontweight="semibold",
                 )
-                ax.set_xlabel("Layer", fontweight="semibold")
+                ax.set_xlabel("Layer", fontsize=11.5, fontweight="semibold")
                 if col_idx == 0:
-                    ax.set_ylabel(title, fontweight="semibold")
+                    ax.set_ylabel(title, fontsize=11.5, fontweight="semibold")
                 else:
                     ax.set_ylabel("")
+                ax.tick_params(labelsize=10.5)
                 ax.grid(alpha=0.25)
                 if row_idx == 0 and col_idx == 2 and metric_key == "within_group_variance":
                     legend = ax.legend(frameon=False, fontsize=8, loc="best")
@@ -463,7 +465,7 @@ def plot_geometry_metrics(rows: list[dict], output_path: Path, model_names: list
                         text.set_fontweight("semibold")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.13, right=0.98, bottom=0.09, top=0.91, wspace=0.18, hspace=0.30)
+    fig.subplots_adjust(left=0.09, right=0.98, bottom=0.09, top=0.92, wspace=0.18, hspace=0.30)
     fig.suptitle("Latent Geometry Metrics", fontsize=14, y=0.96, fontweight="bold")
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
@@ -521,12 +523,13 @@ def plot_pca(
 
     ax.set_title(
         f"{dataset_display_name(dataset_name)} | {source_display_name(representation_source)} | layer {layer_idx}",
-        fontsize=11.5,
-        pad=3,
+        fontsize=13,
+        pad=5,
         fontweight="bold",
     )
-    ax.set_xlabel("PC1", fontweight="semibold")
-    ax.set_ylabel("PC2", fontweight="semibold")
+    ax.set_xlabel("PC1", fontsize=12, fontweight="semibold")
+    ax.set_ylabel("PC2", fontsize=12, fontweight="semibold")
+    ax.tick_params(labelsize=11)
     legend_handles = []
     for model_name in model_names:
         for language in sorted({row["language"] for row in metadata_rows}):
@@ -545,15 +548,15 @@ def plot_pca(
     legend = fig.legend(
         handles=legend_handles,
         frameon=False,
-        fontsize=9.5,
+        fontsize=11,
         loc="upper center",
-        bbox_to_anchor=(0.5, 0.94),
+        bbox_to_anchor=(0.5, 0.99),
         ncol=min(4, max(1, len(legend_handles))),
     )
     for text in legend.get_texts():
         text.set_fontweight("semibold")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.11, right=0.98, bottom=0.11, top=0.82)
+    fig.subplots_adjust(left=0.10, right=0.98, bottom=0.10, top=0.87)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -613,15 +616,16 @@ def plot_pca_grid(
                 )
             ax.set_title(
                 f"{dataset_display_name(dataset_name)} | {source_display_name(representation_source)} | layer {layer_idx}",
-                fontsize=10.0,
-                pad=3,
+                fontsize=11.5,
+                pad=4,
                 fontweight="semibold",
             )
-            ax.set_xlabel("PC1", fontweight="semibold")
+            ax.set_xlabel("PC1", fontsize=11.5, fontweight="semibold")
             if col_idx == 0:
-                ax.set_ylabel("PC2", fontweight="semibold")
+                ax.set_ylabel("PC2", fontsize=11.5, fontweight="semibold")
             else:
                 ax.set_ylabel("")
+            ax.tick_params(labelsize=10.5)
 
     all_languages = sorted(
         {
@@ -649,16 +653,16 @@ def plot_pca_grid(
     legend = fig.legend(
         handles=legend_handles,
         frameon=False,
-        fontsize=10,
+        fontsize=11,
         loc="upper center",
-        bbox_to_anchor=(0.5, 0.945),
+        bbox_to_anchor=(0.5, 0.965),
         ncol=min(4, max(1, len(legend_handles))),
     )
     for text in legend.get_texts():
         text.set_fontweight("semibold")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.09, right=0.99, bottom=0.08, top=0.84, wspace=0.14, hspace=0.24)
-    fig.suptitle("PCA of Latent Representations", fontsize=14, y=0.985, fontweight="bold")
+    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.08, top=0.88, wspace=0.14, hspace=0.24)
+    fig.suptitle("PCA of Latent Representations", fontsize=15, y=0.995, fontweight="bold")
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
