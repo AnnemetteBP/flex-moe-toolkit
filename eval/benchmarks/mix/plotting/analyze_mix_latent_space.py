@@ -575,7 +575,7 @@ def plot_pca_grid(
         figsize=(7.4 * len(representation_sources), 4.8 * len(datasets)),
         squeeze=False,
     )
-    colors = {"en": "#1b6ca8", "da": "#d95f02", "unknown": "#555555"}
+    colors = {"en": "#701f57", "da": "#e13343", "unknown": "#555555"}
     markers = {model_names[0]: "o", model_names[1]: "^"}
 
     for row_idx, dataset_name in enumerate(datasets):
@@ -616,13 +616,13 @@ def plot_pca_grid(
                 )
             ax.set_title(
                 f"{dataset_display_name(dataset_name)} | {source_display_name(representation_source)} | layer {layer_idx}",
-                fontsize=11.5,
+                fontsize=12.5,
                 pad=4,
                 fontweight="semibold",
             )
-            ax.set_xlabel("PC1", fontsize=11.5, fontweight="semibold")
+            ax.set_xlabel("PC1", fontsize=12.5, fontweight="semibold")
             if col_idx == 0:
-                ax.set_ylabel("PC2", fontsize=11.5, fontweight="semibold")
+                ax.set_ylabel("PC2", fontsize=12.5, fontweight="semibold")
             else:
                 ax.set_ylabel("")
             ax.tick_params(labelsize=10.5)
@@ -655,15 +655,15 @@ def plot_pca_grid(
         frameon=False,
         fontsize=11,
         loc="upper center",
-        bbox_to_anchor=(0.5, 0.965),
+        bbox_to_anchor=(0.5, 0.975),
         ncol=min(4, max(1, len(legend_handles))),
     )
     for text in legend.get_texts():
         text.set_fontweight("semibold")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.08, top=0.88, wspace=0.14, hspace=0.24)
+    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.04, top=0.92, wspace=0.14, hspace=0.24)
     fig.suptitle("PCA of Latent Representations", fontsize=15, y=0.995, fontweight="bold")
-    fig.savefig(output_path, dpi=220)
+    fig.savefig(output_path, dpi=300)
     plt.close(fig)
 
 
@@ -802,3 +802,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
