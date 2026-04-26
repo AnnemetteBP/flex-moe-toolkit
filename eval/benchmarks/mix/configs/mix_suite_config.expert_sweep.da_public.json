@@ -1,0 +1,47 @@
+{
+  "shared": {
+    "dataset_manifest": "eval/benchmarks/mix/data/mix_manifest.json",
+    "model_catalog": "model_paths/models.json",
+    "model_root": "/work/training/FlexMoRE/models",
+    "model_registry": "model_paths/all_models.txt",
+    "datasets": [
+      "mkqa_en_da",
+      "gsm8k_subset",
+      "mbpp_subset",
+      "pubmedqa_subset"
+    ],
+    "selected_layers": "early_mid_late_last"
+  },
+  "runtime": {
+    "device": "auto",
+    "dtype": "auto",
+    "max_length": 512,
+    "default_max_new_tokens": 32,
+    "max_examples_per_dataset": 150,
+    "output_root": "eval_results/mix/expert_sweep/a4"
+  },
+  "analyses": {
+    "accuracy": { "enabled": true },
+    "latent_space": { "enabled": true }
+  },
+  "models": [
+    { "enabled": true, "model_name": "Flex-public-2x7B-1T" },
+    { "enabled": true, "model_name": "Flex-public-2x7B-1T-v1" },
+    { "enabled": true, "model_name": "Flex-math-2x7B-1T" },
+    { "enabled": true, "model_name": "Flex-news-2x7B-1T" },
+    { "enabled": true, "model_name": "Flex-pes2o-2x7B-1T" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-5B" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-5B-v1" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-5B-v2" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-10B" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-10B-v1" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-10B-v2" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-15B" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-15B-v2" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-20B" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-20B-v2" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-25B" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-25B-v2" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-55B-v2" }
+  ]
+}
