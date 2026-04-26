@@ -18,6 +18,28 @@ DEFAULT_RESULTS_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "focused" / "55b_
 DEFAULT_OUTPUT_ROOT = PROJECT_ROOT / "eval_results" / "mix" / "comparisons" / "55b_latent_space"
 
 
+def model_display_name(model_name: str) -> str:
+    return model_name.replace("FlexOlmo-8x7B-1T-", "")
+
+
+def dataset_display_name(dataset_name: str) -> str:
+    return {
+        "mkqa_en_da": "MGQA (EN/DA)",
+        "gsm8k_subset": "GSM8K",
+        "mbpp_subset": "MBPP",
+        "pubmedqa_subset": "PubMedQA",
+        "ag_news_subset": "AG News",
+        "common_gen_subset": "CommonGen",
+    }.get(dataset_name, dataset_name)
+
+
+def source_display_name(source_name: str) -> str:
+    return {
+        "pre_router": "Pre-router",
+        "hidden_state": "Hidden state",
+    }.get(source_name, source_name)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Analyze compact latent-space captures for the 55B FlexOlmo pair."
@@ -336,16 +358,28 @@ def plot_similarity_rows(rows: list[dict], output_path: Path, model_names: list[
                         marker="o",
                         label=group,
                     )
-                ax.set_title(f"{dataset_name} | {source_name} | {repr_name}", fontsize=11.5, pad=3, fontweight="semibold")
+                ax.set_title(
+                    f"{dataset_display_name(dataset_name)} | {source_display_name(source_name)} | {repr_name}",
+                    fontsize=11.0,
+                    pad=2,
+                    fontweight="semibold",
+                )
                 ax.set_xlabel("Layer")
                 ax.set_ylabel("Cosine")
                 ax.set_ylim(-0.05, 1.05)
                 if groups:
-                    ax.legend(frameon=False, fontsize=8)
+                    legend = ax.legend(frameon=False, fontsize=8, loc="best")
+                    for text in legend.get_texts():
+                        text.set_fontweight("semibold")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.09, top=0.93, wspace=0.18, hspace=0.34)
-    fig.suptitle(f"Latent Similarity: {model_names[0]} vs {model_names[1]}", fontsize=14, y=0.945, fontweight="bold")
+    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.10, top=0.92, wspace=0.18, hspace=0.34)
+    fig.suptitle(
+        f"Latent Similarity: {model_display_name(model_names[0])} vs {model_display_name(model_names[1])}",
+        fontsize=14,
+        y=0.935,
+        fontweight="bold",
+    )
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -407,14 +441,21 @@ def plot_geometry_metrics(rows: list[dict], output_path: Path, model_names: list
                             marker="o",
                             color=colors["shared"],
                         )
-                ax.set_title(f"{dataset_name} | {source_name} | {title}", fontsize=11.0, pad=3, fontweight="semibold")
+                ax.set_title(
+                    f"{dataset_display_name(dataset_name)} | {source_display_name(source_name)} | {title}",
+                    fontsize=10.5,
+                    pad=2,
+                    fontweight="semibold",
+                )
                 ax.set_xlabel("Layer")
                 ax.grid(alpha=0.25)
                 if row_idx == 0 and col_idx == 2 and metric_key == "within_group_variance":
-                    ax.legend(frameon=False, fontsize=8, loc="best")
+                    legend = ax.legend(frameon=False, fontsize=8, loc="best")
+                    for text in legend.get_texts():
+                        text.set_fontweight("semibold")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.07, right=0.98, bottom=0.08, top=0.94, wspace=0.18, hspace=0.34)
+    fig.subplots_adjust(left=0.07, right=0.98, bottom=0.09, top=0.94, wspace=0.18, hspace=0.34)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -455,7 +496,7 @@ def plot_pca(
     matrix = np.concatenate(points, axis=0)
     projection = pca_2d(matrix)
 
-    fig, ax = plt.subplots(figsize=(7, 6))
+    fig, ax = plt.subplots(figsize=(7.4, 6.2))
     colors = {"en": "#1b6ca8", "da": "#d95f02", "unknown": "#555555"}
     markers = {model_names[0]: "o", model_names[1]: "^"}
 
@@ -480,20 +521,22 @@ def plot_pca(
             [],
             color=colors.get(language, colors["unknown"]),
             marker=markers.get(model_name, "o"),
-            label=f"{model_name} | {language}",
+            label=f"{model_display_name(model_name)} | {language.upper()}",
         )
 
     ax.set_title(
-        f"PCA: {dataset_name} | {representation_source} | layer {layer_idx} | {representation}",
+        f"PCA: {dataset_display_name(dataset_name)} | {source_display_name(representation_source)} | layer {layer_idx} | {representation}",
         fontsize=12,
         pad=4,
         fontweight="bold",
     )
     ax.set_xlabel("PC1")
     ax.set_ylabel("PC2")
-    ax.legend(frameon=False, fontsize=8, loc="best")
+    legend = ax.legend(frameon=False, fontsize=9, loc="upper left", bbox_to_anchor=(1.01, 1.0), borderaxespad=0.0)
+    for text in legend.get_texts():
+        text.set_fontweight("semibold")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.10, right=0.98, bottom=0.10, top=0.92)
+    fig.subplots_adjust(left=0.10, right=0.76, bottom=0.10, top=0.90)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
@@ -509,7 +552,7 @@ def plot_pca_grid(
     fig, axes = plt.subplots(
         len(datasets),
         len(representation_sources),
-        figsize=(7 * len(representation_sources), 5 * len(datasets)),
+        figsize=(7.4 * len(representation_sources), 4.8 * len(datasets)),
         squeeze=False,
     )
     colors = {"en": "#1b6ca8", "da": "#d95f02", "unknown": "#555555"}
@@ -551,7 +594,12 @@ def plot_pca_grid(
                     alpha=0.75,
                     s=22,
                 )
-            ax.set_title(f"{dataset_name} | {representation_source} | layer {layer_idx}", fontsize=11.5, pad=3, fontweight="semibold")
+            ax.set_title(
+                f"{dataset_display_name(dataset_name)} | {source_display_name(representation_source)} | layer {layer_idx}",
+                fontsize=11.0,
+                pad=2,
+                fontweight="semibold",
+            )
             ax.set_xlabel("PC1")
             ax.set_ylabel("PC2")
 
@@ -574,11 +622,13 @@ def plot_pca_grid(
             [],
             color=colors.get(language, colors["unknown"]),
             marker=markers.get(model_name, "o"),
-            label=f"{model_name} | {language}",
+            label=f"{model_display_name(model_name)} | {language.upper()}",
         )
-    axes[0][0].legend(frameon=False, fontsize=8, loc="best")
+    legend = axes[0][0].legend(frameon=False, fontsize=9, loc="upper left", bbox_to_anchor=(1.02, 1.0), borderaxespad=0.0)
+    for text in legend.get_texts():
+        text.set_fontweight("semibold")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.08, top=0.95, wspace=0.18, hspace=0.34)
+    fig.subplots_adjust(left=0.08, right=0.82, bottom=0.08, top=0.95, wspace=0.18, hspace=0.34)
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
 
