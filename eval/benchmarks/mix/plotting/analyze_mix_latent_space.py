@@ -653,7 +653,7 @@ def plot_pca_grid(
     legend = fig.legend(
         handles=legend_handles,
         frameon=False,
-        fontsize=11,
+        fontsize=14,
         loc="upper center",
         bbox_to_anchor=(0.5, 0.975),
         ncol=min(4, max(1, len(legend_handles))),
