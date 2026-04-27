@@ -97,6 +97,35 @@ def parse_danish_variant(model_name: str) -> dict[str, object] | None:
     }
 
 
+def expert_sort_key(model_name: str) -> tuple:
+    if model_name == "Flex-public-2x7B-1T":
+        return (0, 0, 0, model_name)
+    if model_name == "Flex-public-2x7B-1T-v1":
+        return (0, 1, 0, model_name)
+    if model_name == "Flex-math-2x7B-1T":
+        return (1, 0, 0, model_name)
+    if model_name == "Flex-news-2x7B-1T":
+        return (1, 1, 0, model_name)
+    if model_name == "Flex-pes2o-2x7B-1T":
+        return (1, 2, 0, model_name)
+    parsed = parse_danish_variant(model_name)
+    if parsed is not None:
+        return (2, int(parsed["tokens_b"]), int(parsed["version_order"]), model_name)
+    return (3, 0, 0, model_name)
+
+
+def build_expert_palette(model_names: list[str], public_model: str) -> dict[str, tuple]:
+    palette: dict[str, tuple] = {}
+    if public_model in model_names:
+        palette[public_model] = (0.1, 0.1, 0.1, 1.0)
+    non_public = [name for name in model_names if name != public_model]
+    if non_public:
+        colors = plt.cm.viridis(np.linspace(0.15, 0.9, max(len(non_public), 2)))
+        for idx, model_name in enumerate(non_public):
+            palette[model_name] = colors[idx]
+    return palette
+
+
 def load_jsonl(path: Path) -> list[dict]:
     with path.open("r", encoding="utf-8") as handle:
         return [json.loads(line) for line in handle if line.strip()]
@@ -301,6 +330,58 @@ def plot_performance_scaling(
     plt.close(fig)
 
 
+def plot_accuracy_overview(accuracy_frame: pd.DataFrame, output_path: Path) -> None:
+    if accuracy_frame.empty:
+        return
+    datasets = [name for name in DATASET_DISPLAY_NAMES if name in set(accuracy_frame["dataset_name"])]
+    model_names = sorted(accuracy_frame["model_name"].drop_duplicates(), key=expert_sort_key)
+    model_labels = [model_display_name(name) for name in model_names]
+
+    matrix = np.full((len(model_names), len(datasets)), np.nan, dtype=float)
+    for row_idx, model_name in enumerate(model_names):
+        for col_idx, dataset_name in enumerate(datasets):
+            subset = accuracy_frame[
+                (accuracy_frame["model_name"] == model_name) & (accuracy_frame["dataset_name"] == dataset_name)
+            ]
+            if not subset.empty:
+                matrix[row_idx, col_idx] = float(subset.iloc[0]["accuracy"])
+
+    fig, ax = plt.subplots(figsize=(8.8, max(6.0, 0.38 * len(model_names) + 1.6)))
+    image = ax.imshow(matrix, cmap="viridis", aspect="auto", vmin=0.0, vmax=max(1.0, float(np.nanmax(matrix))))
+    ax.set_xticks(range(len(datasets)), [dataset_display_name(name) for name in datasets])
+    ax.set_yticks(range(len(model_names)), model_labels)
+    ax.set_xlabel("Dataset", fontsize=11.5, fontweight="semibold")
+    ax.set_ylabel("Model", fontsize=11.5, fontweight="semibold")
+    ax.set_title("Accuracy Overview", fontsize=13, fontweight="bold", pad=5)
+    ax.tick_params(axis="x", labelsize=10.5, rotation=20)
+    ax.tick_params(axis="y", labelsize=10.0)
+
+    for row_idx in range(matrix.shape[0]):
+        for col_idx in range(matrix.shape[1]):
+            value = matrix[row_idx, col_idx]
+            if np.isnan(value):
+                continue
+            ax.text(
+                col_idx,
+                row_idx,
+                f"{value:.2f}",
+                ha="center",
+                va="center",
+                fontsize=8.6,
+                color="white" if value < 0.55 else "black",
+                fontweight="semibold",
+            )
+
+    colorbar = fig.colorbar(image, ax=ax, shrink=0.92)
+    colorbar.set_label("Accuracy", fontsize=11.0, fontweight="semibold")
+    colorbar.ax.tick_params(labelsize=10.0)
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.subplots_adjust(left=0.23, right=0.94, bottom=0.14, top=0.90)
+    fig.savefig(output_path, dpi=240)
+    plt.close(fig)
+
+
 def build_latent_geometry_rows(
     latent_root: Path,
     datasets: list[str],
@@ -382,8 +463,7 @@ def plot_latent_pca(
 ) -> None:
     points = []
     metadata_rows = []
-    colors = plt.cm.tab10(np.linspace(0, 1, max(len(model_names), 3)))
-    model_colors = {model_name: colors[idx] for idx, model_name in enumerate(model_names)}
+    model_colors = build_expert_palette(model_names, public_model=model_names[0])
 
     for model_name in model_names:
         bundle = load_dataset_bundle(latent_root, model_name, dataset_name)
@@ -465,6 +545,7 @@ def plot_distance_to_public_by_layer(
     dataset_name: str,
     model_names: list[str],
     representation: str,
+    public_model: str,
     output_path: Path,
 ) -> None:
     subset = geometry_frame[
@@ -478,8 +559,7 @@ def plot_distance_to_public_by_layer(
         ("distance_to_public", "Centroid Distance to Public"),
         ("separation_ratio_to_public", "Separation Ratio to Public"),
     ]
-    colors = plt.cm.viridis(np.linspace(0.15, 0.9, max(len(model_names), 2)))
-    model_colors = {model_name: colors[idx] for idx, model_name in enumerate(model_names)}
+    model_colors = build_expert_palette(model_names, public_model=public_model)
 
     for ax, (metric_key, title) in zip(axes, metrics):
         for model_name in model_names:
@@ -499,7 +579,7 @@ def plot_distance_to_public_by_layer(
         ax.tick_params(labelsize=10.5)
         ax.grid(alpha=0.22)
     axes[0].set_ylabel("Value", fontsize=11.5, fontweight="semibold")
-    legend = axes[1].legend(frameon=False, fontsize=10, loc="best")
+    legend = axes[1].legend(frameon=False, fontsize=14, loc="best")
     for text in legend.get_texts():
         text.set_fontweight("semibold")
 
@@ -566,6 +646,7 @@ def main() -> int:
     accuracy_frame.to_csv(output_root / "expert_eval_summary.csv", index=False)
     scaling_frame.to_csv(output_root / "expert_danish_scaling_summary.csv", index=False)
     geometry_frame.to_csv(output_root / "expert_latent_geometry_summary.csv", index=False)
+    plot_accuracy_overview(accuracy_frame, output_root / "expert_accuracy_overview.png")
 
     plot_performance_scaling(
         scaling_frame=scaling_frame,
@@ -598,6 +679,7 @@ def main() -> int:
             dataset_name=args.pca_dataset,
             model_names=layerwise_model_names,
             representation=args.pca_representation,
+            public_model=args.public_model,
             output_path=output_root / (
                 f"expert_distance_to_public_by_layer_{args.pca_dataset}_{args.pca_representation}.png"
             ),
