@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.lines import Line2D
+from matplotlib.patches import Rectangle
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
@@ -27,8 +28,8 @@ DATASET_DISPLAY_NAMES = {
 }
 
 SPECIALIST_DISPLAY_NAMES = {
-    "Flex-public-2x7B-1T": "Public",
-    "Flex-public-2x7B-1T-v1": "Public-v1",
+    "Flex-public-2x7B-1T": "Public 2x7B",
+    "Flex-public-2x7B-1T-v1": "Public 2x7B v1",
     "Flex-math-2x7B-1T": "Math",
     "Flex-news-2x7B-1T": "News",
     "Flex-pes2o-2x7B-1T": "Academic",
@@ -333,27 +334,39 @@ def plot_performance_scaling(
 def plot_accuracy_overview(accuracy_frame: pd.DataFrame, output_path: Path) -> None:
     if accuracy_frame.empty:
         return
-    datasets = [name for name in DATASET_DISPLAY_NAMES if name in set(accuracy_frame["dataset_name"])]
+    column_specs: list[tuple[str, str, str]] = []
+    available_datasets = set(accuracy_frame["dataset_name"])
+    if "mkqa_en_da" in available_datasets:
+        column_specs.extend(
+            [
+                ("mkqa_en_da", "en_accuracy", "MGQA EN"),
+                ("mkqa_en_da", "da_accuracy", "MGQA DA"),
+            ]
+        )
+    for dataset_name in ("gsm8k_subset", "mbpp_subset", "pubmedqa_subset"):
+        if dataset_name in available_datasets:
+            column_specs.append((dataset_name, "accuracy", dataset_display_name(dataset_name)))
     model_names = sorted(accuracy_frame["model_name"].drop_duplicates(), key=expert_sort_key)
     model_labels = [model_display_name(name) for name in model_names]
 
-    matrix = np.full((len(model_names), len(datasets)), np.nan, dtype=float)
+    matrix = np.full((len(model_names), len(column_specs)), np.nan, dtype=float)
     for row_idx, model_name in enumerate(model_names):
-        for col_idx, dataset_name in enumerate(datasets):
+        for col_idx, (dataset_name, metric_name, _display_name) in enumerate(column_specs):
             subset = accuracy_frame[
                 (accuracy_frame["model_name"] == model_name) & (accuracy_frame["dataset_name"] == dataset_name)
             ]
             if not subset.empty:
-                matrix[row_idx, col_idx] = float(subset.iloc[0]["accuracy"])
+                value = subset.iloc[0].get(metric_name)
+                matrix[row_idx, col_idx] = float(value) if pd.notna(value) else np.nan
 
-    fig, ax = plt.subplots(figsize=(8.8, max(6.0, 0.38 * len(model_names) + 1.6)))
+    fig, ax = plt.subplots(figsize=(8.2, max(6.0, 0.38 * len(model_names) + 1.2)))
     image = ax.imshow(matrix, cmap="viridis", aspect="auto", vmin=0.0, vmax=max(1.0, float(np.nanmax(matrix))))
-    ax.set_xticks(range(len(datasets)), [dataset_display_name(name) for name in datasets])
-    ax.set_yticks(range(len(model_names)), model_labels)
+    ax.set_xticks(range(len(column_specs)), [display_name for _dataset, _metric, display_name in column_specs])
+    ax.set_yticks(range(len(model_names)), model_labels, fontweight="semibold")
     ax.set_xlabel("Dataset", fontsize=11.5, fontweight="semibold")
     ax.set_ylabel("Model", fontsize=11.5, fontweight="semibold")
     ax.set_title("Accuracy Overview", fontsize=13, fontweight="bold", pad=5)
-    ax.tick_params(axis="x", labelsize=10.5, rotation=20)
+    ax.tick_params(axis="x", labelsize=10.0, rotation=18)
     ax.tick_params(axis="y", labelsize=10.0)
 
     for row_idx in range(matrix.shape[0]):
@@ -372,12 +385,43 @@ def plot_accuracy_overview(accuracy_frame: pd.DataFrame, output_path: Path) -> N
                 fontweight="semibold",
             )
 
+    for col_idx in range(matrix.shape[1]):
+        column = matrix[:, col_idx]
+        valid_indices = np.where(~np.isnan(column))[0]
+        if valid_indices.size == 0:
+            continue
+        sorted_indices = valid_indices[np.argsort(column[valid_indices])[::-1]]
+        top_idx = int(sorted_indices[0])
+        ax.add_patch(
+            Rectangle(
+                (col_idx - 0.5, top_idx - 0.5),
+                1.0,
+                1.0,
+                fill=False,
+                edgecolor="black",
+                linewidth=2.0,
+            )
+        )
+        if sorted_indices.size >= 2:
+            second_idx = int(sorted_indices[1])
+            ax.add_patch(
+                Rectangle(
+                    (col_idx - 0.5, second_idx - 0.5),
+                    1.0,
+                    1.0,
+                    fill=False,
+                    edgecolor="black",
+                    linewidth=1.8,
+                    linestyle="--",
+                )
+            )
+
     colorbar = fig.colorbar(image, ax=ax, shrink=0.92)
     colorbar.set_label("Accuracy", fontsize=11.0, fontweight="semibold")
     colorbar.ax.tick_params(labelsize=10.0)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.23, right=0.94, bottom=0.14, top=0.90)
+    fig.subplots_adjust(left=0.16, right=0.93, bottom=0.10, top=0.91)
     fig.savefig(output_path, dpi=240)
     plt.close(fig)
 
