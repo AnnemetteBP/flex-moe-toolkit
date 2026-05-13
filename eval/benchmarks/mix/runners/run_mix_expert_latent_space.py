@@ -57,6 +57,11 @@ def parse_args() -> argparse.Namespace:
         default="early_mid_late_last",
         help="Comma-separated hidden-state layer indices to save.",
     )
+    parser.add_argument(
+        "--representation-sources",
+        default="embedding,hidden_state",
+        help="Comma-separated latent sources to save. Supported: embedding, hidden_state.",
+    )
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     return parser.parse_args()
 
@@ -139,36 +144,58 @@ def select_hidden_state_layers(hidden_states, selected_layers: list[int]) -> dic
     return result
 
 
+def parse_representation_sources(raw_value: str) -> list[str]:
+    sources = [part.strip() for part in raw_value.split(",") if part.strip()]
+    allowed = {"embedding", "hidden_state"}
+    invalid = [source for source in sources if source not in allowed]
+    if invalid:
+        raise ValueError(f"Unsupported representation sources: {', '.join(invalid)}")
+    if not sources:
+        raise ValueError("Provide at least one representation source.")
+    return sources
+
+
 def capture_dataset_latents(
     model,
     tokenizer,
     examples: list[dict[str, Any]],
     selected_layers: list[int],
+    representation_sources: list[str],
     max_length: int,
     device: torch.device,
 ) -> tuple[dict[str, np.ndarray], list[dict]]:
-    vectors: dict[int, dict[str, list[np.ndarray]]] = {
-        layer: {"mean": [], "last": []}
-        for layer in selected_layers
-    }
+    vectors: dict[str, dict[int, dict[str, list[np.ndarray]]]] = {}
+    if "embedding" in representation_sources:
+        vectors["embedding"] = {-1: {"mean": [], "last": []}}
+    if "hidden_state" in representation_sources:
+        vectors["hidden_state"] = {
+            layer: {"mean": [], "last": []}
+            for layer in selected_layers
+        }
     metadata: list[dict[str, Any]] = []
 
     for example in examples:
         inputs = encode_prompt(tokenizer, example["prompt"], max_length=max_length, device=device)
+        attention_mask = inputs.get("attention_mask")
+        seq_len = int(attention_mask[0].sum().item()) if attention_mask is not None else int(inputs["input_ids"].shape[-1])
+        if "embedding" in representation_sources:
+            with torch.no_grad():
+                embedding_tensor = model.get_input_embeddings()(inputs["input_ids"])[0, :seq_len, :].detach().cpu().float()
+            vectors["embedding"][-1]["mean"].append(embedding_tensor.mean(dim=0).numpy())
+            vectors["embedding"][-1]["last"].append(embedding_tensor[-1].numpy())
         with torch.no_grad():
             outputs = model(
                 input_ids=inputs["input_ids"],
                 attention_mask=inputs.get("attention_mask"),
-                output_hidden_states=True,
+                output_hidden_states="hidden_state" in representation_sources,
                 use_cache=False,
             )
-        selected = select_hidden_state_layers(outputs.hidden_states, selected_layers)
-        attention_mask = inputs.get("attention_mask")
-        seq_len = int(attention_mask[0].sum().item()) if attention_mask is not None else int(inputs["input_ids"].shape[-1])
-        for layer_idx, tensor in selected.items():
-            layer_tensor = tensor[0, :seq_len, :].detach().cpu().float()
-            vectors[layer_idx]["mean"].append(layer_tensor.mean(dim=0).numpy())
-            vectors[layer_idx]["last"].append(layer_tensor[-1].numpy())
+        if "hidden_state" in representation_sources:
+            selected = select_hidden_state_layers(outputs.hidden_states, selected_layers)
+            for layer_idx, tensor in selected.items():
+                layer_tensor = tensor[0, :seq_len, :].detach().cpu().float()
+                vectors["hidden_state"][layer_idx]["mean"].append(layer_tensor.mean(dim=0).numpy())
+                vectors["hidden_state"][layer_idx]["last"].append(layer_tensor[-1].numpy())
         metadata.append(
             {
                 "example_id": example["example_id"],
@@ -179,9 +206,10 @@ def capture_dataset_latents(
         )
 
     arrays: dict[str, np.ndarray] = {}
-    for layer_idx, reductions in vectors.items():
-        for reduction_name, items in reductions.items():
-            arrays[f"hidden_state_layer_{layer_idx}_{reduction_name}"] = np.stack(items, axis=0).astype(np.float32)
+    for source_name, source_layers in sorted(vectors.items()):
+        for layer_idx, reductions in source_layers.items():
+            for reduction_name, items in reductions.items():
+                arrays[f"{source_name}_layer_{layer_idx}_{reduction_name}"] = np.stack(items, axis=0).astype(np.float32)
     return arrays, metadata
 
 
@@ -208,6 +236,7 @@ def main() -> int:
     if num_hidden_layers is None:
         raise ValueError("Model config must define `num_hidden_layers` for hidden-state capture.")
     selected_layers = parse_hidden_state_layers(args.selected_layers, num_hidden_layers=num_hidden_layers)
+    representation_sources = parse_representation_sources(args.representation_sources)
     output_root = Path(args.output_root) / model_name
     output_root.mkdir(parents=True, exist_ok=True)
 
@@ -221,6 +250,7 @@ def main() -> int:
             tokenizer,
             examples,
             selected_layers=selected_layers,
+            representation_sources=representation_sources,
             max_length=args.max_length,
             device=device,
         )
@@ -249,7 +279,7 @@ def main() -> int:
                 "model_name": model_name,
                 "model_path": model_path,
                 "datasets": dataset_manifest,
-                "representation_sources": ["hidden_state"],
+                "representation_sources": representation_sources,
             },
             indent=2,
             sort_keys=True,

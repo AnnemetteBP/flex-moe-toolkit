@@ -1,11 +1,21 @@
 *__pycache__*
 __pycache__
 
+.euroeval_cache
+.agents
+
+.flex-moe-toolkit-env
+
 .env
 *.egg-info/
 
 allenai/
 gsm8k_golddaen/
 
+output/
+outputs/
+ucloud_results/
 eval_results/
 scripts/flex_rt/
+gemma4_outputs/
+examples/

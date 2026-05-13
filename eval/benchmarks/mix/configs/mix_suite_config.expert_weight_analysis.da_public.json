@@ -1,0 +1,35 @@
+{
+  "shared": {
+    "model_root": "/work/training/FlexMoRE/models",
+    "model_registry": "model_paths/all_models.txt",
+    "selected_layers": "early_mid_late_last"
+  },
+  "runtime": {
+    "device": "auto",
+    "dtype": "auto",
+    "fingerprint_size": 4096,
+    "fingerprint_seed": 17,
+    "output_root": "eval_results/mix/expert_weight_analysis/a4"
+  },
+  "models": [
+    { "enabled": true, "model_name": "Flex-public-7B-1T" },
+    { "enabled": true, "model_name": "Flex-public-2x7B-1T" },
+    { "enabled": true, "model_name": "Flex-public-2x7B-1T-v1" },
+    { "enabled": true, "model_name": "Flex-math-2x7B-1T" },
+    { "enabled": true, "model_name": "Flex-news-2x7B-1T" },
+    { "enabled": true, "model_name": "Flex-pes2o-2x7B-1T" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-5B" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-5B-v1" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-5B-v2" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-10B" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-10B-v1" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-10B-v2" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-15B" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-15B-v2" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-20B" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-20B-v2" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-25B" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-25B-v2" },
+    { "enabled": true, "model_name": "Flex-danish-2x7B-55B-v2" }
+  ]
+}

@@ -16,7 +16,9 @@ dependencies = [
   "pandas",
   "numpy",
   "matplotlib",
-  "seaborn"
+  "seaborn",
+  "scikit-learn",
+  "umap-learn",
 ]
 
 [tool.setuptools]

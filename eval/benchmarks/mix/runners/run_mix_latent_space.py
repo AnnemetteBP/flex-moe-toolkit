@@ -61,8 +61,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--representation-sources",
-        default="hidden_state,pre_router",
-        help="Comma-separated latent sources to save. Supported: hidden_state, pre_router.",
+        default="embedding,hidden_state,pre_router",
+        help="Comma-separated latent sources to save. Supported: embedding, hidden_state, pre_router.",
     )
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     return parser.parse_args()
@@ -143,7 +143,7 @@ def parse_decoder_layers(raw_value: str, num_hidden_layers: int) -> list[int]:
 
 def parse_representation_sources(raw_value: str) -> list[str]:
     sources = [part.strip() for part in raw_value.split(",") if part.strip()]
-    allowed = {"hidden_state", "pre_router"}
+    allowed = {"embedding", "hidden_state", "pre_router"}
     invalid = [source for source in sources if source not in allowed]
     if invalid:
         raise ValueError(f"Unsupported representation sources: {', '.join(invalid)}")
@@ -196,6 +196,10 @@ def capture_dataset_latents(
     device: torch.device,
 ) -> tuple[dict[str, np.ndarray], list[dict]]:
     vectors: dict[str, dict[int, dict[str, list[np.ndarray]]]] = {}
+    if "embedding" in representation_sources:
+        vectors["embedding"] = {
+            -1: {"mean": [], "last": []}
+        }
     if "hidden_state" in representation_sources:
         vectors["hidden_state"] = {
             layer: {"mean": [], "last": []}
@@ -211,6 +215,13 @@ def capture_dataset_latents(
 
     for example in examples:
         inputs = encode_prompt(tokenizer, example["prompt"], max_length=max_length, device=device)
+        attention_mask = inputs.get("attention_mask")
+        seq_len = int(attention_mask[0].sum().item()) if attention_mask is not None else int(inputs["input_ids"].shape[-1])
+        if "embedding" in representation_sources:
+            with torch.no_grad():
+                embedding_tensor = model.get_input_embeddings()(inputs["input_ids"])[0, :seq_len, :].detach().cpu().float()
+            vectors["embedding"][-1]["mean"].append(embedding_tensor.mean(dim=0).numpy())
+            vectors["embedding"][-1]["last"].append(embedding_tensor[-1].numpy())
         pre_router_capture = PreRouterCapture(pre_router_layers) if capture_pre_router else None
         if pre_router_capture is not None:
             pre_router_capture.attach(model)
@@ -226,7 +237,6 @@ def capture_dataset_latents(
             if pre_router_capture is not None:
                 pre_router_capture.remove()
 
-        seq_len = int(inputs["input_ids"].shape[-1])
         metadata.append(
             {
                 "example_id": example["example_id"],

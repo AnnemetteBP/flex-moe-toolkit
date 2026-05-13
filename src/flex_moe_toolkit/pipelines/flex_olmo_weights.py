@@ -49,6 +49,7 @@ def analyze_flex_olmo_weights(model, public_expert_idx: int = 0) -> dict[str, ob
         router_norms = vector_norms(router_weight)
         router_mean_abs = rowwise_mean_abs(router_weight)
         router_similarity = pairwise_cosine_similarity(router_weight)
+        router_public_distance = public_distance_profile(router_weight, public_expert_idx=public_expert_idx)
 
         expert_tensors = _expert_weight_tensors(layer)
         gate_up = expert_tensors["gate_up_proj"]
@@ -64,6 +65,7 @@ def analyze_flex_olmo_weights(model, public_expert_idx: int = 0) -> dict[str, ob
             "router_weight_mean_abs": router_mean_abs,
             "router_similarity": router_similarity,
             "router_similarity_summary": summarize_similarity_matrix(router_similarity),
+            "router_weight_public_distance": router_public_distance,
             "gate_up_proj_shape": tuple(gate_up.shape),
             "gate_up_proj_norms": gate_norms,
             "gate_up_proj_mean_abs": gate_mean_abs,
